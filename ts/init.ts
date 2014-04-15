@@ -3,7 +3,7 @@ module app {
     (function () {
         $(document).ready(function () {
             
-        	console.log('we are ready!');
+        	var datum = new app.model.RawTweets();
            
         });
     })()
