@@ -2,35 +2,29 @@ module app {
 
     export module model {
 
-        export class RawTweets extends Backbone.Model {
+        export class RawTweets{
+
+            tweetList:any;
 
             constructor() {
+
+                var self = this;
+
+                this.tweetList = [];
                 
-               super()
-               
-               
-                tweets = [];
-                
-                var data = $.ajax('data/tweets.json', {
-                    
-                    dataType:'json',                  
-                    error: function() {
-                        console.log('Error occurred in loading the raw tweets');
-                    },
-                    success: function() {
-                       console.log('success');
+                var data = $.getJSON('data/tweets.json'); 
+            
+                data.done(function(data){
+
+                    for (var i = 0; i < data.length; i++) {
+                        var obj = data[i];
+                        self.tweetList.push(obj.text);
+                        console.log(self.tweetList);
                     }
-                }).done(function(){
-                    var array = data.responseJSON;
-                    
-                    for (var i = 0; i < array.length ; i ++) {
-                        tweets.push(array[i]);
-                    }
+
                 });
 
-                $('a').click(function(){
-                    console.log(tweets[1].text);
-                });
+                
                 
             } //end constructor
 
