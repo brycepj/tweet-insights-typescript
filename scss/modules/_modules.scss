@@ -1,1 +1,7 @@
+@import 'loading-mask';
 
+.target {
+	width:500px; min-height:100px;
+	margin:5em auto;
+	background-color:lighten(tomato,35%);
+}

@@ -1,0 +1,1 @@
+/// <reference path="view1.ts"/>

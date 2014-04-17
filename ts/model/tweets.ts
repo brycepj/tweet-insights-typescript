@@ -1,34 +1,21 @@
-module app {
+app.RawTweets = {
 
-    export module model {
+        tweetList: [],
 
-        export class RawTweets{
-
-            tweetList:any;
-
-            constructor() {
-
-                var self = this;
-
-                this.tweetList = [];
-                
-                var data = $.getJSON('data/tweets.json'); 
+        init: function() {
+            var self = this;
             
-                data.done(function(data){
+            var data = $.getJSON('data/tweets.json');
 
-                    for (var i = 0; i < data.length; i++) {
-                        var obj = data[i];
-                        self.tweetList.push(obj.text);
-                        console.log(self.tweetList);
-                    }
-
-                });
-
+            data.done(function(data) {
                 
-                
-            } //end constructor
+                for (var i=0;i<data.length;i++) {
+                    
+                    self.tweetList.push(data[i].text);
+                }
+                console.log(self.tweetList);
 
-
+            });
         }
-    }
+        
 }
