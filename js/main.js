@@ -1,3 +1,13 @@
+var app;
+(function (app) {
+    (function (util) {
+        function initBaseModels() {
+            var stinky = "striky";
+        }
+        util.initBaseModels = initBaseModels;
+    })(app.util || (app.util = {}));
+    var util = app.util;
+})(app || (app = {}));
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -22,21 +32,32 @@ var app;
     })(app.view || (app.view = {}));
     var view = app.view;
 })(app || (app = {}));
-app.RawTweets = {
-    tweetList: [],
-    init: function () {
-        var self = this;
+var app;
+(function (app) {
+    (function (model) {
+        var RawData = (function (_super) {
+            __extends(RawData, _super);
+            function RawData() {
+                _super.call(this);
 
-        var data = $.getJSON('data/tweets.json');
+                var self = this;
+                var data = $.getJSON('data/tweets.json');
 
-        data.done(function (data) {
-            for (var i = 0; i < data.length; i++) {
-                self.tweetList.push(data[i].text);
+                this.tweets = [];
+
+                data.done(function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        self.tweets.push(data[i]);
+                    }
+                    console.log(self.tweets);
+                });
             }
-            console.log(self.tweetList);
-        });
-    }
-};
+            return RawData;
+        })(Backbone.Model);
+        model.RawData = RawData;
+    })(app.model || (app.model = {}));
+    var model = app.model;
+})(app || (app = {}));
 var app;
 (function (app) {
     (function (model) {
@@ -55,8 +76,19 @@ var app;
 (function (app) {
     (function () {
         $(document).ready(function () {
-            app.RawTweets.init();
-            console.log('made it');
+            var raw = new app.model.RawData();
+
+            var kike = new app.LoadingMask();
         });
     })();
+})(app || (app = {}));
+var app;
+(function (app) {
+    var LoadingMask = (function () {
+        function LoadingMask() {
+            console.log('kike shit');
+        }
+        return LoadingMask;
+    })();
+    app.LoadingMask = LoadingMask;
 })(app || (app = {}));

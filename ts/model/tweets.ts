@@ -1,21 +1,35 @@
-app.RawTweets = {
+module app {
 
-        tweetList: [],
+    export module model {
 
-        init: function() {
-            var self = this;
-            
-            var data = $.getJSON('data/tweets.json');
+        export class RawData extends Backbone.Model {
 
-            data.done(function(data) {
-                
-                for (var i=0;i<data.length;i++) {
-                    
-                    self.tweetList.push(data[i].text);
-                }
-                console.log(self.tweetList);
+            tweets: any;
 
-            });
+            constructor() {
+                super()
+
+                var self = this;
+                var data = $.getJSON('data/tweets.json');
+
+                this.tweets = [];
+
+                data.done(function(data) {
+
+                    for (var i = 0; i < data.length; i++) {
+
+                        self.tweets.push(data[i]);
+                    }
+                    console.log(self.tweets);
+
+
+                });
+
+            }
+
+
         }
-        
+
+    }
+
 }

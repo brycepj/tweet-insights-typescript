@@ -2,9 +2,11 @@ module app {
 
     (function () {
         $(document).ready(function () {
+           
+            var raw = new app.model.RawData();
             
-        	app.RawTweets.init();
-            console.log('made it');
+            var kike = new app.LoadingMask();
+            
            
         });
     })()
