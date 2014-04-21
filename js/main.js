@@ -4,30 +4,23 @@ var app;
         function initModels() {
             var rawData = $.getJSON('data/tweets.json');
             var rawTweetData, justText, textAndTime;
+            var newNarc;
             var view1;
 
             rawData.done(function (data) {
-                console.log('first done');
-                rawTweetData = new app.model.RawTweetData(data);
-                justText = new app.model.JustTextData(data);
                 textAndTime = new app.model.TextAndTimeData(data);
             });
 
             rawData.done(function () {
-                console.log('second done');
             });
 
             rawData.done(function () {
-                console.log('third done');
-                view1 = new app.view.View1({ model: justText.model() });
             });
 
             rawData.fail(function () {
-                console.log('failed please try again');
             });
 
             rawData.always(function () {
-                console.log('always happens');
             });
         }
         util.initModels = initModels;
@@ -47,8 +40,8 @@ var app;
             __extends(View1, _super);
             function View1(model) {
                 _super.call(this);
-                console.log(model);
-                console.log('view');
+
+                this.model = model;
             }
             return View1;
         })(Backbone.View);
@@ -122,12 +115,46 @@ var app;
             __extends(TextAndTimeData, _super);
             function TextAndTimeData(model) {
                 _super.call(this);
+
                 this.model = model;
-                console.log('model');
+                this.clean = [];
+
+                this.scrub();
             }
+            TextAndTimeData.prototype.scrub = function () {
+                var array = this.model;
+                for (var i = 0; i < array.length; i++) {
+                    var obj = array[i];
+                    var time = obj.created_at;
+                    var text = obj.text;
+
+                    var pairing = {
+                        "time": time,
+                        "text": text
+                    };
+
+                    this.clean.push(pairing);
+                }
+
+                console.log(this.clean);
+            };
             return TextAndTimeData;
         })(Backbone.Model);
         _model.TextAndTimeData = TextAndTimeData;
+    })(app.model || (app.model = {}));
+    var model = app.model;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (model) {
+        var NarcModel = (function (_super) {
+            __extends(NarcModel, _super);
+            function NarcModel(textOnly) {
+                _super.call(this);
+            }
+            return NarcModel;
+        })(Backbone.Model);
+        model.NarcModel = NarcModel;
     })(app.model || (app.model = {}));
     var model = app.model;
 })(app || (app = {}));

@@ -6,8 +6,11 @@ module app {
 
            constructor(model) {
                super();
-               console.log(model);
-               console.log('view');
+
+               this.model = model;
+
+
+
            }
             
         }
