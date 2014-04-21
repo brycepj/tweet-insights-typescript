@@ -19,12 +19,10 @@ var app;
     (function (view) {
         var View1 = (function (_super) {
             __extends(View1, _super);
-            function View1() {
-                _super.apply(this, arguments);
-                this.init = function () {
-                    console.log('init occurred');
-                };
-                this.model = new app.model.Model1();
+            function View1(model) {
+                _super.call(this);
+                console.log(model);
+                console.log('view');
             }
             return View1;
         })(Backbone.View);
@@ -60,15 +58,17 @@ var app;
 })(app || (app = {}));
 var app;
 (function (app) {
-    (function (model) {
-        var Model1 = (function (_super) {
-            __extends(Model1, _super);
-            function Model1() {
-                _super.apply(this, arguments);
+    (function (_model) {
+        var DataSet = (function (_super) {
+            __extends(DataSet, _super);
+            function DataSet(model) {
+                _super.call(this);
+                this.model = model;
+                console.log('model');
             }
-            return Model1;
+            return DataSet;
         })(Backbone.Model);
-        model.Model1 = Model1;
+        _model.DataSet = DataSet;
     })(app.model || (app.model = {}));
     var model = app.model;
 })(app || (app = {}));
@@ -76,9 +76,19 @@ var app;
 (function (app) {
     (function () {
         $(document).ready(function () {
-            var raw = new app.model.RawData();
+            var rawData = $.getJSON('data/tweets.json');
+            var RawData, JustText, TextAndDates;
+            var view1;
 
-            var kike = new app.LoadingMask();
+            rawData.done(function (data) {
+                RawData = new app.model.DataSet(data);
+                JustText = new app.model.DataSet(data);
+                TextAndDates = new app.model.DataSet(data);
+            });
+
+            rawData.done(function () {
+                view1 = new app.view.View1(RawData.model);
+            });
         });
     })();
 })(app || (app = {}));

@@ -4,11 +4,11 @@ module app {
 
         export class View1 extends Backbone.View {
 
-            init = function(){
-                console.log('init occurred');
-            }
-            
-            model = new app.model.Model1();
+           constructor(model) {
+               super();
+               console.log(model);
+               console.log('view');
+           }
             
         }
     }
