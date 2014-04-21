@@ -1,10 +1,36 @@
 var app;
 (function (app) {
     (function (util) {
-        function initBaseModels() {
-            var stinky = "striky";
+        function initModels() {
+            var rawData = $.getJSON('data/tweets.json');
+            var rawTweetData, justText, textAndTime;
+            var view1;
+
+            rawData.done(function (data) {
+                console.log('first done');
+                rawTweetData = new app.model.RawTweetData(data);
+                justText = new app.model.JustTextData(data);
+                textAndTime = new app.model.TextAndTimeData(data);
+            });
+
+            rawData.done(function () {
+                console.log('second done');
+            });
+
+            rawData.done(function () {
+                console.log('third done');
+                view1 = new app.view.View1({ model: justText.model() });
+            });
+
+            rawData.fail(function () {
+                console.log('failed please try again');
+            });
+
+            rawData.always(function () {
+                console.log('always happens');
+            });
         }
-        util.initBaseModels = initBaseModels;
+        util.initModels = initModels;
     })(app.util || (app.util = {}));
     var util = app.util;
 })(app || (app = {}));
@@ -32,43 +58,76 @@ var app;
 })(app || (app = {}));
 var app;
 (function (app) {
-    (function (model) {
-        var RawData = (function (_super) {
-            __extends(RawData, _super);
-            function RawData() {
+    (function (_model) {
+        var RawTweetData = (function (_super) {
+            __extends(RawTweetData, _super);
+            function RawTweetData(model) {
                 _super.call(this);
 
-                var self = this;
-                var data = $.getJSON('data/tweets.json');
-
-                this.tweets = [];
-
-                data.done(function (data) {
-                    for (var i = 0; i < data.length; i++) {
-                        self.tweets.push(data[i]);
-                    }
-                    console.log(self.tweets);
-                });
+                this.data = model;
+                this.clean = [];
+                this.scrub();
+                this.model = function () {
+                    return this.clean;
+                };
+                console.log(this.model());
             }
-            return RawData;
+            RawTweetData.prototype.scrub = function () {
+                var array = this.data;
+                for (var i = 0; i < array.length; i++) {
+                    var obj = array[i];
+                    delete obj.id;
+                    this.clean.push(obj);
+                }
+            };
+            return RawTweetData;
         })(Backbone.Model);
-        model.RawData = RawData;
+        _model.RawTweetData = RawTweetData;
+    })(app.model || (app.model = {}));
+    var model = app.model;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (model) {
+        var JustTextData = (function (_super) {
+            __extends(JustTextData, _super);
+            function JustTextData(data) {
+                _super.call(this);
+
+                this.data = data;
+                this.tweetText = [];
+                this.sortText();
+
+                this.model = function () {
+                    return this.tweetText;
+                };
+            }
+            JustTextData.prototype.sortText = function () {
+                var array = this.data;
+                for (var i = 0; i < array.length; i++) {
+                    var text = array[i].text;
+                    this.tweetText.push(text);
+                }
+            };
+            return JustTextData;
+        })(Backbone.Model);
+        model.JustTextData = JustTextData;
     })(app.model || (app.model = {}));
     var model = app.model;
 })(app || (app = {}));
 var app;
 (function (app) {
     (function (_model) {
-        var DataSet = (function (_super) {
-            __extends(DataSet, _super);
-            function DataSet(model) {
+        var TextAndTimeData = (function (_super) {
+            __extends(TextAndTimeData, _super);
+            function TextAndTimeData(model) {
                 _super.call(this);
                 this.model = model;
                 console.log('model');
             }
-            return DataSet;
+            return TextAndTimeData;
         })(Backbone.Model);
-        _model.DataSet = DataSet;
+        _model.TextAndTimeData = TextAndTimeData;
     })(app.model || (app.model = {}));
     var model = app.model;
 })(app || (app = {}));
@@ -76,19 +135,7 @@ var app;
 (function (app) {
     (function () {
         $(document).ready(function () {
-            var rawData = $.getJSON('data/tweets.json');
-            var RawData, JustText, TextAndDates;
-            var view1;
-
-            rawData.done(function (data) {
-                RawData = new app.model.DataSet(data);
-                JustText = new app.model.DataSet(data);
-                TextAndDates = new app.model.DataSet(data);
-            });
-
-            rawData.done(function () {
-                view1 = new app.view.View1(RawData.model);
-            });
+            app.util.initModels();
         });
     })();
 })(app || (app = {}));

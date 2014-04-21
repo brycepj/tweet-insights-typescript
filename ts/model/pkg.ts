@@ -1,2 +1,3 @@
-/// <reference path="tweets.ts"/>
-/// <reference path="DataSet.ts"/>
+/// <reference path="RawTweetData.ts"/>
+/// <reference path="JustTextData.ts"/>
+/// <reference path="TextAndTimeData.ts"/>

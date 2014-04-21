@@ -2,24 +2,11 @@ module app {
 
     (function () {
         $(document).ready(function () {
-           
-            var rawData = $.getJSON('data/tweets.json');
-            var RawData, JustText,TextAndDates;
-            var view1;
 
-            rawData.done(function(data){
+            //this is a good place to invoke init/util functions, completely unrelated to one another
 
-                RawData = new app.model.DataSet(data);
-                JustText = new app.model.DataSet(data);
-                TextAndDates = new app.model.DataSet(data);
+            app.util.initModels();
 
-
-            });
-
-            rawData.done(function(){
-                view1 = new app.view.View1(RawData.model);
-            });
-            
            
         });
     })()
