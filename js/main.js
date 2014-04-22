@@ -2,25 +2,12 @@ var app;
 (function (app) {
     (function (util) {
         function initModels() {
-            var rawData = $.getJSON('data/tweets.json');
-            var rawTweetData, justText, textAndTime;
-            var newNarc;
-            var view1;
+            var getRawData = $.getJSON('data/tweets.json');
 
-            rawData.done(function (data) {
-                textAndTime = new app.model.TextAndTimeData(data);
-            });
+            var timeData;
 
-            rawData.done(function () {
-            });
-
-            rawData.done(function () {
-            });
-
-            rawData.fail(function () {
-            });
-
-            rawData.always(function () {
+            getRawData.done(function (data) {
+                timeData = new app.model.TimeData(data);
             });
         }
         util.initModels = initModels;
@@ -141,6 +128,43 @@ var app;
             return TextAndTimeData;
         })(Backbone.Model);
         _model.TextAndTimeData = TextAndTimeData;
+    })(app.model || (app.model = {}));
+    var model = app.model;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (model) {
+        var TimeData = (function (_super) {
+            __extends(TimeData, _super);
+            function TimeData(raw) {
+                _super.call(this);
+
+                this.raw = raw;
+                this.model = [];
+                this.avgGap();
+            }
+            TimeData.prototype.avgGap = function () {
+                var rawDataArray = this.raw;
+
+                for (var i = 1; i < rawDataArray.length; i++) {
+                    var index = i;
+                    var prevIndex = i - 1;
+                    var currentTime = rawDataArray[index].created_at;
+                    var prevTime = rawDataArray[prevIndex].created_at;
+
+                    var currentTimeObj = function (text) {
+                        return new Date(Date.parse(currentTime.replace(/( +)/, ' UTC$1')));
+                    };
+                    var prevTimeObj = function (text) {
+                        return new Date(Date.parse(prevTime.replace(/( +)/, ' UTC$1')));
+                    };
+
+                    console.log(Math.abs(currentTimeObj() - prevTimeObj()));
+                }
+            };
+            return TimeData;
+        })(Backbone.Model);
+        model.TimeData = TimeData;
     })(app.model || (app.model = {}));
     var model = app.model;
 })(app || (app = {}));
