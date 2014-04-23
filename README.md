@@ -1,7 +1,6 @@
 ## Next
 
-- abstract away sorting functions for time into util class
-
+- simplify return values for interval thingy
 
 
 ## Setup Models
