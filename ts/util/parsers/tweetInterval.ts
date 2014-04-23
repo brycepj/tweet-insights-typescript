@@ -5,221 +5,125 @@ module app {
         export module parsers {
 
             export function tweetInterval(data) {
+                
+                console.log('raw data check',data);
+                
+                var factor = [1, 60, 3600, 86400, 604800, 3144960];
 
-
-                function getAverages():Object {
+                function getAverages(): Object {
                     var avg, seconds; var total = 0;
                     var array = data; var length = array.length;
 
                     //get total seconds
                     for (var i = 0; i < array.length; i++) {
-                        var seconds = array[i] / 1000;
-                        total += seconds;
+                        var secs = array[i] / 1000;
+                        total += secs;
                     }
 
                     seconds = total / length;
 
                     avg = {
-                        "seconds": seconds,
-                        "minutes": seconds / 60,
-                        "hours": seconds / 3600,
-                        "days": seconds / 86400,
-                        "weeks": seconds / 604800,
-                        "years": seconds / 31449600
+                        "seconds": seconds / factor[0],
+                        "minutes": seconds / factor[1],
+                        "hours": seconds / factor[2],
+                        "days": seconds / factor[3],
+                        "weeks": seconds / factor[4],
+                        "years": seconds / factor[5]
                     };
-
+                    
+                    console.log('avg object',avg);
+                    
                     return avg;
                 }
 
 
-                function returnModel(avg):Object {
-                    var pUnit, sUnit, pValue,sValue,avgString;
+                function returnModel(avg): Object {
+                    var pUnit, sUnit, pValue, sValue, avgString;
 
+                    console.log('avg object check',avg);
 
-                    function getString(){
-                    //NEED TO FIGURE OUT EXACT NEEDS FOR PLOTTING
+                    function getValues(high, low) {
+                        var pValue = Math.floor(avg.seconds / high);
+                        var sValue = Math.floor(avg.seconds / low) - pValue;
+                        
+                        console.log("getValues",avg.seconds, high, pValue,sValue);
+                        return {
+                            "pValue": pValue,
+                            "sValue": sValue
+                        }
                     }
-
-
-
-                    if (avg.seconds < 60) {
-
-                        pUnit = "sec";
+                    
+                    if (factor[0] < avg.seconds && avg.seconds < factor[1]) {
+                        var high = factor[1];
+                        var low = factor[0];
+                            
+                        pUnit = "second";
                         sUnit = null;
-                        pValue = avg.seconds;
+                        pValue = getValues(high, low).pValue;
                         sValue = null;
+                        console.log({"high":high,"low":low,"pValue":pValue,"sValue":sValue});    
 
+                    } else if (factor[2] > avg.seconds && avg.seconds > factor[1]) {
+                        var high = factor[1];
+                        var low = factor[0];
 
-                    } else if (avg.seconds > 60 && avg.minutes < 60) {
-                        pUnit = "min";
-                        sUnit = "sec";
-                        pValue = ;
-                        sValue = ;
+                        pUnit = "minute";
+                        sUnit = "second";
+                        pValue = getValues(high, low).pValue;
+                        sValue = getValues(high, low).sValue;
+                        console.log({"high":high,"low":low,"pValue":pValue,"sValue":sValue}); 
 
-                    } else if (avg.minutes > 60 && avg.hours < 24) {
+                    } else if (factor[3] > avg.seconds && avg.seconds > factor[2]) {
+                        var high = factor[2];
+                        var low = factor[1];
+
                         pUnit = "hour";
                         sUnit = "min";
-                        pValue = ;
-                        sValue = ;
+                        pValue = getValues(high, low).pValue;
+                        sValue = getValues(high, low).sValue;
+                        console.log({"high":high,"low":low,"pValue":pValue,"sValue":sValue}); 
 
+                    } else if (factor[4] > avg.seconds && avg.seconds > factor[3]) {
+                        var high = factor[3];
+                        var low = factor[2];
 
-                    } else if (avg.hours > 24 && avg.days < 7) {
                         pUnit = "day";
                         sUnit = "hour";
-                        pValue = ;
-                        sValue = ;
+                        pValue = getValues(high, low).pValue;
+                        sValue = getValues(high, low).sValue;
+                        
+                        console.log({"high":high,"low":low,"pValue":pValue,"sValue":sValue}); 
+                        
+                    } else if (factor[5] > avg.seconds && avg.seconds > factor[4]) {
+                        var high = factor[4];
+                        var low = factor[3];
 
-                    } else if (avg.days > 7) {
-                        pUnit = "week" ;
-                        sUnit = "day" ;
-                        pValue = ;
-                        sValue = ;
-
+                        pUnit = "week";
+                        sUnit = "day";
+                        pValue = getValues(high, low).pValue;
+                        sValue = getValues(high, low).sValue;
+                        
+                        console.log({"high":high,"low":low,"pValue":pValue,"sValue":sValue}); 
                     }
 
-
-
                     return {
-                        "pUnit":pUnit,
-                        "sUnit":sUnit,
-                        "pValue":pValue,
-                        "sValue":sValue,
+                        "pUnit": pUnit,
+                        "pUnits": pUnit + "s",
+                        "pValue": pValue,
+                        "sUnit": sUnit,
+                        "sUnits": sUnit + "s",
+                        "sValue": sValue,
                         "print": avgString
                     };
                 }
 
-
-                if (avgSeconds < 60) {
-                    avgSeconds = avgSeconds.toFixed(0);
-
-                    interval = {
-                        "unit": "seconds",
-                        "seconds": avgSeconds,
-                        "string": "1 tweet every " + avgSeconds
-                    };
-
-
-                } else if (avgSeconds > 60 && avgMinutes < 60) {
-                    var seconds = avgSeconds % 60;
-                    seconds = seconds.toFixed(0);
-                    var minutes = avgMinutes.toFixed(0);
-                    var unitMin = function () {
-                        if (minutes != 1) {
-                            return "minutes";
-                        } else {
-                            return "minute";
-                        }
-                    };
-                    var unitSec = function () {
-                        if (seconds != 1) {
-                            return "seconds";
-                        } else {
-                            return "second";
-                        }
-                    };
-
-                    interval = {
-                        "unit": "minutes",
-                        "minutes": minutes,
-                        "seconds": seconds,
-                        "string": "You tweet every " + minutes + " " + unitMin() + " and " + seconds + " " + unitSec()
-                    };
-
-                } else if (avgMinutes > 60 && avgHours < 24) {
-
-                    var minutes = avgMinutes % 24;
-                    minutes = seconds.toFixed(0);
-                    var hours = avgHours.toFixed(0);
-                    var unitMin = function () {
-                        if (minutes != 1) {
-                            return "minutes";
-                        } else {
-                            return "minute";
-                        }
-                    };
-                    var unitHours = function () {
-                        if (seconds != 1) {
-                            return "hours";
-                        } else {
-                            return "hour";
-                        }
-                    };
-
-                    interval = {
-                        "unit": "hours",
-                        "minutes": minutes,
-                        "hours": hours,
-                        "string": "You tweet every " + hours + " " + unitHours() + " and " + minutes + " " + unitMin()
-                    };
-
-
-                } else if (avgHours > 24 && avgDays < 7) {
-
-                    var hours = avgHours % 7;
-                    hours = hours.toFixed(0);
-                    var days = avgDays.toFixed(0);
-
-                    var unitHours = function () {
-                        if (hours != 1) {
-                            return "hours";
-                        } else {
-                            return "hour";
-                        }
-                    };
-                    var unitDays = function () {
-                        console.log(days);
-                        if (days != 1) {
-                            return "days";
-                        } else {
-                            return "day";
-                        }
-                    };
-
-                    interval = {
-                        "unit": "days",
-                        "hours": hours,
-                        "days": days,
-                        "string": "You tweet every " + days + " " + unitDays() + " and " + hours + " " + unitHours()
-                    };
-
-                } else {
-
-                    var days = avgHours % 52;
-                    days = hours.toFixed(0);
-                    var weeks = avgWeeks.toFixed(0);
-
-                    var unitWeeks = function () {
-                        if (hours != 1) {
-                            return "weeks";
-                        } else {
-                            return "week";
-                        }
-                    };
-                    var unitDays = function () {
-                        if (days != 1) {
-                            return "days";
-                        } else {
-                            return "day";
-                        }
-                    };
-
-                    interval = {
-                        "unit": "weeks",
-                        "days": days,
-                        "weeks": weeks,
-                        "string": "You tweet every " + weeks + " " + unitWeeks() + " and " + days + " " + unitDays()
-                    };
-
-
-                }
-
-                return interval;
-
+                return returnModel(getAverages());
 
             }
 
+
+
         }
+
     }
-
-
 }

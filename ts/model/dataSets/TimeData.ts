@@ -16,7 +16,7 @@ module app {
                 this.model = [];
                 this.timeGaps = [];
                 this.storeGaps();
-                console.log(this.gapAvg().string);
+                console.log(this.getAvg());
             }
 
             storeGaps():void {
@@ -44,7 +44,10 @@ module app {
 
             }
 
-            gapAvg():any {
+            getAvg():any {
+                var array = this.timeGaps;
+                console.log('raw data',array);
+                return app.util.parsers.tweetInterval(array);
             }
 
         }
