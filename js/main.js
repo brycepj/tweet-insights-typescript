@@ -19,8 +19,6 @@ var app;
     (function (util) {
         (function (parsers) {
             function tweetInterval(data) {
-                console.log('raw data check', data);
-
                 var factor = [1, 60, 3600, 86400, 604800, 3144960];
 
                 function getAverages() {
@@ -45,21 +43,16 @@ var app;
                         "years": seconds / factor[5]
                     };
 
-                    console.log('avg object', avg);
-
                     return avg;
                 }
 
                 function returnModel(avg) {
-                    var pUnit, sUnit, pValue, sValue, avgString;
-
-                    console.log('avg object check', avg);
+                    var pUnit, sUnit, pValue, sValue, avgPrint;
 
                     function getValues(high, low) {
                         var pValue = Math.floor(avg.seconds / high);
                         var sValue = Math.floor(avg.seconds / low) - pValue;
 
-                        console.log("getValues", avg.seconds, high, pValue, sValue);
                         return {
                             "pValue": pValue,
                             "sValue": sValue
@@ -74,7 +67,6 @@ var app;
                         sUnit = null;
                         pValue = getValues(high, low).pValue;
                         sValue = null;
-                        console.log({ "high": high, "low": low, "pValue": pValue, "sValue": sValue });
                     } else if (factor[2] > avg.seconds && avg.seconds > factor[1]) {
                         var high = factor[1];
                         var low = factor[0];
@@ -83,7 +75,6 @@ var app;
                         sUnit = "second";
                         pValue = getValues(high, low).pValue;
                         sValue = getValues(high, low).sValue;
-                        console.log({ "high": high, "low": low, "pValue": pValue, "sValue": sValue });
                     } else if (factor[3] > avg.seconds && avg.seconds > factor[2]) {
                         var high = factor[2];
                         var low = factor[1];
@@ -92,7 +83,6 @@ var app;
                         sUnit = "min";
                         pValue = getValues(high, low).pValue;
                         sValue = getValues(high, low).sValue;
-                        console.log({ "high": high, "low": low, "pValue": pValue, "sValue": sValue });
                     } else if (factor[4] > avg.seconds && avg.seconds > factor[3]) {
                         var high = factor[3];
                         var low = factor[2];
@@ -101,8 +91,6 @@ var app;
                         sUnit = "hour";
                         pValue = getValues(high, low).pValue;
                         sValue = getValues(high, low).sValue;
-
-                        console.log({ "high": high, "low": low, "pValue": pValue, "sValue": sValue });
                     } else if (factor[5] > avg.seconds && avg.seconds > factor[4]) {
                         var high = factor[4];
                         var low = factor[3];
@@ -111,18 +99,23 @@ var app;
                         sUnit = "day";
                         pValue = getValues(high, low).pValue;
                         sValue = getValues(high, low).sValue;
-
-                        console.log({ "high": high, "low": low, "pValue": pValue, "sValue": sValue });
                     }
+
+                    if (pValue != 1) {
+                        pUnit = pUnit + "s";
+                    }
+                    if (sValue != 1) {
+                        sUnit = sUnit + "s";
+                    }
+
+                    avgPrint = pValue + " " + pUnit + " and " + sValue + " " + sUnit;
 
                     return {
                         "pUnit": pUnit,
-                        "pUnits": pUnit + "s",
                         "pValue": pValue,
                         "sUnit": sUnit,
-                        "sUnits": sUnit + "s",
                         "sValue": sValue,
-                        "print": avgString
+                        "print": avgPrint
                     };
                 }
 
