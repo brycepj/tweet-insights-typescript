@@ -9,7 +9,7 @@ module app {
 
             constructor(model) {
                 super();
-
+                console.log('this is the constructor starting up');
                 this.model = model;
                 this.clean = [];
 
@@ -34,7 +34,7 @@ module app {
 
                 }
 
-                console.log(this.clean);
+
             }
 
         }
