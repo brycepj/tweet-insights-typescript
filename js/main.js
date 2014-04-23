@@ -261,13 +261,20 @@ var app;
                 _super.call(this);
 
                 this.raw = raw;
-                this.rawIntervals = [];
-                this.rawMoment = [];
-                this.saveRawIntervals();
-                this.saveRawMoment();
+
+                this.init();
+
                 console.log(this.getIntervals());
                 console.log(this.getActivity());
             }
+            TimeData.prototype.init = function () {
+                this.rawIntervals = [];
+                this.rawMoment = [];
+
+                this.saveRawIntervals();
+                this.saveRawMoment();
+            };
+
             TimeData.prototype.saveRawIntervals = function () {
                 var array = this.raw;
 
