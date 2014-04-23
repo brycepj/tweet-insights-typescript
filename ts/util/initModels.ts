@@ -12,6 +12,8 @@ module app {
 
                 timeData = new app.model.TimeData(data);
 
+            }).fail(function(){
+                console.log('request failed');
             });
 
 

@@ -5,9 +5,9 @@ module app {
         export module parsers {
 
             export function tweetInterval(data) {
-                
-              
-                
+
+                console.log('data check', data);
+
                 var factor = [1, 60, 3600, 86400, 604800, 3144960];
 
                 function getAverages(): Object {
@@ -30,9 +30,7 @@ module app {
                         "weeks": seconds / factor[4],
                         "years": seconds / factor[5]
                     };
-                    
-                    
-                    
+                    console.log('avg check', avg);
                     return avg;
                 }
 
@@ -40,28 +38,30 @@ module app {
                 function returnModel(avg): Object {
                     var pUnit, sUnit, pValue, sValue, avgPrint;
 
-                   
+
 
                     function getValues(high, low) {
                         var pValue = Math.floor(avg.seconds / high);
-                        var sValue = Math.floor(avg.seconds / low) - pValue;
-                        
-                        
+                        var sValue = Math.floor((avg.seconds - (pValue * high))/low);
+                        console.log('high check', high);
+                        console.log('low check', low);
+                        console.log('getValue check', pValue);
+                        console.log('getValue check', sValue);
                         return {
                             "pValue": pValue,
                             "sValue": sValue
                         }
                     }
-                    
+
                     if (factor[0] < avg.seconds && avg.seconds < factor[1]) {
-                        var high = factor[1];
+                        var high = factor[0];
                         var low = factor[0];
-                            
+
                         pUnit = "second";
                         sUnit = null;
                         pValue = getValues(high, low).pValue;
                         sValue = null;
-                          
+
 
                     } else if (factor[2] > avg.seconds && avg.seconds > factor[1]) {
                         var high = factor[1];
@@ -71,17 +71,17 @@ module app {
                         sUnit = "second";
                         pValue = getValues(high, low).pValue;
                         sValue = getValues(high, low).sValue;
-                        
+
 
                     } else if (factor[3] > avg.seconds && avg.seconds > factor[2]) {
                         var high = factor[2];
                         var low = factor[1];
 
                         pUnit = "hour";
-                        sUnit = "min";
+                        sUnit = "minute";
                         pValue = getValues(high, low).pValue;
                         sValue = getValues(high, low).sValue;
-                       
+
 
                     } else if (factor[4] > avg.seconds && avg.seconds > factor[3]) {
                         var high = factor[3];
@@ -91,35 +91,44 @@ module app {
                         sUnit = "hour";
                         pValue = getValues(high, low).pValue;
                         sValue = getValues(high, low).sValue;
-                        
-                    
-                        
-                    } else if (factor[5] > avg.seconds && avg.seconds > factor[4]) {
+
+
+
+                    } else if (avg.seconds > factor[4]) {
                         var high = factor[4];
                         var low = factor[3];
-
+                        
                         pUnit = "week";
                         sUnit = "day";
                         pValue = getValues(high, low).pValue;
                         sValue = getValues(high, low).sValue;
-                        
+
                     }
 
                     if (pValue != 1) {
-                       pUnit = pUnit + "s";
+                        pUnit = pUnit + "s";
                     }
                     if (sValue != 1) {
-                       sUnit = sUnit + "s";
+                        sUnit = sUnit + "s";
                     }
-                    
-                    avgPrint = pValue + " " + pUnit + " and " + sValue + " " + sUnit;
-                    
+
+                    avgPrint = function() {
+                        if (pUnit === "seconds") {
+                            return pValue + " " + pUnit;
+                        } else if (sValue == 0) {
+                            return pValue + " " + pUnit;
+                        }
+                        else {
+                            return pValue + " " + pUnit + " and " + sValue + " " + sUnit;
+                        }
+                    };
+
                     return {
                         "pUnit": pUnit,
                         "pValue": pValue,
                         "sUnit": sUnit,
                         "sValue": sValue,
-                        "print": avgPrint
+                        "print": avgPrint()
                     };
                 }
 

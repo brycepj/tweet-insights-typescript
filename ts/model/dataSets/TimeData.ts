@@ -46,7 +46,7 @@ module app {
 
             getAvg():any {
                 var array = this.timeGaps;
-                console.log('raw data',array);
+                console.log(array);
                 return app.util.parsers.tweetInterval(array);
             }
 
