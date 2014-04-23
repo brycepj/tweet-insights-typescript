@@ -6,8 +6,6 @@ module app {
 
             export function tweetInterval(data) {
 
-                console.log('data check', data);
-
                 var factor = [1, 60, 3600, 86400, 604800, 3144960];
 
                 function getAverages(): Object {
@@ -30,7 +28,6 @@ module app {
                         "weeks": seconds / factor[4],
                         "years": seconds / factor[5]
                     };
-                    console.log('avg check', avg);
                     return avg;
                 }
 
@@ -38,15 +35,10 @@ module app {
                 function returnModel(avg): Object {
                     var pUnit, sUnit, pValue, sValue, avgPrint;
 
-
-
                     function getValues(high, low) {
                         var pValue = Math.floor(avg.seconds / high);
                         var sValue = Math.floor((avg.seconds - (pValue * high))/low);
-                        console.log('high check', high);
-                        console.log('low check', low);
-                        console.log('getValue check', pValue);
-                        console.log('getValue check', sValue);
+                        
                         return {
                             "pValue": pValue,
                             "sValue": sValue

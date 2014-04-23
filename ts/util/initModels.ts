@@ -9,7 +9,7 @@ module app {
             var timeData;
 
             getRawData.done(function(data){
-
+                console.log('request succeeded');
                 timeData = new app.model.TimeData(data);
 
             }).fail(function(){

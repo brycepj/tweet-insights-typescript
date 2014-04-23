@@ -7,6 +7,7 @@ var app;
             var timeData;
 
             getRawData.done(function (data) {
+                console.log('request succeeded');
                 timeData = new app.model.TimeData(data);
             }).fail(function () {
                 console.log('request failed');
@@ -21,8 +22,6 @@ var app;
     (function (util) {
         (function (parsers) {
             function tweetInterval(data) {
-                console.log('data check', data);
-
                 var factor = [1, 60, 3600, 86400, 604800, 3144960];
 
                 function getAverages() {
@@ -46,7 +45,6 @@ var app;
                         "weeks": seconds / factor[4],
                         "years": seconds / factor[5]
                     };
-                    console.log('avg check', avg);
                     return avg;
                 }
 
@@ -56,10 +54,7 @@ var app;
                     function getValues(high, low) {
                         var pValue = Math.floor(avg.seconds / high);
                         var sValue = Math.floor((avg.seconds - (pValue * high)) / low);
-                        console.log('high check', high);
-                        console.log('low check', low);
-                        console.log('getValue check', pValue);
-                        console.log('getValue check', sValue);
+
                         return {
                             "pValue": pValue,
                             "sValue": sValue
@@ -264,22 +259,23 @@ var app;
             __extends(TimeData, _super);
             function TimeData(raw) {
                 _super.call(this);
-                console.log("this is the consturctor");
+
                 this.raw = raw;
-
-                this.model = [];
-                this.timeGaps = [];
-                this.storeGaps();
-                console.log(this.getAvg());
+                this.rawIntervals = [];
+                this.rawMoment = [];
+                this.saveRawIntervals();
+                this.saveRawMoment();
+                console.log(this.getIntervals());
+                console.log(this.getActivity());
             }
-            TimeData.prototype.storeGaps = function () {
-                var rawDataArray = this.raw;
+            TimeData.prototype.saveRawIntervals = function () {
+                var array = this.raw;
 
-                for (var i = 1; i < rawDataArray.length; i++) {
+                for (var i = 1; i < array.length; i++) {
                     var index = i;
                     var prevIndex = i - 1;
-                    var currentTime = rawDataArray[index].created_at;
-                    var prevTime = rawDataArray[prevIndex].created_at;
+                    var currentTime = array[index].created_at;
+                    var prevTime = array[prevIndex].created_at;
 
                     var currentTimeObj = function () {
                         return new Date(Date.parse(currentTime.replace(/( +)/, ' UTC$1')));
@@ -290,14 +286,32 @@ var app;
 
                     var diff = Math.abs(currentTimeObj() - prevTimeObj());
 
-                    this.timeGaps.push(diff);
+                    this.rawIntervals.push(diff);
                 }
             };
 
-            TimeData.prototype.getAvg = function () {
-                var array = this.timeGaps;
-                console.log(array);
+            TimeData.prototype.saveRawMoment = function () {
+                var array = this.raw;
+
+                for (var i = 0; i < array.length; i++) {
+                    var current = array[i].created_at;
+
+                    var date = moment(current, "YYYY/MM/DD");
+
+                    this.rawMoment.push(date);
+                }
+                console.log(this.rawMoment);
+            };
+
+            TimeData.prototype.getIntervals = function () {
+                var array = this.rawIntervals;
                 return app.util.parsers.tweetInterval(array);
+            };
+
+            TimeData.prototype.getActivity = function () {
+                var array = this.raw;
+
+                return array;
             };
             return TimeData;
         })(Backbone.Model);
