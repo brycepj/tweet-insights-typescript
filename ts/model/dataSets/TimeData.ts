@@ -29,10 +29,10 @@ module app {
                     var currentTime = rawDataArray[index].created_at;
                     var prevTime = rawDataArray[prevIndex].created_at;
 
-                    var currentTimeObj = function (text) {
+                    var currentTimeObj = function () {
                         return new Date(Date.parse(currentTime.replace(/( +)/, ' UTC$1')));
                     };
-                    var prevTimeObj = function (text) {
+                    var prevTimeObj = function () {
                         return new Date(Date.parse(prevTime.replace(/( +)/, ' UTC$1')));
                     };
 
@@ -44,7 +44,7 @@ module app {
 
             }
 
-            gapAvg():Object {
+            gapAvg():any {
                 var array = this.timeGaps;
                 var tweets = array.length;
                 var totalSeconds = 0;

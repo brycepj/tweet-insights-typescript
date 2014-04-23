@@ -153,10 +153,10 @@ var app;
                     var currentTime = rawDataArray[index].created_at;
                     var prevTime = rawDataArray[prevIndex].created_at;
 
-                    var currentTimeObj = function (text) {
+                    var currentTimeObj = function () {
                         return new Date(Date.parse(currentTime.replace(/( +)/, ' UTC$1')));
                     };
-                    var prevTimeObj = function (text) {
+                    var prevTimeObj = function () {
                         return new Date(Date.parse(prevTime.replace(/( +)/, ' UTC$1')));
                     };
 

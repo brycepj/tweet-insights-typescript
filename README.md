@@ -1,6 +1,13 @@
+## Next
+
+- abstract away sorting functions for time into util class
+
+
+
 ## Setup Models
 
-- list the different models we need with all of the data we will need (there should be many)
+
+
 
 - figure out how to turn promise callbacks into functions (so we can use $when)
 - set up loading mask
