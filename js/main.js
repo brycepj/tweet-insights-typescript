@@ -137,6 +137,56 @@ var app;
     })(app.util || (app.util = {}));
     var util = app.util;
 })(app || (app = {}));
+var app;
+(function (app) {
+    (function (util) {
+        (function (parsers) {
+            function tweetActivity(data) {
+                var moments = data;
+
+                function getTotalDays() {
+                    var index = moments.length - 1;
+                    var first = moments[0];
+                    var last = moments[index];
+                    var totalDays = first.diff(last, 'days');
+
+                    return {
+                        "days": totalDays
+                    };
+                }
+
+                function createModelArray() {
+                    var modelArray = [];
+
+                    for (var i = 0; i < moments.length; i++) {
+                        var momentObj = moments[i];
+                        var dayOfWeek = momentObj.day();
+                        var dateStr = momentObj.format("dddd, MMMM Do YYYY");
+                        var _a = momentObj._a;
+                        var year = _a[0];
+                        var month = _a[1];
+                        var day = _a[2];
+
+                        modelArray.push({
+                            "year": year,
+                            "month": month,
+                            "day": day,
+                            "dayOfWeek": dayOfWeek,
+                            "dateStr": dateStr
+                        });
+                    }
+
+                    return modelArray;
+                }
+
+                return [getTotalDays(), createModelArray()];
+            }
+            parsers.tweetActivity = tweetActivity;
+        })(util.parsers || (util.parsers = {}));
+        var parsers = util.parsers;
+    })(app.util || (app.util = {}));
+    var util = app.util;
+})(app || (app = {}));
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -269,10 +319,10 @@ var app;
             }
             TimeData.prototype.init = function () {
                 this.rawIntervals = [];
-                this.rawMoment = [];
+                this.rawMoments = [];
 
                 this.saveRawIntervals();
-                this.saveRawMoment();
+                this.saveRawMoments();
             };
 
             TimeData.prototype.saveRawIntervals = function () {
@@ -297,17 +347,17 @@ var app;
                 }
             };
 
-            TimeData.prototype.saveRawMoment = function () {
+            TimeData.prototype.saveRawMoments = function () {
                 var array = this.raw;
 
                 for (var i = 0; i < array.length; i++) {
                     var current = array[i].created_at;
 
-                    var date = moment(current, "YYYY/MM/DD");
+                    var momentObj = moment(current, "YYYY/MM/DD");
+                    var dayOfWeek = momentObj.day();
 
-                    this.rawMoment.push(date);
+                    this.rawMoments.push(momentObj);
                 }
-                console.log(this.rawMoment);
             };
 
             TimeData.prototype.getIntervals = function () {
@@ -316,9 +366,9 @@ var app;
             };
 
             TimeData.prototype.getActivity = function () {
-                var array = this.raw;
+                var array = this.rawMoments;
 
-                return array;
+                return app.util.parsers.tweetActivity(array);
             };
             return TimeData;
         })(Backbone.Model);

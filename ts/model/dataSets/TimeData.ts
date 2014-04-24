@@ -7,7 +7,7 @@ module app {
             raw: any;
             model: any;
             rawIntervals: any;
-            rawMoment: any;
+            rawMoments: any;
 
             constructor(raw) {
                 super();
@@ -24,11 +24,11 @@ module app {
             init(): void {
 
                 this.rawIntervals = [];
-                this.rawMoment = [];
+                this.rawMoments = [];
                 
                 
                 this.saveRawIntervals();
-                this.saveRawMoment();
+                this.saveRawMoments();
                 
             }
 
@@ -57,18 +57,19 @@ module app {
 
             }
 
-            saveRawMoment(): void {
+            saveRawMoments(): void {
                 var array = this.raw;
 
                 for (var i = 0; i < array.length; i++) {
                     var current = array[i].created_at;
 
-                    var date = moment(current, "YYYY/MM/DD");
+                    var momentObj = moment(current, "YYYY/MM/DD");
+                    var dayOfWeek = momentObj.day();
 
-                    this.rawMoment.push(date);
+                    this.rawMoments.push(momentObj);
 
                 }
-                console.log(this.rawMoment);
+
 
             }
 
@@ -78,9 +79,9 @@ module app {
             }
 
             getActivity(): any {
-                var array = this.raw;
+                var array = this.rawMoments;
 
-                return array;
+                return app.util.parsers.tweetActivity(array);
 
             }
 
