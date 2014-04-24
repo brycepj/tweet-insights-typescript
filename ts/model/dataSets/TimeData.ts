@@ -16,8 +16,9 @@ module app {
                 
                 this.init();
                 
-                console.log(this.getIntervals());
-                console.log(this.getActivity());
+                console.log('raw data: ', this.raw);
+                console.log('intervals: ',this.getIntervals());
+                console.log('activity: ',this.getActivity());
 
             }
 

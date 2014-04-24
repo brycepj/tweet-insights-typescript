@@ -4,11 +4,12 @@ var app;
         function initModels() {
             var getRawData = $.getJSON('data/tweets.json');
 
-            var timeData;
+            var timeData, contextData;
 
             getRawData.done(function (data) {
                 console.log('request succeeded');
                 timeData = new app.model.TimeData(data);
+                contextData = new app.model.ContextData(data);
             }).fail(function () {
                 console.log('request failed');
             });
@@ -185,7 +186,6 @@ var app;
                 function createModelArray() {
                     var model = [];
                     var raw = createRawArray();
-                    console.log(raw);
                     var current = null;
                     var count = 1;
 
@@ -210,6 +210,18 @@ var app;
                 return [getTotalDays(), createModelArray()];
             }
             parsers.tweetActivity = tweetActivity;
+        })(util.parsers || (util.parsers = {}));
+        var parsers = util.parsers;
+    })(app.util || (app.util = {}));
+    var util = app.util;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (util) {
+        (function (parsers) {
+            function tweetContext(data) {
+            }
+            parsers.tweetContext = tweetContext;
         })(util.parsers || (util.parsers = {}));
         var parsers = util.parsers;
     })(app.util || (app.util = {}));
@@ -342,8 +354,9 @@ var app;
 
                 this.init();
 
-                console.log(this.getIntervals());
-                console.log(this.getActivity());
+                console.log('raw data: ', this.raw);
+                console.log('intervals: ', this.getIntervals());
+                console.log('activity: ', this.getActivity());
             }
             TimeData.prototype.init = function () {
                 this.rawIntervals = [];
@@ -402,6 +415,88 @@ var app;
             return TimeData;
         })(Backbone.Model);
         model.TimeData = TimeData;
+    })(app.model || (app.model = {}));
+    var model = app.model;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (model) {
+        var ContextData = (function (_super) {
+            __extends(ContextData, _super);
+            function ContextData(raw) {
+                _super.call(this);
+
+                this.raw = raw;
+
+                this.init();
+            }
+            ContextData.prototype.init = function () {
+                this.rawGeo = [];
+                this.rawClient = [];
+                this.rawReason = [];
+
+                this.saveRawGeo();
+                this.saveRawClient();
+                this.saveRawReason();
+            };
+
+            ContextData.prototype.saveRawGeo = function () {
+                var array = this.raw;
+
+                for (var i = 0; i < array.length; i++) {
+                    var obj = array[i];
+                    var current = obj.created_at;
+                    var date = moment(current, "YYYY/MM/DD");
+                    var geo = obj.geo;
+                    var place = obj.place;
+
+                    this.rawGeo.push({
+                        "date": date,
+                        "geo": geo,
+                        "place": place
+                    });
+                }
+            };
+
+            ContextData.prototype.saveRawClient = function () {
+                var array = this.raw;
+
+                for (var i = 0; i < array.length; i++) {
+                    var obj = array[i];
+                    var current = obj.created_at;
+                    var date = moment(current, "YYYY/MM/DD");
+                    var source = obj.source;
+
+                    this.rawClient.push({
+                        "date": date,
+                        "source": source
+                    });
+                }
+            };
+
+            ContextData.prototype.saveRawReason = function () {
+                var array = this.raw;
+
+                for (var i = 0; i < array.length; i++) {
+                    var obj = array[i];
+                    var current = obj.created_at;
+                    var date = moment(current, "YYYY/MM/DD");
+                    var reply = obj.in_reply_to_screen_name;
+                    var retweeted = obj.retweeted;
+                    var text = obj.text;
+
+                    this.rawReason.push({
+                        "date": date,
+                        "reply": reply,
+                        "retweeted": retweeted,
+                        "text": text
+                    });
+                }
+                console.log(this.rawReason);
+            };
+            return ContextData;
+        })(Backbone.Model);
+        model.ContextData = ContextData;
     })(app.model || (app.model = {}));
     var model = app.model;
 })(app || (app = {}));

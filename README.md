@@ -1,6 +1,5 @@
 ## Next
 
-- simplify return values for interval thingy
 - ALL TIME RETWEETS, FAVORITES
 
 ## Setup Models
@@ -45,7 +44,7 @@
     - what is the average distance in time between tweets
     - The most you ever did in a minute was ...
     - The most you ever did in a day was ...
-    - The most you ever did in a week ...
+    - The most you ever did in a week ... 
 
 ## Literacy
 
@@ -62,9 +61,7 @@
 
 ### General Tweet Stats
 
-- where you are most of the time
-- your tweet activity over time
+
 - favorite topics to tweet about
 - percentage to people vs statements
 - favorite source to tweet from
-- favorite Twitter Client to use

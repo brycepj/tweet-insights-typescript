@@ -52,7 +52,6 @@ module app {
                 function createModelArray() {
                     var model = [];
                     var raw = createRawArray();
-                    console.log(raw);
                     var current = null;
                     var count = 1;
 
