@@ -75,12 +75,13 @@ module app {
 
             getIntervals(): any {
                 var array = this.rawIntervals;
+                
                 return app.util.parsers.tweetInterval(array);
             }
 
             getActivity(): any {
                 var array = this.rawMoments;
-
+                
                 return app.util.parsers.tweetActivity(array);
 
             }
