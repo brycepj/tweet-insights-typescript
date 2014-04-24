@@ -1,7 +1,7 @@
 ## Next
 
 - simplify return values for interval thingy
-
+- ALL TIME RETWEETS, FAVORITES
 
 ## Setup Models
 
