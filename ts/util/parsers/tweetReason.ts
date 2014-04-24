@@ -4,12 +4,12 @@ module app {
 
         export module parsers {
 
-            export function tweetContext(data) {
+            export function tweetReason(data) {
 
     
                
                 
-                
+               return "GALLO"; 
             }
         }
     }

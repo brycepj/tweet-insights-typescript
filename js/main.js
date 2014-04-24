@@ -219,9 +219,51 @@ var app;
 (function (app) {
     (function (util) {
         (function (parsers) {
-            function tweetContext(data) {
+            function tweetGeo(data) {
+                var geoData = data;
+
+                console.log(geoData);
+
+                for (var i = 0; i < geoData.length; i++) {
+                    if (geoData[i].geo) {
+                        console.log(geoData[i]);
+                    }
+                    if (geoData[i].place) {
+                        console.log(geoData[i]);
+                    }
+                }
+
+                return "GALLO";
             }
-            parsers.tweetContext = tweetContext;
+            parsers.tweetGeo = tweetGeo;
+        })(util.parsers || (util.parsers = {}));
+        var parsers = util.parsers;
+    })(app.util || (app.util = {}));
+    var util = app.util;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (util) {
+        (function (parsers) {
+            function tweetClient(data) {
+                var clients = data;
+
+                return "GALLO";
+            }
+            parsers.tweetClient = tweetClient;
+        })(util.parsers || (util.parsers = {}));
+        var parsers = util.parsers;
+    })(app.util || (app.util = {}));
+    var util = app.util;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (util) {
+        (function (parsers) {
+            function tweetReason(data) {
+                return "GALLO";
+            }
+            parsers.tweetReason = tweetReason;
         })(util.parsers || (util.parsers = {}));
         var parsers = util.parsers;
     })(app.util || (app.util = {}));
@@ -438,6 +480,28 @@ var app;
                 this.saveRawGeo();
                 this.saveRawClient();
                 this.saveRawReason();
+
+                console.log(this.getGeos());
+                console.log(this.getClients());
+                console.log(this.getReasons());
+            };
+
+            ContextData.prototype.getGeos = function () {
+                var array = this.rawGeo;
+
+                return app.util.parsers.tweetGeo(array);
+            };
+
+            ContextData.prototype.getClients = function () {
+                var array = this.rawClient;
+
+                return app.util.parsers.tweetClient(array);
+            };
+
+            ContextData.prototype.getReasons = function () {
+                var array = this.rawReason;
+
+                return app.util.parsers.tweetReason(array);
             };
 
             ContextData.prototype.saveRawGeo = function () {
@@ -492,7 +556,6 @@ var app;
                         "text": text
                     });
                 }
-                console.log(this.rawReason);
             };
             return ContextData;
         })(Backbone.Model);

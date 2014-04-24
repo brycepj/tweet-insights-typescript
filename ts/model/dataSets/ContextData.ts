@@ -27,7 +27,29 @@ module app {
                 this.saveRawGeo();
                 this.saveRawClient();
                 this.saveRawReason();
+                
+                console.log(this.getGeos());
+                console.log(this.getClients());
+                console.log(this.getReasons());
 
+            }
+            
+            getGeos(){
+                var array = this.rawGeo;
+         
+                return app.util.parsers.tweetGeo(array);
+            }
+            
+            getClients(){
+                var array = this.rawClient;
+         
+                return app.util.parsers.tweetClient(array);
+            }
+            
+            getReasons(){
+                var array = this.rawReason;
+         
+                return app.util.parsers.tweetReason(array);
             }
 
             saveRawGeo() {
@@ -83,7 +105,6 @@ module app {
                     });
 
                 }
-                console.log(this.rawReason);
             }
         }
 
