@@ -11,14 +11,14 @@ module app {
 
             constructor(raw) {
                 super();
-                
+
                 this.raw = raw;
-                
+
                 this.init();
-                
+
                 console.log('raw data: ', this.raw);
-                console.log('intervals: ',this.getIntervals());
-                console.log('activity: ',this.getActivity());
+                console.log('intervals: ', this.getIntervals());
+                console.log('activity: ', this.getActivity());
 
             }
 
@@ -26,16 +26,15 @@ module app {
 
                 this.rawIntervals = [];
                 this.rawMoments = [];
-                
-                
+
+
                 this.saveRawIntervals();
                 this.saveRawMoments();
-                
+
             }
 
             saveRawIntervals(): void {
                 var array = this.raw;
-
 
                 for (var i = 1; i < array.length; i++) {
                     var index = i;
@@ -43,19 +42,13 @@ module app {
                     var currentTime = array[index].created_at;
                     var prevTime = array[prevIndex].created_at;
 
-                    var currentTimeObj = function() {
-                        return new Date(Date.parse(currentTime.replace(/( +)/, ' UTC$1')));
-                    };
-                    var prevTimeObj = function() {
-                        return new Date(Date.parse(prevTime.replace(/( +)/, ' UTC$1')));
-                    };
+                    var currentMoment = moment(currentTime, "YYYY/MM/DD");
+                    var prevMoment = moment(prevTime, "YYYY/MM/DD");
 
-                    var diff = Math.abs(currentTimeObj() - prevTimeObj());
+                    var diff = prevMoment.diff(currentMoment);
 
                     this.rawIntervals.push(diff);
-
                 }
-
             }
 
             saveRawMoments(): void {
@@ -76,13 +69,13 @@ module app {
 
             getIntervals(): any {
                 var array = this.rawIntervals;
-                
+
                 return app.util.parsers.tweetInterval(array);
             }
 
             getActivity(): any {
                 var array = this.rawMoments;
-                
+
                 return app.util.parsers.tweetActivity(array);
 
             }

@@ -97,10 +97,29 @@ module app {
                     var retweeted = obj.retweeted;
                     var text = obj.text;
 
+                    var rtSn = function(){
+                        if (retweeted === true) {
+                            if (obj.entities.user_mentions.length == 0) {
+                                return null;
+                            }
+                            var user = obj.entities.user_mentions;
+                            var handle = user[0].screen_name;
+                            var name = user[0].name;
+                                                        
+                            return {
+                                "handle":handle,
+                                "name":name
+                            };
+                         
+                        } else {
+                            return null; 
+                        }
+                    };
+                    
                     this.rawReason.push({
                         "date": date,
                         "reply": reply,
-                        "retweeted": retweeted,
+                        "retweeted": rtSn(),
                         "text": text
                     });
 

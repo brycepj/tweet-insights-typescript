@@ -222,14 +222,10 @@ var app;
             function tweetGeo(data) {
                 var geoData = data;
 
-                console.log(geoData);
-
                 for (var i = 0; i < geoData.length; i++) {
                     if (geoData[i].geo) {
-                        console.log(geoData[i]);
                     }
                     if (geoData[i].place) {
-                        console.log(geoData[i]);
                     }
                 }
 
@@ -261,7 +257,79 @@ var app;
     (function (util) {
         (function (parsers) {
             function tweetReason(data) {
-                return "GALLO";
+                console.log("rawReasons", data);
+                var reasons = data;
+
+                var replies = [];
+                var retweets = [];
+                var declarations = [];
+
+                var totalNumber;
+
+                function getTotals() {
+                    for (var i = 0; i < reasons.length; i++) {
+                        var stats = {};
+
+                        var obj = reasons[i];
+
+                        if (obj.reply) {
+                            stats.type = "reply";
+                            stats.sn = obj.reply;
+                        } else if (obj.retweeted) {
+                            stats.type = "retweeted";
+                        } else {
+                            stats.type = "declared";
+                        }
+                    }
+
+                    return data.length;
+                }
+
+                var returnObj = {
+                    "totalNumber": getTotals(),
+                    "retweets": {
+                        "total": getTotals(),
+                        "percent": 57,
+                        "favorites": [
+                            {
+                                "name": '@thisperson',
+                                "number": 12
+                            },
+                            {
+                                "name": '@thatperson', "number": 12
+                            },
+                            {
+                                "name": '@theotherperson',
+                                "number": 12
+                            }
+                        ]
+                    },
+                    "replies": {
+                        "total": totalNumber,
+                        "percent": 32,
+                        "favorites": [
+                            {
+                                "name": '@thisperson',
+                                "number": 12
+                            },
+                            {
+                                "name": '@thatperson', "number": 12
+                            },
+                            {
+                                "name": '@theotherperson',
+                                "number": 12
+                            }
+                        ],
+                        "percentClose": 67,
+                        "percentRando": 34
+                    },
+                    "declarations": {
+                        "total": totalNumber,
+                        "percent": 11
+                    }
+                };
+
+                return returnObj;
             }
             parsers.tweetReason = tweetReason;
         })(util.parsers || (util.parsers = {}));
@@ -417,14 +485,10 @@ var app;
                     var currentTime = array[index].created_at;
                     var prevTime = array[prevIndex].created_at;
 
-                    var currentTimeObj = function () {
-                        return new Date(Date.parse(currentTime.replace(/( +)/, ' UTC$1')));
-                    };
-                    var prevTimeObj = function () {
-                        return new Date(Date.parse(prevTime.replace(/( +)/, ' UTC$1')));
-                    };
+                    var currentMoment = moment(currentTime, "YYYY/MM/DD");
+                    var prevMoment = moment(prevTime, "YYYY/MM/DD");
 
-                    var diff = Math.abs(currentTimeObj() - prevTimeObj());
+                    var diff = prevMoment.diff(currentMoment);
 
                     this.rawIntervals.push(diff);
                 }
@@ -549,10 +613,28 @@ var app;
                     var retweeted = obj.retweeted;
                     var text = obj.text;
 
+                    var rtSn = function () {
+                        if (retweeted === true) {
+                            if (obj.entities.user_mentions.length == 0) {
+                                return null;
+                            }
+                            var user = obj.entities.user_mentions;
+                            var handle = user[0].screen_name;
+                            var name = user[0].name;
+
+                            return {
+                                "handle": handle,
+                                "name": name
+                            };
+                        } else {
+                            return null;
+                        }
+                    };
+
                     this.rawReason.push({
                         "date": date,
                         "reply": reply,
-                        "retweeted": retweeted,
+                        "retweeted": rtSn(),
                         "text": text
                     });
                 }
@@ -560,20 +642,6 @@ var app;
             return ContextData;
         })(Backbone.Model);
         model.ContextData = ContextData;
-    })(app.model || (app.model = {}));
-    var model = app.model;
-})(app || (app = {}));
-var app;
-(function (app) {
-    (function (model) {
-        var NarcModel = (function (_super) {
-            __extends(NarcModel, _super);
-            function NarcModel(textOnly) {
-                _super.call(this);
-            }
-            return NarcModel;
-        })(Backbone.Model);
-        model.NarcModel = NarcModel;
     })(app.model || (app.model = {}));
     var model = app.model;
 })(app || (app = {}));

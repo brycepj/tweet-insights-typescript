@@ -5,7 +5,6 @@
 /// <reference path="util/pkg.ts"/>
 /// <reference path="view/pkg.ts"/>
 /// <reference path="model/dataSets/pkg.ts"/>
-/// <reference path="model/badHabitModels/pkg.ts"/>
 /// <reference path="init/pkg.ts"/>
 
 
