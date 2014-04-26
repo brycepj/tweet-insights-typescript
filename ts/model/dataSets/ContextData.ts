@@ -30,7 +30,7 @@ module app {
                 
                 console.log(this.getGeos());
                 console.log(this.getClients());
-                console.log(this.getReasons());
+                console.log('reasons',this.getReasons());
 
             }
             
@@ -105,7 +105,7 @@ module app {
                             var user = obj.entities.user_mentions;
                             var handle = user[0].screen_name;
                             var name = user[0].name;
-                                                        
+
                             return {
                                 "handle":handle,
                                 "name":name
