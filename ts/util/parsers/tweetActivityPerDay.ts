@@ -4,7 +4,7 @@ module app {
 
         export module parsers {
 
-            export function tweetActivity(data) {
+            export function tweetActivityPerDay(data) {
 
                 var moments = data;
 

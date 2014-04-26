@@ -7,6 +7,8 @@ module app {
             export function tweetReason(data) {
                 var reasons = data;
 
+                console.log('reasons raw',reasons);
+
                 function parseReasons() {
 
                     var parsed = [];
@@ -14,17 +16,25 @@ module app {
                         var stats = {};
 
                         var obj = reasons[i];
+                        var text = obj.text;
+                        var firstTwo = text.substring(0,2);
 
                         if (obj.reply) {
                             stats.type = "reply";
                             stats.sn = obj.reply;
-                        } else if (obj.retweeted) {
+                        } else if (obj.retweeted || firstTwo == "RT") {
                             stats.type = "retweeted";
                             stats.sn = obj.retweeted.handle;
                             stats.name = obj.retweeted.name;
                         } else {
                             stats.type = "declared";
                         }
+
+
+                        // need to write a function that checks if it's null or not, and then searches then slices
+                        // of the first two, checks for the at symbol, and stop at the first symbol or space
+                        // user_mention.screen name will show up first from RTs not listed as RTs
+
 
                         parsed.push(stats);
                     }

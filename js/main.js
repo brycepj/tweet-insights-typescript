@@ -2,7 +2,7 @@ var app;
 (function (app) {
     (function (util) {
         function initModels() {
-            var getRawData = $.getJSON('data/tweets.json');
+            var getRawData = $.getJSON('data/rachael.json');
 
             var timeData, contextData;
 
@@ -142,7 +142,7 @@ var app;
 (function (app) {
     (function (util) {
         (function (parsers) {
-            function tweetActivity(data) {
+            function tweetActivityPerDay(data) {
                 var moments = data;
 
                 function getTotalDays() {
@@ -209,7 +209,35 @@ var app;
 
                 return [getTotalDays(), createModelArray()];
             }
-            parsers.tweetActivity = tweetActivity;
+            parsers.tweetActivityPerDay = tweetActivityPerDay;
+        })(util.parsers || (util.parsers = {}));
+        var parsers = util.parsers;
+    })(app.util || (app.util = {}));
+    var util = app.util;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (util) {
+        (function (parsers) {
+            function tweetActivityPerHour(data) {
+                var times = data;
+                function parseTime() {
+                    var hours = [];
+
+                    for (var i = 0; i < times.length; i++) {
+                        var obj = times[i];
+
+                        var hour = obj;
+
+                        hours.push(hour);
+                    }
+
+                    return hours;
+                }
+
+                return parseTime();
+            }
+            parsers.tweetActivityPerHour = tweetActivityPerHour;
         })(util.parsers || (util.parsers = {}));
         var parsers = util.parsers;
     })(app.util || (app.util = {}));
@@ -259,17 +287,21 @@ var app;
             function tweetReason(data) {
                 var reasons = data;
 
+                console.log('reasons raw', reasons);
+
                 function parseReasons() {
                     var parsed = [];
                     for (var i = 0; i < reasons.length; i++) {
                         var stats = {};
 
                         var obj = reasons[i];
+                        var text = obj.text;
+                        var firstTwo = text.substring(0, 2);
 
                         if (obj.reply) {
                             stats.type = "reply";
                             stats.sn = obj.reply;
-                        } else if (obj.retweeted) {
+                        } else if (obj.retweeted || firstTwo == "RT") {
                             stats.type = "retweeted";
                             stats.sn = obj.retweeted.handle;
                             stats.name = obj.retweeted.name;
@@ -577,14 +609,16 @@ var app;
 
                 console.log('raw data: ', this.raw);
                 console.log('intervals: ', this.getIntervals());
-                console.log('activity: ', this.getActivity());
+                console.log('activity per day: ', this.getActivityPerDay());
+                console.log('activity per hour: ', this.getActivityPerHour());
             }
             TimeData.prototype.init = function () {
                 this.rawIntervals = [];
-                this.rawMoments = [];
+                this.rawDates = [];
+                this.rawHours = [];
 
                 this.saveRawIntervals();
-                this.saveRawMoments();
+                this.saveRawDates();
             };
 
             TimeData.prototype.saveRawIntervals = function () {
@@ -605,16 +639,18 @@ var app;
                 }
             };
 
-            TimeData.prototype.saveRawMoments = function () {
+            TimeData.prototype.saveRawDates = function () {
                 var array = this.raw;
 
                 for (var i = 0; i < array.length; i++) {
                     var current = array[i].created_at;
 
-                    var momentObj = moment(current, "YYYY/MM/DD");
-                    var dayOfWeek = momentObj.day();
+                    var datesObj = moment(current, "YYYY/MM/DD");
+                    var hoursObj = moment(current, "YYYY/MM/DD, h:mm:ss").local().hours();
+                    var dayOfWeek = datesObj.day();
 
-                    this.rawMoments.push(momentObj);
+                    this.rawDates.push(datesObj);
+                    this.rawHours.push(hoursObj);
                 }
             };
 
@@ -624,10 +660,16 @@ var app;
                 return app.util.parsers.tweetInterval(array);
             };
 
-            TimeData.prototype.getActivity = function () {
-                var array = this.rawMoments;
+            TimeData.prototype.getActivityPerDay = function () {
+                var array = this.rawDates;
 
-                return app.util.parsers.tweetActivity(array);
+                return app.util.parsers.tweetActivityPerDay(array);
+            };
+
+            TimeData.prototype.getActivityPerHour = function () {
+                var array = this.rawHours;
+
+                return app.util.parsers.tweetActivityPerHour(array);
             };
             return TimeData;
         })(Backbone.Model);
@@ -724,18 +766,18 @@ var app;
                     var retweeted = obj.retweeted;
                     var text = obj.text;
 
+                    var firstTwo = text.substring(0, 2);
+
                     var rtSn = function () {
-                        if (retweeted === true) {
+                        if (retweeted === true || firstTwo == "RT") {
                             if (obj.entities.user_mentions.length == 0) {
                                 return null;
                             }
                             var user = obj.entities.user_mentions;
                             var handle = user[0].screen_name;
-                            var name = user[0].name;
 
                             return {
-                                "handle": handle,
-                                "name": name
+                                "handle": handle
                             };
                         } else {
                             return null;

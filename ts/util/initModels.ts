@@ -4,7 +4,7 @@ module app {
     
         export function initModels() {
 
-            var getRawData = $.getJSON('data/tweets.json');
+            var getRawData = $.getJSON('data/rachael.json');
 
             var timeData, contextData;
 

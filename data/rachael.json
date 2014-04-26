@@ -1,0 +1,469 @@
+[{
+    "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "urls": [{
+            "expanded_url": "http://www.buzzfeed.com/mckaycoppins/why-the-internet-hasnt-shattered-my-mormon-faith",
+            "display_url": "buzzfeed.com/mckaycoppins/w\u2026",
+            "url": "http://t.co/q2pNW5FIRH",
+            "indices": [101, 123]
+        }],
+        "user_mentions": [{
+            "name": "BuzzFeed",
+            "screen_name": "BuzzFeed",
+            "id_str": "5695632",
+            "id": 5695632,
+            "indices": [129, 138]
+        }]
+    },
+    "in_reply_to_screen_name": null,
+    "geo": null,
+    "id_str": "359432005143900161",
+    "contributors": null,
+    "in_reply_to_user_id_str": null,
+    "truncated": false,
+    "in_reply_to_status_id_str": null,
+    "favorited": false,
+    "place": null,
+    "lang": "en",
+    "in_reply_to_user_id": null,
+    "source_url": "http://twitter.com/tweetbutton",
+    "coordinates": null,
+    "text": "a sensible take by Mckay Coppins on the NYT piece: Why The Internet Hasn\u2019t Shattered My Mormon Faith http://t.co/q2pNW5FIRH via @buzzfeed",
+    "favorite_count": 0,
+    "id": 359432005143900161,
+    "source": "Tweet Button",
+    "created_at": "2013-07-22 21:57:22",
+    "retweeted": false,
+    "in_reply_to_status_id": null,
+    "retweet_count": 0
+}, {
+    "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "urls": [{
+            "expanded_url": "http://difficultrun.nathanielgivens.com/2013/07/15/my-thoughts-on-martin-zimmerman-and-racism/",
+            "display_url": "difficultrun.nathanielgivens.com/2013/07/15/my-\u2026",
+            "url": "http://t.co/efph8Ne3Yj",
+            "indices": [45, 67]
+        }],
+        "user_mentions": []
+    },
+    "in_reply_to_screen_name": null,
+    "geo": null,
+    "id_str": "356875866728443906",
+    "contributors": null,
+    "in_reply_to_user_id_str": null,
+    "truncated": false,
+    "in_reply_to_status_id_str": null,
+    "favorited": false,
+    "place": null,
+    "lang": "en",
+    "in_reply_to_user_id": null,
+    "source_url": "http://twitter.com/tweetbutton",
+    "coordinates": null,
+    "text": "My Thoughts on Martin, Zimmerman, and Racism http://t.co/efph8Ne3Yj",
+    "favorite_count": 0,
+    "id": 356875866728443906,
+    "source": "Tweet Button",
+    "created_at": "2013-07-15 20:40:11",
+    "retweeted": false,
+    "in_reply_to_status_id": null,
+    "retweet_count": 0
+}, {
+    "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "urls": [{
+            "expanded_url": "http://thebea.st/1b3WRVh",
+            "display_url": "thebea.st/1b3WRVh",
+            "url": "http://t.co/WjoSXpBz2j",
+            "indices": [53, 75]
+        }],
+        "user_mentions": [{
+            "name": "The Daily Beast",
+            "screen_name": "thedailybeast",
+            "id_str": "16012783",
+            "id": 16012783,
+            "indices": [80, 94]
+        }]
+    },
+    "in_reply_to_screen_name": null,
+    "geo": null,
+    "id_str": "352478204272975872",
+    "contributors": null,
+    "in_reply_to_user_id_str": null,
+    "truncated": false,
+    "in_reply_to_status_id_str": null,
+    "favorited": false,
+    "place": null,
+    "lang": "en",
+    "in_reply_to_user_id": null,
+    "source_url": "http://twitter.com/tweetbutton",
+    "coordinates": null,
+    "text": "Amen. Kirsten Powers: I Don\u2019t Stand With Wendy Davis http://t.co/WjoSXpBz2j via @thedailybeast",
+    "favorite_count": 0,
+    "id": 352478204272975872,
+    "source": "Tweet Button",
+    "created_at": "2013-07-03 17:25:27",
+    "retweeted": false,
+    "in_reply_to_status_id": null,
+    "retweet_count": 0
+}, {
+    "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "urls": [{
+            "expanded_url": "http://difficultrun.nathanielgivens.com/2013/07/03/wendy-davis-and-the-sainthood-of-planned-parenthood/",
+            "display_url": "difficultrun.nathanielgivens.com/2013/07/03/wen\u2026",
+            "url": "http://t.co/03MK2NX0Gg",
+            "indices": [44, 66]
+        }],
+        "user_mentions": []
+    },
+    "in_reply_to_screen_name": null,
+    "geo": null,
+    "id_str": "352477073438289920",
+    "contributors": null,
+    "in_reply_to_user_id_str": null,
+    "truncated": false,
+    "in_reply_to_status_id_str": null,
+    "favorited": false,
+    "place": null,
+    "lang": "en",
+    "in_reply_to_user_id": null,
+    "source_url": "http://twitter.com/tweetbutton",
+    "coordinates": null,
+    "text": "Breaking down the Planned Parenthood myths: http://t.co/03MK2NX0Gg",
+    "favorite_count": 0,
+    "id": 352477073438289920,
+    "source": "Tweet Button",
+    "created_at": "2013-07-03 17:20:57",
+    "retweeted": false,
+    "in_reply_to_status_id": null,
+    "retweet_count": 0
+}, {
+    "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "urls": [{
+            "expanded_url": "http://flip.it/H6xe9",
+            "display_url": "flip.it/H6xe9",
+            "url": "http://t.co/7LXk47omyR",
+            "indices": [87, 109]
+        }],
+        "user_mentions": []
+    },
+    "in_reply_to_screen_name": null,
+    "geo": null,
+    "id_str": "342642497798959104",
+    "contributors": null,
+    "in_reply_to_user_id_str": null,
+    "truncated": false,
+    "in_reply_to_status_id_str": null,
+    "favorited": false,
+    "place": null,
+    "lang": "en",
+    "in_reply_to_user_id": null,
+    "source_url": "http://www.flipboard.com",
+    "coordinates": null,
+    "text": "Interesting insights: Listening to Young Atheists, Lessons for a Stronger Christianity http://t.co/7LXk47omyR",
+    "favorite_count": 0,
+    "id": 342642497798959104,
+    "source": "Flipboard",
+    "created_at": "2013-06-06 14:01:52",
+    "retweeted": false,
+    "in_reply_to_status_id": null,
+    "retweet_count": 0
+}, {
+    "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "urls": [{
+            "expanded_url": "http://bit.ly/11o6xnp",
+            "display_url": "bit.ly/11o6xnp",
+            "url": "http://t.co/mBZVxAhQ4u",
+            "indices": [139, 140]
+        }],
+        "user_mentions": [{
+            "name": "First Things",
+            "screen_name": "firstthingsmag",
+            "id_str": "25314580",
+            "id": 25314580,
+            "indices": [3, 18]
+        }]
+    },
+    "in_reply_to_screen_name": null,
+    "geo": null,
+    "id_str": "334061471992516609",
+    "contributors": null,
+    "in_reply_to_user_id_str": null,
+    "truncated": false,
+    "in_reply_to_status_id_str": null,
+    "favorited": false,
+    "place": null,
+    "lang": "en",
+    "in_reply_to_user_id": null,
+    "source_url": "http://www.flipboard.com",
+    "coordinates": null,
+    "text": "RT @firstthingsmag: Are we surprised that after years of hearing \u201dIt\u2019s not a baby, it just looks like a baby,\u201d someone believed it? http://\u2026",
+    "favorite_count": 0,
+    "id": 334061471992516609,
+    "source": "Flipboard",
+    "created_at": "2013-05-13 21:43:56",
+    "retweeted": false,
+    "in_reply_to_status_id": null,
+    "retweet_count": 18
+}, {
+    "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "urls": [],
+        "user_mentions": [{
+            "name": "Ross Douthat",
+            "screen_name": "DouthatNYT",
+            "id_str": "546135718",
+            "id": 546135718,
+            "indices": [3, 14]
+        }]
+    },
+    "in_reply_to_screen_name": null,
+    "geo": null,
+    "id_str": "322807492469993472",
+    "contributors": null,
+    "in_reply_to_user_id_str": null,
+    "truncated": false,
+    "in_reply_to_status_id_str": null,
+    "favorited": false,
+    "place": null,
+    "lang": "en",
+    "in_reply_to_user_id": null,
+    "source_url": "http://www.flipboard.com",
+    "coordinates": null,
+    "text": "RT @DouthatNYT: But most ppl, including most journalists, don't want to think too hard about what abortion *does.* Hence the lack of int ...",
+    "favorite_count": 0,
+    "id": 322807492469993472,
+    "source": "Flipboard",
+    "created_at": "2013-04-12 20:24:38",
+    "retweeted": false,
+    "in_reply_to_status_id": null,
+    "retweet_count": 61
+}, {
+    "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "urls": [],
+        "user_mentions": [{
+            "name": "Matt Frost",
+            "screen_name": "mattfrost",
+            "id_str": "9039722",
+            "id": 9039722,
+            "indices": [3, 13]
+        }]
+    },
+    "in_reply_to_screen_name": null,
+    "geo": null,
+    "id_str": "322806951929081856",
+    "contributors": null,
+    "in_reply_to_user_id_str": null,
+    "truncated": false,
+    "in_reply_to_status_id_str": null,
+    "favorited": false,
+    "place": null,
+    "lang": "en",
+    "in_reply_to_user_id": null,
+    "source_url": "http://www.flipboard.com",
+    "coordinates": null,
+    "text": "RT @mattfrost: One side sees the Gosnell case, thinks: \"abortion is an atrocity.\" Other side says, \"abortion is too unsafe.\" \nThe \"cente ...",
+    "favorite_count": 0,
+    "id": 322806951929081856,
+    "source": "Flipboard",
+    "created_at": "2013-04-12 20:22:29",
+    "retweeted": false,
+    "in_reply_to_status_id": null,
+    "retweet_count": 66
+}, {
+    "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "urls": [{
+            "expanded_url": "http://nyti.ms/104D0N7",
+            "display_url": "nyti.ms/104D0N7",
+            "url": "http://t.co/qtxHhp0cWv",
+            "indices": [113, 135]
+        }],
+        "user_mentions": []
+    },
+    "in_reply_to_screen_name": null,
+    "geo": null,
+    "id_str": "316285388664750080",
+    "contributors": null,
+    "in_reply_to_user_id_str": null,
+    "truncated": false,
+    "in_reply_to_status_id_str": null,
+    "favorited": false,
+    "place": null,
+    "lang": "en",
+    "in_reply_to_user_id": null,
+    "source_url": "http://twitter.com/tweetbutton",
+    "coordinates": null,
+    "text": "Great commentary from Roger Scruton on some suffocating tendencies of public discourse- When Hope Tramples Truth http://t.co/qtxHhp0cWv",
+    "favorite_count": 0,
+    "id": 316285388664750080,
+    "source": "Tweet Button",
+    "created_at": "2013-03-25 20:28:07",
+    "retweeted": false,
+    "in_reply_to_status_id": null,
+    "retweet_count": 0
+}, {
+    "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "urls": [{
+            "expanded_url": "http://s.shr.lc/X5sKbs",
+            "display_url": "s.shr.lc/X5sKbs",
+            "url": "http://t.co/glw3qUsWLC",
+            "indices": [76, 98]
+        }],
+        "user_mentions": [{
+            "name": "Times and Seasons",
+            "screen_name": "timesandseasons",
+            "id_str": "55067198",
+            "id": 55067198,
+            "indices": [103, 119]
+        }]
+    },
+    "in_reply_to_screen_name": null,
+    "geo": null,
+    "id_str": "316279234773520384",
+    "contributors": null,
+    "in_reply_to_user_id_str": null,
+    "truncated": false,
+    "in_reply_to_status_id_str": null,
+    "favorited": false,
+    "place": null,
+    "lang": "en",
+    "in_reply_to_user_id": null,
+    "source_url": "http://www.shareaholic.com",
+    "coordinates": null,
+    "text": "Thoughtful post on women and ordination: Giving Up On The Feminine Divine - http://t.co/glw3qUsWLC via @TimesandSeasons",
+    "favorite_count": 0,
+    "id": 316279234773520384,
+    "source": "shareaholic",
+    "created_at": "2013-03-25 20:03:40",
+    "retweeted": false,
+    "in_reply_to_status_id": null,
+    "retweet_count": 0
+}, {
+    "entities": {
+        "hashtags": [{
+            "text": "DespicableMe",
+            "indices": [22, 35]
+        }],
+        "symbols": [],
+        "urls": [{
+            "expanded_url": "http://tinyurl.com/b8vvcgx",
+            "display_url": "tinyurl.com/b8vvcgx",
+            "url": "http://t.co/7dzdaZfl",
+            "indices": [37, 57]
+        }],
+        "user_mentions": [{
+            "name": "#DespicableMe2",
+            "screen_name": "DespicableMe",
+            "id_str": "25592034",
+            "id": 25592034,
+            "indices": [7, 20]
+        }]
+    },
+    "in_reply_to_screen_name": null,
+    "geo": null,
+    "id_str": "265992935638700032",
+    "contributors": null,
+    "in_reply_to_user_id_str": null,
+    "truncated": false,
+    "in_reply_to_status_id_str": null,
+    "favorited": false,
+    "place": null,
+    "lang": "en",
+    "in_reply_to_user_id": null,
+    "source_url": "http://www.engodo.com",
+    "coordinates": null,
+    "text": "yes! | @DespicableMe #DespicableMe http://t.co/7dzdaZfl",
+    "favorite_count": 0,
+    "id": 265992935638700032,
+    "source": "engodo",
+    "created_at": "2012-11-07 01:43:52",
+    "retweeted": false,
+    "in_reply_to_status_id": null,
+    "retweet_count": 0
+}, {
+    "entities": {
+        "hashtags": [{
+            "text": "techjobs",
+            "indices": [67, 76]
+        }],
+        "symbols": [],
+        "urls": [{
+            "expanded_url": "http://tinyurl.com/ca2on64",
+            "display_url": "tinyurl.com/ca2on64",
+            "url": "http://t.co/8rWGcsPe",
+            "indices": [78, 98]
+        }],
+        "user_mentions": [{
+            "name": "redKonnect",
+            "screen_name": "RedKonnect",
+            "id_str": "413620948",
+            "id": 413620948,
+            "indices": [54, 65]
+        }]
+    },
+    "in_reply_to_screen_name": null,
+    "geo": null,
+    "id_str": "228664773003321344",
+    "contributors": null,
+    "in_reply_to_user_id_str": null,
+    "truncated": false,
+    "in_reply_to_status_id_str": null,
+    "favorited": false,
+    "place": null,
+    "lang": "en",
+    "in_reply_to_user_id": null,
+    "source_url": "http://www.engodo.com",
+    "coordinates": null,
+    "text": "Senior Developer job opening in SLC. Great company. | @redkonnect #techjobs http://t.co/8rWGcsPe",
+    "favorite_count": 0,
+    "id": 228664773003321344,
+    "source": "engodo",
+    "created_at": "2012-07-27 01:35:04",
+    "retweeted": false,
+    "in_reply_to_status_id": null,
+    "retweet_count": 0
+}, {
+    "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "urls": [],
+        "user_mentions": []
+    },
+    "in_reply_to_screen_name": null,
+    "geo": null,
+    "id_str": "228661495217672192",
+    "contributors": null,
+    "in_reply_to_user_id_str": null,
+    "truncated": false,
+    "in_reply_to_status_id_str": null,
+    "favorited": false,
+    "place": null,
+    "lang": "vi",
+    "in_reply_to_user_id": null,
+    "source_url": null,
+    "coordinates": null,
+    "text": "hello world.",
+    "favorite_count": 0,
+    "id": 228661495217672192,
+    "source": "web",
+    "created_at": "2012-07-27 01:22:03",
+    "retweeted": false,
+    "in_reply_to_status_id": null,
+    "retweet_count": 0
+}]

@@ -4,10 +4,11 @@ module app {
 
         export class TimeData extends Backbone.Model {
 
-            raw: any;
-            model: any;
-            rawIntervals: any;
-            rawMoments: any;
+            raw:any;
+            model:any;
+            rawIntervals:any;
+            rawDates:any;
+            rawHours:any;
 
             constructor(raw) {
                 super();
@@ -18,22 +19,25 @@ module app {
 
                 console.log('raw data: ', this.raw);
                 console.log('intervals: ', this.getIntervals());
-                console.log('activity: ', this.getActivity());
+                console.log('activity per day: ', this.getActivityPerDay());
+                console.log('activity per hour: ', this.getActivityPerHour());
 
             }
 
-            init(): void {
+            init():void {
 
                 this.rawIntervals = [];
-                this.rawMoments = [];
+                this.rawDates = [];
+                this.rawHours = [];
 
 
                 this.saveRawIntervals();
-                this.saveRawMoments();
+                this.saveRawDates();
 
             }
 
-            saveRawIntervals(): void {
+            saveRawIntervals():void {
+
                 var array = this.raw;
 
                 for (var i = 1; i < array.length; i++) {
@@ -51,32 +55,46 @@ module app {
                 }
             }
 
-            saveRawMoments(): void {
+            saveRawDates():void {
+
                 var array = this.raw;
 
                 for (var i = 0; i < array.length; i++) {
                     var current = array[i].created_at;
 
-                    var momentObj = moment(current, "YYYY/MM/DD");
-                    var dayOfWeek = momentObj.day();
+                    var datesObj = moment(current, "YYYY/MM/DD");
+                    var hoursObj = moment(current, "YYYY/MM/DD, h:mm:ss").local().hours();
+                    var dayOfWeek = datesObj.day();
 
-                    this.rawMoments.push(momentObj);
+                    this.rawDates.push(datesObj);
+                    this.rawHours.push(hoursObj);
 
                 }
 
 
             }
 
-            getIntervals(): any {
+
+            getIntervals():any {
+
                 var array = this.rawIntervals;
 
                 return app.util.parsers.tweetInterval(array);
             }
 
-            getActivity(): any {
-                var array = this.rawMoments;
+            getActivityPerDay():any {
 
-                return app.util.parsers.tweetActivity(array);
+                var array = this.rawDates;
+
+                return app.util.parsers.tweetActivityPerDay(array);
+
+            }
+
+            getActivityPerHour():any {
+
+                var array = this.rawHours;
+
+                return app.util.parsers.tweetActivityPerHour(array);
 
             }
 
