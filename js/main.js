@@ -2,7 +2,7 @@ var app;
 (function (app) {
     (function (util) {
         function initModels() {
-            var getRawData = $.getJSON('data/rachael.json');
+            var getRawData = $.getJSON('data/austin.json');
 
             var timeData, contextData;
 
@@ -287,8 +287,6 @@ var app;
             function tweetReason(data) {
                 var reasons = data;
 
-                console.log('reasons raw', reasons);
-
                 function parseReasons() {
                     var parsed = [];
                     for (var i = 0; i < reasons.length; i++) {
@@ -303,8 +301,7 @@ var app;
                             stats.sn = obj.reply;
                         } else if (obj.retweeted || firstTwo == "RT") {
                             stats.type = "retweeted";
-                            stats.sn = obj.retweeted.handle;
-                            stats.name = obj.retweeted.name;
+                            stats.sn = obj.retweeted;
                         } else {
                             stats.type = "declared";
                         }
@@ -773,12 +770,10 @@ var app;
                             if (obj.entities.user_mentions.length == 0) {
                                 return null;
                             }
-                            var user = obj.entities.user_mentions;
-                            var handle = user[0].screen_name;
 
-                            return {
-                                "handle": handle
-                            };
+                            var handle = obj.entities.user_mentions[0].screen_name;
+
+                            return handle;
                         } else {
                             return null;
                         }

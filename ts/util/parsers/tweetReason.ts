@@ -7,8 +7,6 @@ module app {
             export function tweetReason(data) {
                 var reasons = data;
 
-                console.log('reasons raw',reasons);
-
                 function parseReasons() {
 
                     var parsed = [];
@@ -24,8 +22,7 @@ module app {
                             stats.sn = obj.reply;
                         } else if (obj.retweeted || firstTwo == "RT") {
                             stats.type = "retweeted";
-                            stats.sn = obj.retweeted.handle;
-                            stats.name = obj.retweeted.name;
+                            stats.sn = obj.retweeted;
                         } else {
                             stats.type = "declared";
                         }
@@ -221,7 +218,6 @@ module app {
                             "percent": counts.declaration.percent
                         }
                     };
-
 
                     return returnObj;
                 }

@@ -4,10 +4,10 @@ module app {
 
         export class ContextData extends Backbone.Model {
 
-            raw: any;
-            rawGeo: any;
-            rawClient: any;
-            rawReason: any;
+            raw:any;
+            rawGeo:any;
+            rawClient:any;
+            rawReason:any;
 
             constructor(raw) {
                 super();
@@ -18,7 +18,7 @@ module app {
 
             }
 
-            init(): void {
+            init():void {
 
                 this.rawGeo = [];
                 this.rawClient = [];
@@ -27,28 +27,28 @@ module app {
                 this.saveRawGeo();
                 this.saveRawClient();
                 this.saveRawReason();
-                
+
                 console.log(this.getGeos());
                 console.log(this.getClients());
-                console.log('reasons',this.getReasons());
+                console.log('reasons', this.getReasons());
 
             }
-            
-            getGeos(){
+
+            getGeos() {
                 var array = this.rawGeo;
-         
+
                 return app.util.parsers.tweetGeo(array);
             }
-            
-            getClients(){
+
+            getClients() {
                 var array = this.rawClient;
-         
+
                 return app.util.parsers.tweetClient(array);
             }
-            
-            getReasons(){
+
+            getReasons() {
                 var array = this.rawReason;
-         
+
                 return app.util.parsers.tweetReason(array);
             }
 
@@ -97,26 +97,25 @@ module app {
                     var retweeted = obj.retweeted;
                     var text = obj.text;
 
-                    var firstTwo = text.substring(0,2);
+                    var firstTwo = text.substring(0, 2);
 
-                    var rtSn = function(){
+                    var rtSn = function () {
                         if (retweeted === true || firstTwo == "RT") {
                             if (obj.entities.user_mentions.length == 0) {
                                 return null;
                             }
-                            var user = obj.entities.user_mentions;
-                            var handle = user[0].screen_name;
+
+                            var handle = obj.entities.user_mentions[0].screen_name;
 
 
-                            return {
-                                "handle":handle
-                            };
-                         
+                            return  handle;
+
+
                         } else {
-                            return null; 
+                            return null;
                         }
                     };
-                    
+
                     this.rawReason.push({
                         "date": date,
                         "reply": reply,
