@@ -16,7 +16,7 @@ module.exports = function(grunt) {
 		watch : {
 			scripts : {
 				files : [ 'ts/**/*.ts','gruntfile.js' ],
-				tasks : [ 'typescript' ],
+				tasks : [ 'ts' ],
 				options : {
 					livereload : true,
 					spawn : false,
@@ -57,12 +57,20 @@ module.exports = function(grunt) {
 				dest : 'css/build/prefixed/'
 			}
 		},
-		typescript : {
+		ts : {
 			base : {
-				src : 'ts/pkg.ts',
-				dest : 'js/main.js'
+				src: 'ts/pkg.ts',
+				out: 'js/main.js',
+				options: {                      
+					target: 'es5',
+					sourceMap: false,
+					declaration: true, 
+					removeComments: false
+				}
 			}
 		}
+		
+		
 
 	});
 
@@ -74,13 +82,13 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-imagemin');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-sass');
-	grunt.loadNpmTasks('grunt-typescript');
+	grunt.loadNpmTasks('grunt-ts');
 	grunt.loadNpmTasks('grunt-shell');
 
 	// 4. Where we tell Grunt what to do when we type "grunt" into the terminal.
-	grunt.registerTask('dev', [ 'typescript','sass', 'autoprefixer','watch' ]);
+	grunt.registerTask('dev', [ 'ts','sass', 'autoprefixer','watch' ]);
 	grunt.registerTask('dev-css',['sass','autoprefixer','watch']);
-	grunt.registerTask('dev-ts',['typescript','watch']);
-	grunt.registerTask('build',[ 'typescript', 'sass', 'autoprefixer', 'shell' ]);
+	grunt.registerTask('dev-ts',['ts','watch']);
+	grunt.registerTask('build',[ 'ts', 'sass', 'autoprefixer', 'shell' ]);
 
 };

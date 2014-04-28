@@ -1,6 +1,6 @@
 module app {
     
-    export module util {
+    export module utils {
     
         export function initModels() {
 
@@ -13,6 +13,11 @@ module app {
                 timeData = new app.model.TimeData(data);
                 contextData = new app.model.ContextData(data);
 
+            }).done(function(){
+                var parsedReasons = contextData.getReasons();
+                
+                //new views, pass in models using above format
+                
             }).fail(function(){
                 console.log('request failed');
             });

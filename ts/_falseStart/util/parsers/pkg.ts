@@ -4,3 +4,4 @@
 /// <reference path="tweetGeo.ts"/>
 /// <reference path="tweetClient.ts"/>
 /// <reference path="tweetReason.ts"/>
+/// <reference path="saveTweetDataByDay.ts"/>
