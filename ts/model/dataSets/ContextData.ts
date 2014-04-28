@@ -30,7 +30,7 @@ module app {
 
                 console.log(this.getGeos());
                 console.log(this.getClients());
-                console.log('reasons', this.getReasons());
+                console.log('reasons breakdown', this.getReasons());
 
             }
 

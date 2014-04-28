@@ -12,6 +12,8 @@ var app;
                 contextData = new app.model.ContextData(data);
             }).fail(function () {
                 console.log('request failed');
+            }).done(function () {
+                var randoBando = new app.views.TweetReasonsView(contextData);
             });
         }
         util.initModels = initModels;
@@ -485,19 +487,26 @@ var __extends = this.__extends || function (d, b) {
 };
 var app;
 (function (app) {
-    (function (view) {
-        var View1 = (function (_super) {
-            __extends(View1, _super);
-            function View1(model) {
+    (function (views) {
+        var TweetReasonsView = (function (_super) {
+            __extends(TweetReasonsView, _super);
+            function TweetReasonsView(model) {
                 _super.call(this);
 
-                this.model = model;
+                this.reasons = model.getReasons();
+                this.id = "container";
+
+                this.render();
             }
-            return View1;
+            TweetReasonsView.prototype.render = function () {
+                var model = this.reasons;
+                $('#target').text(model.total);
+            };
+            return TweetReasonsView;
         })(Backbone.View);
-        view.View1 = View1;
-    })(app.view || (app.view = {}));
-    var view = app.view;
+        views.TweetReasonsView = TweetReasonsView;
+    })(app.views || (app.views = {}));
+    var views = app.views;
 })(app || (app = {}));
 var app;
 (function (app) {
@@ -697,7 +706,7 @@ var app;
 
                 console.log(this.getGeos());
                 console.log(this.getClients());
-                console.log('reasons', this.getReasons());
+                console.log('reasons breakdown', this.getReasons());
             };
 
             ContextData.prototype.getGeos = function () {

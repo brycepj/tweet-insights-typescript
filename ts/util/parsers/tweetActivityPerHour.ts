@@ -9,6 +9,9 @@ module app {
                 var times = data;
                 function parseTime(){
 
+
+
+
                     var hours = [];
 
                     for (var i = 0; i < times.length; i++) {

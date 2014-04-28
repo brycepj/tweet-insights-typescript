@@ -15,6 +15,8 @@ module app {
 
             }).fail(function(){
                 console.log('request failed');
+            }).done(function(){
+                var randoBando = new app.views.TweetReasonsView(contextData);
             });
 
 
