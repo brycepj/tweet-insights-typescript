@@ -2,7 +2,7 @@ var app;
 (function (app) {
     (function (util) {
         function initModels() {
-            var getRawData = $.getJSON('data/austin.json');
+            var getRawData = $.getJSON('data/mitchell.json');
 
             var timeData, contextData;
 
