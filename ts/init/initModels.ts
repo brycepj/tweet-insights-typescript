@@ -5,17 +5,20 @@ module app {
         export function initModels() {
 
             var getRawData = $.getJSON('data/mitchell.json');
-
+            var cleanData, dataByHour;
 
             getRawData.done(function(data){
 
-                var raw = app.scrubRawData(data);
-
-                console.log(raw,'this is cleaned up');
+                cleanData = app.scrubRawData(data);
+                
+                
                 //initialize new data sets
 
             }).done(function(data){
-
+            
+                dataByHour = new app.models.DataByHour(cleanData);
+                console.log(dataByHour);
+                
                 //scrub and parse datasets
 
             }).done(function(data){
