@@ -3,7 +3,8 @@ module app {
     export class LoadingMask {
     
         constructor() {
-            console.log('kike shit');
+           
+            console.log('start the loading mask');
         
         
         }

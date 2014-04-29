@@ -75,9 +75,9 @@ module app {
 
                 for (var i = 0; i < array.length; i++) {
                     var obj = array[i];
-                    var current = obj.created_at;
+                    var current:string = obj.created_at;
                     var date = moment(current, "YYYY/MM/DD");
-                    var source = obj.source;
+                    var source:string = obj.source;
 
                     this.rawClient.push({
                         "date": date,
@@ -93,13 +93,13 @@ module app {
                     var obj = array[i];
                     var current = obj.created_at;
                     var date = moment(current, "YYYY/MM/DD");
-                    var reply = obj.in_reply_to_screen_name;
-                    var retweeted = obj.retweeted;
-                    var text = obj.text;
+                    var reply:string = obj.in_reply_to_screen_name;
+                    var retweeted:boolean = obj.retweeted;
+                    var text:string = obj.text;
 
-                    var firstTwo = text.substring(0, 2);
+                    var firstTwo:string = text.substring(0, 2);
 
-                    var rtSn = function () {
+                    var rtSn:any = function () {
                         if (retweeted === true || firstTwo == "RT") {
                             if (obj.entities.user_mentions.length == 0) {
                                 return null;

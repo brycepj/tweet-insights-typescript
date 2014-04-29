@@ -2,7 +2,7 @@ var app;
 (function (app) {
     (function (util) {
         function initModels() {
-            var getRawData = $.getJSON('data/austin.json');
+            var getRawData = $.getJSON('data/mitchell.json');
 
             var timeData, contextData;
 
@@ -10,6 +10,9 @@ var app;
                 console.log('request succeeded');
                 timeData = new app.model.TimeData(data);
                 contextData = new app.model.ContextData(data);
+            }).done(function () {
+                var parsedReasons = contextData.getReasons();
+                //new views, pass in models using above format
             }).fail(function () {
                 console.log('request failed');
             }).done(function () {
@@ -274,6 +277,20 @@ var app;
             function tweetClient(data) {
                 var clients = data;
 
+                /*
+                
+                var clientCounter array of objects
+                
+                loop through clients
+                var store obj
+                var store source
+                
+                loop through storeClients
+                if current.client = source
+                current.quantity++
+                if is last index of store and it doesn't match
+                push {"source":source,quantity:1} to storeClients
+                */
                 return "GALLO";
             }
             parsers.tweetClient = tweetClient;
@@ -292,7 +309,10 @@ var app;
                 function parseReasons() {
                     var parsed = [];
                     for (var i = 0; i < reasons.length; i++) {
-                        var stats = {};
+                        var stats = {
+                            type: null,
+                            sn: null
+                        };
 
                         var obj = reasons[i];
                         var text = obj.text;
@@ -308,6 +328,9 @@ var app;
                             stats.type = "declared";
                         }
 
+                        // need to write a function that checks if it's null or not, and then searches then slices
+                        // of the first two, checks for the at symbol, and stop at the first symbol or space
+                        // user_mention.screen name will show up first from RTs not listed as RTs
                         parsed.push(stats);
                     }
 
@@ -479,6 +502,41 @@ var app;
     })(app.util || (app.util = {}));
     var util = app.util;
 })(app || (app = {}));
+var app;
+(function (app) {
+    (function (util) {
+        (function (parsers) {
+            function saveTweetDataByDay(data) {
+                var clients = data;
+
+                var obj = {
+                    "day": 1,
+                    "tweets": 2,
+                    "favorites": 12,
+                    "retweets": 122,
+                    "hashtags": [1, 2, 3, 4],
+                    "tweetLength": [10, 10, 20, 102],
+                    "percentBlue": [10, 23, 12, 34]
+                };
+                var returnObj = [];
+
+                return returnObj;
+            }
+            parsers.saveTweetDataByDay = saveTweetDataByDay;
+        })(util.parsers || (util.parsers = {}));
+        var parsers = util.parsers;
+    })(app.util || (app.util = {}));
+    var util = app.util;
+})(app || (app = {}));
+/// <reference path="tweetInterval.ts"/>
+/// <reference path="tweetActivityPerDay.ts"/>
+/// <reference path="tweetActivityPerHour.ts"/>
+/// <reference path="tweetGeo.ts"/>
+/// <reference path="tweetClient.ts"/>
+/// <reference path="tweetReason.ts"/>
+/// <reference path="saveTweetDataByDay.ts"/>
+/// <reference path="initModels.ts"/>
+/// <reference path="parsers/pkg.ts"/>
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -508,6 +566,7 @@ var app;
     })(app.views || (app.views = {}));
     var views = app.views;
 })(app || (app = {}));
+/// <reference path="view1.ts"/>
 var app;
 (function (app) {
     (function (_model) {
@@ -622,9 +681,11 @@ var app;
                 this.rawIntervals = [];
                 this.rawDates = [];
                 this.rawHours = [];
+                this.tweetDataByDay = [];
 
                 this.saveRawIntervals();
                 this.saveRawDates();
+                console.log(this.saveTweetDataByDay());
             };
 
             TimeData.prototype.saveRawIntervals = function () {
@@ -658,6 +719,12 @@ var app;
                     this.rawDates.push(datesObj);
                     this.rawHours.push(hoursObj);
                 }
+            };
+
+            TimeData.prototype.saveTweetDataByDay = function () {
+                var array = this.raw;
+
+                return app.util.parsers.saveTweetDataByDay(array);
             };
 
             TimeData.prototype.getIntervals = function () {
@@ -802,10 +869,16 @@ var app;
     })(app.model || (app.model = {}));
     var model = app.model;
 })(app || (app = {}));
+/// <reference path="RawTweetData.ts"/>
+/// <reference path="JustTextData.ts"/>
+/// <reference path="TextAndTimeData.ts"/>
+/// <reference path="TimeData.ts"/>
+/// <reference path="ContextData.ts"/>
 var app;
 (function (app) {
     (function () {
         $(document).ready(function () {
+            //this is a good place to invoke site/view based functions, completely unrelated to one another
             app.util.initModels();
         });
     })();
@@ -814,9 +887,45 @@ var app;
 (function (app) {
     var LoadingMask = (function () {
         function LoadingMask() {
-            console.log('kike shit');
+            console.log('start the loading mask');
         }
         return LoadingMask;
     })();
     app.LoadingMask = LoadingMask;
 })(app || (app = {}));
+/// <reference path="init.ts"/>
+/// <reference path="loadingMask.ts"/>
+var app;
+(function (app) {
+    (function (utils) {
+        function initModels() {
+            var getRawData = $.getJSON('data/mitchell.json');
+
+            var timeData, contextData;
+
+            getRawData.done(function (data) {
+                console.log('request succeeded');
+                timeData = new app.model.TimeData(data);
+                contextData = new app.model.ContextData(data);
+            }).done(function () {
+                var parsedReasons = contextData.getReasons();
+                //new views, pass in models using above format
+            }).fail(function () {
+                console.log('request failed');
+            });
+        }
+        utils.initModels = initModels;
+    })(app.utils || (app.utils = {}));
+    var utils = app.utils;
+})(app || (app = {}));
+/// <reference path="initModels.ts"/>
+/// <reference path="lib/underscore.d.ts"/>
+/// <reference path="lib/jquery.d.ts"/>
+/// <reference path="lib/backbone.d.ts"/>
+/// <reference path="lib/moment.d.ts"/>
+/// <reference path="util/pkg.ts"/>
+/// <reference path="view/pkg.ts"/>
+/// <reference path="model/dataSets/pkg.ts"/>
+/// <reference path="init/pkg.ts"/>
+/// <reference path="utils/pkg.ts"/>
+// this is where the order matters

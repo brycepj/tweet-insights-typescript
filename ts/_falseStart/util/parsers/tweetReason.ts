@@ -11,11 +11,14 @@ module app {
 
                     var parsed = [];
                     for (var i = 0; i < reasons.length; i++) {
-                        var stats = {};
+                        var stats = {
+                            type: null,
+                            sn: null
+                        };
 
                         var obj = reasons[i];
                         var text = obj.text;
-                        var firstTwo = text.substring(0,2);
+                        var firstTwo = text.substring(0, 2);
 
                         if (obj.reply) {
                             stats.type = "reply";
@@ -143,7 +146,7 @@ module app {
 
                             if (i > 0) {
 
-                                rpModel.push({"handle": current, "count": count});
+                                rpModel.push({ "handle": current, "count": count });
                                 current = rpHandles[i];
                                 count = 1;
                             }
@@ -164,7 +167,7 @@ module app {
 
                             if (i > 0) {
 
-                                rtModel.push({"handle": current, "count": count});
+                                rtModel.push({ "handle": current, "count": count });
                                 current = rtHandles[i];
                                 count = 1;
                             }

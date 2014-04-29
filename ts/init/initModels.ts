@@ -4,19 +4,28 @@ module app {
     
         export function initModels() {
 
-            var getRawData = $.getJSON('data/austin.json');
+            var getRawData = $.getJSON('data/mitchell.json');
 
-            var timeData, contextData;
 
             getRawData.done(function(data){
                 console.log('request succeeded');
-                timeData = new app.model.TimeData(data);
-                contextData = new app.model.ContextData(data);
 
-            }).fail(function(){
-                console.log('request failed');
+                //initialize new data sets
+
             }).done(function(){
-                var randoBando = new app.views.TweetReasonsView(contextData);
+
+                //scrub and parse datasets
+
+            }).done(function(){
+
+                //new parsing of models
+                
+            }).fail(function(){
+
+                console.log('request failed');
+
+            }).done(function(){
+
             });
 
 

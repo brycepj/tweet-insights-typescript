@@ -1,2 +1,8 @@
 /// <reference path="init.ts"/>
-/// <reference path="loadingMask.ts"/>
+/// <reference path="initModels.ts"/>
+
+module app {
+
+
+
+}

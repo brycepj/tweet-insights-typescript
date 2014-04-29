@@ -4,11 +4,12 @@ module app {
 
         export class TimeData extends Backbone.Model {
 
-            raw:any;
-            model:any;
-            rawIntervals:any;
-            rawDates:any;
-            rawHours:any;
+            raw: any;
+            model: any;
+            rawIntervals: any;
+            rawDates: any;
+            rawHours: any;
+            tweetDataByDay: any;
 
             constructor(raw) {
                 super();
@@ -24,19 +25,20 @@ module app {
 
             }
 
-            init():void {
+            init(): void {
 
                 this.rawIntervals = [];
                 this.rawDates = [];
                 this.rawHours = [];
+                this.tweetDataByDay = [];
 
 
                 this.saveRawIntervals();
                 this.saveRawDates();
-
+                console.log(this.saveTweetDataByDay());
             }
 
-            saveRawIntervals():void {
+            saveRawIntervals(): void {
 
                 var array = this.raw;
 
@@ -55,7 +57,7 @@ module app {
                 }
             }
 
-            saveRawDates():void {
+            saveRawDates(): void {
 
                 var array = this.raw;
 
@@ -74,15 +76,20 @@ module app {
 
             }
 
+            saveTweetDataByDay() {
+                var array = this.raw;
 
-            getIntervals():any {
+                return app.util.parsers.saveTweetDataByDay(array);
+            }
 
+
+            getIntervals(): any {
                 var array = this.rawIntervals;
 
                 return app.util.parsers.tweetInterval(array);
             }
 
-            getActivityPerDay():any {
+            getActivityPerDay(): any {
 
                 var array = this.rawDates;
 
@@ -90,7 +97,7 @@ module app {
 
             }
 
-            getActivityPerHour():any {
+            getActivityPerHour(): any {
 
                 var array = this.rawHours;
 
