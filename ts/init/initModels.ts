@@ -8,32 +8,27 @@ module app {
 
 
             getRawData.done(function(data){
-                console.log('request succeeded');
 
+                var raw = app.scrubRawData(data);
+
+                console.log(raw,'this is cleaned up');
                 //initialize new data sets
 
-            }).done(function(){
+            }).done(function(data){
 
                 //scrub and parse datasets
 
-            }).done(function(){
+            }).done(function(data){
 
                 //new parsing of models
                 
-            }).fail(function(){
+            }).fail(function(data){
 
                 console.log('request failed');
 
-            }).done(function(){
+            }).done(function(data){
 
             });
-
-
-        
         }
-    
-    
     }
-
-
 }

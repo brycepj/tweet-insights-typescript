@@ -4,7 +4,7 @@ module app {
         $(document).ready(function () {
 
             //this is a good place to invoke site/view based functions, completely unrelated to one another
-            app.utils.initModels();
+            app.util.initModels();
 
            
         });
