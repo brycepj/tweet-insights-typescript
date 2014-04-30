@@ -13,7 +13,7 @@ module app {
                 this.model = {};
 
                 this.init();
-                console.log(this.model);
+                console.log('data by date', this.model);
             }
 
             init(): any {

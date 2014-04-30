@@ -6,23 +6,22 @@ module app {
 
             var getRawData = $.getJSON('data/bryce.json');
             var freshData,dataByDate;
+            var tweetReasonsModel;
                 
             getRawData.done(function(data){
 
                 freshData = app.scrubRawData(data);
 
-                console.log(freshData,'fresh data');
-                //initialize new data sets
+                console.log('fresh data',freshData);
 
             }).done(function(data){
 
                 dataByDate = new app.models.DataByDate(freshData);
 
-                //scrub and parse datasets
 
             }).done(function(data){
 
-                //new parsing of models
+                tweetReasonsModel = new app.models.TweetReasonsModel(dataByDate.model);
                 
             }).fail(function(data){
 
