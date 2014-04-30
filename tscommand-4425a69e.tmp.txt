@@ -1,0 +1,1 @@
+"/Users/bryce/repo/tweets/ts/pkg.ts" --declaration --target ES5 --module amd --out js/main.js
