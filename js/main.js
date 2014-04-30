@@ -151,6 +151,7 @@ var app;
             function TweetReasonsConfig(TweetReasons) {
                 _super.call(this);
 
+                this.data = TweetReasons;
                 this.model = TweetReasons;
                 console.log('the data we are working with here', TweetReasons);
             }
@@ -536,6 +537,7 @@ var app;
                 _super.call(this);
 
                 this.model = model;
+                //do highcharts jquery intializer, passing in config from model
             }
             return TweetReasonsView;
         })(Backbone.View);

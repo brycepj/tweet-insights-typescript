@@ -9,9 +9,12 @@ module app {
                 
                 this.model = model;
                 
-            
+                            //do highcharts jquery intializer, passing in config from model
+
             }
         
+           
+            
         }
     
     }
