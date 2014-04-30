@@ -7,6 +7,7 @@ module app {
             var getRawData = $.getJSON('data/bryce.json');
             var freshData,dataByDate;
             var tweetReasonsModel;
+            var tweetReasonsConfig;
                 
             getRawData.done(function(data){
 
@@ -29,6 +30,12 @@ module app {
 
             }).done(function(data){
 
+                tweetReasonsConfig = new app.models.TweetReasonsConfig(tweetReasonsModel.model);
+            }).done(function(){
+            
+                app.util.initViews({
+                    tweetReasons:tweetReasonsConfig
+                });
             });
         }
     }

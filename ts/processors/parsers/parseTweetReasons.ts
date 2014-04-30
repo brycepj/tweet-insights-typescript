@@ -102,13 +102,13 @@ module app {
                 var rpStore = [];
 
                 for (var i = 0; i < parsed.length; i++) {
-                    if (parsed[i].type !== "declaration") {
+                    if (parsed[i].type !== "declared") {
                         switch (parsed[i].type) {
                             case "reply":
-                                rpStore.push(parsed[i].sn);
+                                rpStore.push(parsed[i].user);
                                 break;
-                            case "retweeted":
-                                rtStore.push(parsed[i].sn);
+                            case "retweet":
+                                rtStore.push(parsed[i].user);
                                 break;
                         }
                     }

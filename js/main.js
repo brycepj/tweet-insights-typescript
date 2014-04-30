@@ -19,6 +19,7 @@ var app;
             var getRawData = $.getJSON('data/bryce.json');
             var freshData, dataByDate;
             var tweetReasonsModel;
+            var tweetReasonsConfig;
 
             getRawData.done(function (data) {
                 freshData = app.scrubRawData(data);
@@ -31,14 +32,32 @@ var app;
             }).fail(function (data) {
                 console.log('request failed');
             }).done(function (data) {
+                tweetReasonsConfig = new app.models.TweetReasonsConfig(tweetReasonsModel.model);
+            }).done(function () {
+                app.util.initViews({
+                    tweetReasons: tweetReasonsConfig
+                });
             });
         }
         util.initModels = initModels;
     })(app.util || (app.util = {}));
     var util = app.util;
 })(app || (app = {}));
+var app;
+(function (app) {
+    (function (util) {
+        function initViews(models) {
+            var tweetReasonsView = new app.views.TweetReasonsView(models.tweetReasons.model);
+
+            console.log(tweetReasonsView);
+        }
+        util.initViews = initViews;
+    })(app.util || (app.util = {}));
+    var util = app.util;
+})(app || (app = {}));
 /// <reference path="init.ts"/>
 /// <reference path="initModels.ts"/>
+/// <reference path="initViews.ts"/>
 var app;
 (function (app) {
     (function (models) {
@@ -124,7 +143,26 @@ var app;
     })(app.models || (app.models = {}));
     var models = app.models;
 })(app || (app = {}));
+var app;
+(function (app) {
+    (function (models) {
+        var TweetReasonsConfig = (function (_super) {
+            __extends(TweetReasonsConfig, _super);
+            function TweetReasonsConfig(TweetReasons) {
+                _super.call(this);
+
+                this.model = TweetReasons;
+                console.log('the data we are working with here', TweetReasons);
+            }
+            return TweetReasonsConfig;
+        })(Backbone.Model);
+        models.TweetReasonsConfig = TweetReasonsConfig;
+    })(app.models || (app.models = {}));
+    var models = app.models;
+})(app || (app = {}));
+/// <reference path="TweetReasonsConfig.ts"/>
 /// <reference path="TweetReasonsModel.ts"/>
+/// <reference path="chartConfig/pkg.ts"/>
 var app;
 (function (app) {
     function scrubRawData(data) {
@@ -374,13 +412,13 @@ var app;
                 var rpStore = [];
 
                 for (var i = 0; i < parsed.length; i++) {
-                    if (parsed[i].type !== "declaration") {
+                    if (parsed[i].type !== "declared") {
                         switch (parsed[i].type) {
                             case "reply":
-                                rpStore.push(parsed[i].sn);
+                                rpStore.push(parsed[i].user);
                                 break;
-                            case "retweeted":
-                                rtStore.push(parsed[i].sn);
+                            case "retweet":
+                                rtStore.push(parsed[i].user);
                                 break;
                         }
                     }
@@ -489,10 +527,28 @@ var app;
 /// <reference path="parseTweetReasons.ts"/>
 /// <reference path="scrubbers/pkg.ts"/>
 /// <reference path="parsers/pkg.ts"/>
+var app;
+(function (app) {
+    (function (views) {
+        var TweetReasonsView = (function (_super) {
+            __extends(TweetReasonsView, _super);
+            function TweetReasonsView(model) {
+                _super.call(this);
+
+                this.model = model;
+            }
+            return TweetReasonsView;
+        })(Backbone.View);
+        views.TweetReasonsView = TweetReasonsView;
+    })(app.views || (app.views = {}));
+    var views = app.views;
+})(app || (app = {}));
+/// <reference path="TweetReasonsView.ts"/>
 /// <reference path="lib/pkg.ts"/>
 /// <reference path="init/pkg.ts"/>
 /// <reference path="models/datasets/pkg.ts"/>
 /// <reference path="models/pkg.ts"/>
 /// <reference path="processors/pkg.ts"/>
 /// <reference path="utils/pkg.ts"/>
+/// <reference path="views/pkg.ts"/>
 // this is where the order matters

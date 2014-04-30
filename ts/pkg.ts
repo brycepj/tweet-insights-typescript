@@ -4,6 +4,7 @@
 /// <reference path="models/pkg.ts"/>
 /// <reference path="processors/pkg.ts"/>
 /// <reference path="utils/pkg.ts"/>
+/// <reference path="views/pkg.ts"/>
 
 
 
