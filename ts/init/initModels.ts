@@ -4,14 +4,15 @@ module app {
     
         export function initModels() {
 
-            var getRawData = $.getJSON('data/mitchell.json');
+            var getRawData = $.getJSON('data/bryce.json');
+            var freshData,dataByDate;
             var cleanData, dataByHour;
 
             getRawData.done(function(data){
 
-                cleanData = app.scrubRawData(data);
-                
-                
+               freshData = app.scrubRawData(data);
+
+                console.log(freshData,'fresh data');
                 //initialize new data sets
 
             }).done(function(data){
@@ -19,6 +20,8 @@ module app {
                 dataByHour = new app.models.DataByHour(cleanData);
                 console.log(dataByHour);
                 
+                dataByDate = new app.models.DataByDate(freshData);
+
                 //scrub and parse datasets
 
             }).done(function(data){
