@@ -4,17 +4,19 @@ module app {
     
         export function initModels() {
 
-            var getRawData = $.getJSON('data/mitchell.json');
-
+            var getRawData = $.getJSON('data/bryce.json');
+            var freshData,dataByDate;
 
             getRawData.done(function(data){
 
-                var raw = app.scrubRawData(data);
+                freshData = app.scrubRawData(data);
 
-                console.log(raw,'this is cleaned up');
+                console.log(freshData,'fresh data');
                 //initialize new data sets
 
             }).done(function(data){
+
+                dataByDate = new app.models.DataByDate(freshData);
 
                 //scrub and parse datasets
 

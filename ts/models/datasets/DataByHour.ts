@@ -2,11 +2,10 @@ module app {
 
     export module models {
 
-        export class DataByHour() {
+        export class DataByHour {
 
 
-
-    }
+        }
 
 
     }
