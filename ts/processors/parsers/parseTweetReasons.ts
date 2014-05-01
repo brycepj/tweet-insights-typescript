@@ -7,18 +7,16 @@ module app {
             var data = dataByDate;
 
             function parseReasons() {
-
                 var parsed = [];
-
                 for (var i = 0; i < data.length; i++) {
                     var day = data[i];
+
 
                     for (var j = 0; j < day.tweetData.length; j++) {
                         var stats = {
                             type: null,
                             user: null
                         };
-
                         var tweet = day.tweetData[j];
                         var text = tweet.text;
                         var RT = text.substring(0, 2);
@@ -29,13 +27,14 @@ module app {
                         if (replyUser) {
                             stats.type = "reply";
                             stats.user = replyUser;
-                        } else if (retweeted || RT == "RT") {
+                        } else if (retweeted) {
                             stats.type = "retweet";
                             stats.user = tweet.user_mentions[0].screen_name;
                         } else {
                             stats.type = "declared";
                             delete stats.user;
                         }
+
                         parsed.push(stats);
                     }
                 }

@@ -4,10 +4,10 @@ module app {
     
         export function initModels() {
 
-            var getRawData = $.getJSON('data/bryce.json');
+            var getRawData = $.getJSON('data/ben.json');
             var freshData,dataByDate;
-            var tweetReasonsModel;
-            var tweetReasonsConfig;
+            var reasonsModel;
+            var reasonsConfig;
                 
             getRawData.done(function(data){
 
@@ -22,7 +22,7 @@ module app {
 
             }).done(function(data){
 
-                tweetReasonsModel = new app.models.TweetReasonsModel(dataByDate.model);
+                reasonsModel = new app.models.TweetReasonsModel(dataByDate.model);
                 
             }).fail(function(data){
 
@@ -30,11 +30,11 @@ module app {
 
             }).done(function(data){
 
-                tweetReasonsConfig = new app.models.TweetReasonsConfig(tweetReasonsModel.model);
+                reasonsConfig = new app.models.TweetReasonsConfig(reasonsModel.model);
             }).done(function(){
             
                 app.util.initViews({
-                    tweetReasons:tweetReasonsConfig
+                    tweetReasons:reasonsConfig
                 });
             });
         }

@@ -16,10 +16,10 @@ var app;
 (function (app) {
     (function (util) {
         function initModels() {
-            var getRawData = $.getJSON('data/bryce.json');
+            var getRawData = $.getJSON('data/ben.json');
             var freshData, dataByDate;
-            var tweetReasonsModel;
-            var tweetReasonsConfig;
+            var reasonsModel;
+            var reasonsConfig;
 
             getRawData.done(function (data) {
                 freshData = app.scrubRawData(data);
@@ -28,14 +28,14 @@ var app;
             }).done(function (data) {
                 dataByDate = new app.models.DataByDate(freshData);
             }).done(function (data) {
-                tweetReasonsModel = new app.models.TweetReasonsModel(dataByDate.model);
+                reasonsModel = new app.models.TweetReasonsModel(dataByDate.model);
             }).fail(function (data) {
                 console.log('request failed');
             }).done(function (data) {
-                tweetReasonsConfig = new app.models.TweetReasonsConfig(tweetReasonsModel.model);
+                reasonsConfig = new app.models.TweetReasonsConfig(reasonsModel.model);
             }).done(function () {
                 app.util.initViews({
-                    tweetReasons: tweetReasonsConfig
+                    tweetReasons: reasonsConfig
                 });
             });
         }
@@ -152,9 +152,19 @@ var app;
                 _super.call(this);
 
                 this.data = TweetReasons;
-                this.model = TweetReasons;
-                console.log('the data we are working with here', TweetReasons);
+                this.init();
+
+                console.log('the data we are working with here', this.model);
             }
+            TweetReasonsConfig.prototype.init = function () {
+                this.model = this.formatData();
+            };
+
+            TweetReasonsConfig.prototype.formatData = function () {
+                var data = this.data;
+
+                return app.processors.tweetReasonsFormatting(data);
+            };
             return TweetReasonsConfig;
         })(Backbone.Model);
         models.TweetReasonsConfig = TweetReasonsConfig;
@@ -197,15 +207,18 @@ var app;
             function getMoments() {
                 var moments = [];
                 var array = dataSet;
+
                 var firstMoment;
 
                 for (var i = 0; i < array.length; i++) {
+                    var dayStr, yearStr, monthStr;
                     var obj = array[i];
+
                     var returnObj, age;
                     var dateStr = obj.created_at;
                     var currentMoment;
 
-                    currentMoment = moment(dateStr, "YYYY-MM-DD HH:mm:ss");
+                    currentMoment = moment(dateStr, "YYYY-MM-DD");
 
                     if (i === 0) {
                         firstMoment = currentMoment;
@@ -213,8 +226,12 @@ var app;
 
                     age = firstMoment.diff(currentMoment, 'days');
 
+                    yearStr = (currentMoment._a[0]).toString();
+                    monthStr = (currentMoment._a[1]).toString();
+                    dayStr = (currentMoment._a[2]).toString();
+
                     returnObj = {
-                        dateStr: currentMoment._i,
+                        dateStr: yearStr + monthStr + dayStr,
                         dateObj: currentMoment,
                         day: currentMoment._a[2],
                         month: currentMoment._a[1],
@@ -222,7 +239,6 @@ var app;
                         tweetId: i,
                         tweetAge: age
                     };
-
                     moments.push(returnObj);
                 }
                 return moments;
@@ -241,6 +257,7 @@ var app;
 
                     returnObj = {
                         age: momentObj.tweetAge,
+                        day: momentObj.day,
                         month: momentObj.month,
                         year: momentObj.year,
                         coordinates: obj.coordinates,
@@ -267,34 +284,37 @@ var app;
             }
 
             function sortTweetArray() {
+                console.log('store tweets', storeTweetArray());
+
                 var sortedTweet;
                 var momentArray = getMoments();
                 var tweetArray = storeTweetArray();
                 var sortedTweets = [];
                 var tweetsToday = [];
 
-                var currentAge = 0;
+                var currentDay = 0;
 
                 for (var i = 0; i < tweetArray.length; i++) {
                     var obj = tweetArray[i];
 
-                    if (obj.age !== currentAge) {
-                        if (obj.age > 0) {
+                    if (obj.created_at !== currentDay) {
+                        if (obj.created_at > 0) {
                             var newDay;
 
+                            sortedTweets.concat(tweetsToday);
+                            tweetsToday = [];
                             newDay = {
-                                day: currentAge,
+                                day: currentDay,
                                 count: tweetsToday.length,
                                 dateStr: momentArray[i].dateStr,
                                 dateObj: momentArray[i].dateObj,
                                 tweetData: tweetsToday
                             };
 
-                            sortedTweets.push(newDay);
-                            currentAge = obj.age;
-                            tweetsToday = [];
+                            tweetsToday.push(newDay);
+                            currentDay = obj.created_at;
                         } else {
-                            return null;
+                            currentDay = obj.created_at;
                         }
                     } else {
                         var array = tweetArray[i];
@@ -328,7 +348,6 @@ var app;
 
             function parseReasons() {
                 var parsed = [];
-
                 for (var i = 0; i < data.length; i++) {
                     var day = data[i];
 
@@ -337,7 +356,6 @@ var app;
                             type: null,
                             user: null
                         };
-
                         var tweet = day.tweetData[j];
                         var text = tweet.text;
                         var RT = text.substring(0, 2);
@@ -348,13 +366,14 @@ var app;
                         if (replyUser) {
                             stats.type = "reply";
                             stats.user = replyUser;
-                        } else if (retweeted || RT == "RT") {
+                        } else if (retweeted) {
                             stats.type = "retweet";
                             stats.user = tweet.user_mentions[0].screen_name;
                         } else {
                             stats.type = "declared";
                             delete stats.user;
                         }
+
                         parsed.push(stats);
                     }
                 }
@@ -526,8 +545,40 @@ var app;
 })(app || (app = {}));
 /// <reference path="parseDataByDate.ts"/>
 /// <reference path="parseTweetReasons.ts"/>
+var app;
+(function (app) {
+    (function (processors) {
+        function tweetReasonsFormatting(data) {
+            var reasons = data;
+
+            function formatSeriesData() {
+                var formattedSeries;
+
+                formattedSeries = [
+                    ['Declarations', reasons.declarations.total],
+                    ['Replies', reasons.replies.total],
+                    ['Retweets', reasons.retweets.total]
+                ];
+
+                return formattedSeries;
+            }
+
+            var formattedData = {
+                chartTitleText: "How do you use Twitter?",
+                chartType: "pie",
+                seriesData: formatSeriesData()
+            };
+
+            return formattedData;
+        }
+        processors.tweetReasonsFormatting = tweetReasonsFormatting;
+    })(app.processors || (app.processors = {}));
+    var processors = app.processors;
+})(app || (app = {}));
+/// <reference path="tweetReasonsFormatting.ts"/>
 /// <reference path="scrubbers/pkg.ts"/>
 /// <reference path="parsers/pkg.ts"/>
+/// <reference path="formatters/pkg.ts"/>
 var app;
 (function (app) {
     (function (views) {
@@ -537,8 +588,29 @@ var app;
                 _super.call(this);
 
                 this.model = model;
-                //do highcharts jquery intializer, passing in config from model
+
+                this.init();
             }
+            TweetReasonsView.prototype.init = function () {
+                this.render();
+            };
+
+            TweetReasonsView.prototype.render = function () {
+                var m = this.model;
+                /*
+                $('#container').highcharts({
+                chart: {
+                type: m.chartType
+                },
+                title: {
+                text: m.chartTitleText
+                },
+                series: [{
+                data: m.seriesData
+                }]
+                });
+                */
+            };
             return TweetReasonsView;
         })(Backbone.View);
         views.TweetReasonsView = TweetReasonsView;

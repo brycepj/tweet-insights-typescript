@@ -10,25 +10,32 @@ module app {
             function getMoments() {
                 var moments = [];
                 var array = dataSet;
+                
                 var firstMoment;
 
                 for (var i = 0; i < array.length; i++) {
-
+                    var dayStr,yearStr,monthStr;
                     var obj = array[i];
+                    
                     var returnObj, age;
                     var dateStr = obj.created_at;
                     var currentMoment;
 
-                    currentMoment = moment(dateStr, "YYYY-MM-DD HH:mm:ss");
-
+                    currentMoment = moment(dateStr, "YYYY-MM-DD");
+                    
+                    
                     if (i === 0) {
                         firstMoment = currentMoment;
                     }
 
                     age = firstMoment.diff(currentMoment, 'days');
 
+                    yearStr = (currentMoment._a[0]).toString();
+                    monthStr = (currentMoment._a[1]).toString();
+                    dayStr = (currentMoment._a[2]).toString();
+
                     returnObj = {
-                        dateStr: currentMoment._i,
+                        dateStr: yearStr + monthStr + dayStr,
                         dateObj: currentMoment,
                         day: currentMoment._a[2],
                         month: currentMoment._a[1],
@@ -36,7 +43,6 @@ module app {
                         tweetId: i,
                         tweetAge: age
                     };
-
                     moments.push(returnObj);
                 }
                 return moments;
@@ -48,7 +54,7 @@ module app {
 
                 var tweetData = [];
 
-
+                
                 for (var i = 0; i < dataSet.length; i++) {
                     var returnObj, obj, momentObj, newAge;
 
@@ -57,6 +63,7 @@ module app {
 
                     returnObj = {
                         age: momentObj.tweetAge,
+                        day:momentObj.day,
                         month: momentObj.month,
                         year: momentObj.year,
                         coordinates: obj.coordinates,
@@ -75,7 +82,8 @@ module app {
                         source_url: obj.source_url,
                         text: obj.text
                     };
-
+                    
+                    
                     tweetData.push(returnObj);
 
                 }
@@ -86,36 +94,44 @@ module app {
 
             function sortTweetArray() {
 
+                console.log('store tweets',storeTweetArray());
+                
                 var sortedTweet;
                 var momentArray = getMoments();
                 var tweetArray = storeTweetArray();
                 var sortedTweets = [];
                 var tweetsToday = [];
 
-                var currentAge = 0;
-
+                var currentDay = 0;
+                
+                
+                
                 for (var i = 0; i < tweetArray.length; i++) {
 
                     var obj = tweetArray[i];
 
-                    if (obj.age !== currentAge){
-                        if (obj.age > 0) {
+                    if (obj.created_at !== currentDay){
 
+                        if (obj.created_at > 0) {
+                            
                             var newDay;
-
+                            
+                            sortedTweets.concat(tweetsToday);
+                            tweetsToday = [];
                             newDay = {
-                                day:currentAge,
+                                day:currentDay,
                                 count:tweetsToday.length,
                                 dateStr:momentArray[i].dateStr,
                                 dateObj:momentArray[i].dateObj,
                                 tweetData:tweetsToday
                             };
 
-                            sortedTweets.push(newDay);
-                            currentAge = obj.age;
-                            tweetsToday = [];
+                            tweetsToday.push(newDay);
+                            currentDay = obj.created_at;
+                            
+                            
                         } else {
-                            return null;
+                            currentDay = obj.created_at;
                         }
 
                     } else {
@@ -128,12 +144,13 @@ module app {
                         delete array.created_at;
 
                         tweetsToday.push(array);
+                        
                     }
                     // check if it's the same day or a new day
                     // push an object to sorted that contains day info, and an array of tweets
 
                 }
-
+                 
                 return sortedTweets;
             }
 

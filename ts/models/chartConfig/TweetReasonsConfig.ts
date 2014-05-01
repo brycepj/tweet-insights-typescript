@@ -5,20 +5,33 @@ module app {
         export class TweetReasonsConfig extends Backbone.Model {
 
             data: any;
-            model:any;
-            
+            model: any;
+
             constructor(TweetReasons) {
                 super();
-                
-                this.data = TweetReasons;
-                this.model = TweetReasons;
-                console.log('the data we are working with here', TweetReasons);
 
-               
+                this.data = TweetReasons;
+                this.init();
+                
+                
+                console.log('the data we are working with here', this.model);
+
+
 
             }
 
-
+            init() {
+                
+                this.model = this.formatData();
+                
+            }
+            
+            formatData() {
+                var data = this.data;
+                
+                return app.processors.tweetReasonsFormatting(data);
+            
+            }
 
         }
 
