@@ -6,7 +6,6 @@ module app {
 
             var data = dataByDate.forTotals;
 
-            console.log('what we are working with next', data);
             function parseReasons() {
                 var parsed = [];
                 for (var i = 0; i < data.length; i++) {
@@ -89,7 +88,8 @@ module app {
                                         mentionsList.push(tweet.user_mentions[3].screen_name);
                                         mentionsList.push(tweet.user_mentions[4].screen_name);
                                         mentionsList.push(tweet.user_mentions[5].screen_name);
-                                        console.log('more than six users mentioned', i, j);
+                                        mentionsList.push(tweet.user_mentions[6].screen_name);
+                                        
                                         break;
                                 }
 

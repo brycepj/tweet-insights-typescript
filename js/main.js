@@ -351,7 +351,6 @@ var app;
         function parseTweetReasons(dataByDate) {
             var data = dataByDate.forTotals;
 
-            console.log('what we are working with next', data);
             function parseReasons() {
                 var parsed = [];
                 for (var i = 0; i < data.length; i++) {
@@ -432,7 +431,8 @@ var app;
                                         mentionsList.push(tweet.user_mentions[3].screen_name);
                                         mentionsList.push(tweet.user_mentions[4].screen_name);
                                         mentionsList.push(tweet.user_mentions[5].screen_name);
-                                        console.log('more than six users mentioned', i, j);
+                                        mentionsList.push(tweet.user_mentions[6].screen_name);
+
                                         break;
                                 }
 
@@ -690,8 +690,13 @@ var app;
                 this.model = model;
 
                 this.init();
+
+                this.id = "target";
             }
             TweetReasonsView.prototype.init = function () {
+                var model = this.model;
+
+                this.template = _.template($('#tweet-reasons-template').html(), model);
                 this.render();
             };
 
@@ -711,6 +716,8 @@ var app;
                             data: m.seriesData
                         }]
                 });
+
+                this.$el.html(this.template);
             };
             return TweetReasonsView;
         })(Backbone.View);
