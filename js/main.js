@@ -24,7 +24,7 @@ var app;
             getRawData.done(function (data) {
                 freshData = app.scrubRawData(data);
 
-                console.log('fresh data', freshData);
+                console.log('fresh data length', freshData.length, freshData);
             }).done(function (data) {
                 dataByDate = new app.models.DataByDate(freshData);
             }).done(function (data) {
@@ -64,10 +64,10 @@ var app;
         var DataByDate = (function () {
             function DataByDate(freshData) {
                 this.dataSet = freshData;
-                this.model = {};
+                this.model = null;
 
                 this.init();
-                console.log('data by date', this.model);
+                console.log('data by date of arrays', this.model);
             }
             DataByDate.prototype.init = function () {
                 var freshData = this.dataSet;
@@ -232,12 +232,9 @@ var app;
 
                     returnObj = {
                         dateStr: yearStr + monthStr + dayStr,
-                        dateObj: currentMoment,
                         day: currentMoment._a[2],
                         month: currentMoment._a[1],
-                        year: currentMoment._a[0],
-                        tweetId: i,
-                        tweetAge: age
+                        year: currentMoment._a[0]
                     };
                     moments.push(returnObj);
                 }
@@ -256,7 +253,6 @@ var app;
                     momentObj = moments[i];
 
                     returnObj = {
-                        age: momentObj.tweetAge,
                         day: momentObj.day,
                         month: momentObj.month,
                         year: momentObj.year,
@@ -279,62 +275,67 @@ var app;
 
                     tweetData.push(returnObj);
                 }
-
                 return tweetData;
             }
 
             function sortTweetArray() {
-                console.log('store tweets', storeTweetArray());
-
                 var sortedTweet;
                 var momentArray = getMoments();
                 var tweetArray = storeTweetArray();
                 var sortedTweets = [];
                 var tweetsToday = [];
 
-                var currentDay = 0;
+                var prevDate = null;
 
                 for (var i = 0; i < tweetArray.length; i++) {
                     var obj = tweetArray[i];
+                    var newDate = obj.created_at;
 
-                    if (obj.created_at !== currentDay) {
-                        if (obj.created_at > 0) {
-                            var newDay;
-
-                            sortedTweets.concat(tweetsToday);
-                            tweetsToday = [];
-                            newDay = {
-                                day: currentDay,
-                                count: tweetsToday.length,
-                                dateStr: momentArray[i].dateStr,
-                                dateObj: momentArray[i].dateObj,
-                                tweetData: tweetsToday
-                            };
-
-                            tweetsToday.push(newDay);
-                            currentDay = obj.created_at;
-                        } else {
-                            currentDay = obj.created_at;
-                        }
+                    if (i === 0) {
+                        prevDate = newDate;
+                        tweetsToday.push(obj);
                     } else {
-                        var array = tweetArray[i];
-
-                        delete array.age;
-                        delete array.day;
-                        delete array.month;
-                        delete array.year;
-                        delete array.created_at;
-
-                        tweetsToday.push(array);
+                        if (newDate === prevDate) {
+                            tweetsToday.push(obj);
+                            if (i === tweetArray.length - 1) {
+                                sortedTweets.push(tweetsToday);
+                            }
+                        } else {
+                            sortedTweets.push(tweetsToday); //unload tweetsToday array into sortedTweets
+                            tweetsToday = []; //clear tweetsToday
+                            tweetsToday.push(obj); // add today to tweetsToday
+                            prevDate = newDate; //update prevdate, so next tweet can check
+                        }
                     }
-                    // check if it's the same day or a new day
-                    // push an object to sorted that contains day info, and an array of tweets
                 }
 
                 return sortedTweets;
             }
 
-            return sortTweetArray();
+            function sortTweetsByDates() {
+                var returnArray = [];
+                var sortedTweets = sortTweetArray();
+
+                for (var i = 0; i < sortedTweets.length; i++) {
+                    var newObj;
+                    var obj = sortedTweets[i];
+                    var date = obj[0].created_at;
+
+                    newObj = {
+                        "date": date,
+                        "tweets": obj
+                    };
+
+                    returnArray.push(newObj);
+                }
+
+                return returnArray;
+            }
+
+            return {
+                forTotals: sortTweetArray(),
+                forDays: sortTweetsByDates()
+            };
         }
         processors.parseDataByDate = parseDataByDate;
     })(app.processors || (app.processors = {}));

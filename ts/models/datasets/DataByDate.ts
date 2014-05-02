@@ -10,10 +10,10 @@ module app {
             constructor(freshData) {
 
                 this.dataSet = freshData;
-                this.model = {};
+                this.model = null;
 
                 this.init();
-                console.log('data by date', this.model);
+                console.log('data by date of arrays', this.model);
             }
 
             init(): any {

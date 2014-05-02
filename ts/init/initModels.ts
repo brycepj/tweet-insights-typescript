@@ -13,12 +13,11 @@ module app {
 
                 freshData = app.scrubRawData(data);
 
-                console.log('fresh data',freshData);
+                console.log('fresh data length', freshData.length, freshData);
 
             }).done(function(data){
 
                 dataByDate = new app.models.DataByDate(freshData);
-
 
             }).done(function(data){
 
