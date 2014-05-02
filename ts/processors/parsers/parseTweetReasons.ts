@@ -32,12 +32,18 @@ module app {
                             stats.user = replyUser;
                         } else if (retweeted) {
                             stats.type = "retweet";
-                            stats.user = tweet.user_mentions[0].screen_name;
+
+                            if (tweet.user_mentions.length === 0) {
+                                stats.user = "account_deleted";
+                            } else {
+                                stats.user = tweet.user_mentions[0].screen_name;
+                            }
+
                         } else {
                             var mentions = tweet.user_mentions.length;
                             var mentionsList = [];
 
-                            stats.type = "comment";
+                            stats.type = "statement";
                             stats.user = (function() {
                                 switch (mentions) {
                                     case 0:
@@ -77,7 +83,13 @@ module app {
                                         break;
 
                                     default:
-                                        console.log('something screwed up', i, j);
+                                        mentionsList.push(tweet.user_mentions[0].screen_name);
+                                        mentionsList.push(tweet.user_mentions[1].screen_name);
+                                        mentionsList.push(tweet.user_mentions[2].screen_name);
+                                        mentionsList.push(tweet.user_mentions[3].screen_name);
+                                        mentionsList.push(tweet.user_mentions[4].screen_name);
+                                        mentionsList.push(tweet.user_mentions[5].screen_name);
+                                        console.log('more than six users mentioned', i, j);
                                         break;
                                 }
 
@@ -102,9 +114,9 @@ module app {
 
                 var parsed = parseReasons();
                 var replyCount = 0;
-                var commentCount = 0;
+                var statementCount = 0;
                 var retweetCount = 0;
-                var replyPercent, commentPercent, retweetPercent;
+                var replyPercent, statementPercent, retweetPercent;
 
 
                 for (var i = 0; i < parsed.length; i++) {
@@ -117,8 +129,8 @@ module app {
                         case "retweet":
                             retweetCount++;
                             break;
-                        case "comment":
-                            commentCount++;
+                        case "statement":
+                            statementCount++;
                             break;
                         default:
                             console.log('something screwed up');
@@ -130,9 +142,9 @@ module app {
 
                 replyPercent = ((replyCount / parsed.length) * 100).toFixed(2);
                 retweetPercent = ((retweetCount / parsed.length) * 100).toFixed(2);
-                commentPercent = ((commentCount / parsed.length) * 100).toFixed(2);
+                statementPercent = ((statementCount / parsed.length) * 100).toFixed(2);
 
-                console.log(replyPercent, retweetPercent, commentPercent)
+                console.log(replyPercent, retweetPercent, statementPercent)
                                 return {
                     "retweet": {
                         "total": retweetCount,
@@ -142,9 +154,9 @@ module app {
                         "total": replyCount,
                         "percent": replyPercent
                     },
-                    "declaration": {
-                        "total": commentCount,
-                        "percent": commentPercent
+                    "statement": {
+                        "total": statementCount,
+                        "percent": statementPercent
                     }
                 }
 
@@ -155,7 +167,7 @@ module app {
                 var parsed = parseReasons();
                 var rtStore = [];
                 var rpStore = [];
-                var coStore = [];
+                var stStore = [];
 
                 for (var i = 0; i < parsed.length; i++) {
                     if (parsed[i].type !== "declared") {
@@ -166,10 +178,10 @@ module app {
                             case "retweet":
                                 rtStore.push(parsed[i].user);
                                 break;
-                            case "comment":
+                            case "statement":
                                 if (parsed[i].user) {
                                     for (var j = 0; j < parsed[i].user.length; j++) {
-                                        coStore.push(parsed[i].user[j]);
+                                        stStore.push(parsed[i].user[j]);
                                     }
                                     break;
                                 }
@@ -180,7 +192,7 @@ module app {
                                 return {
                     "retweetHandles": rtStore.sort(),
                     "replyHandles": rpStore.sort(),
-                    "commentHandles": coStore.sort()
+                    "statementHandles": stStore.sort()
                 }
 
 
@@ -191,10 +203,10 @@ module app {
                 var handles = storeHandles();
                 var rpHandles = handles.replyHandles;
                 var rtHandles = handles.retweetHandles;
-                var coHandles = handles.commentHandles;
+                var stHandles = handles.statementHandles;
                 var rtModel = [];
                 var rpModel = [];
-                var coModel = [];
+                var stModel = [];
 
 
                 var current = null;
@@ -242,19 +254,19 @@ module app {
 
                 }
 
-                for (var i = 0; i < coHandles.length; i++) {
+                for (var i = 0; i < stHandles.length; i++) {
 
                     if (i === 0) {
-                        current = coHandles[0];
+                        current = stHandles[0];
 
                     }
 
-                    if (current != coHandles[i]) {
+                    if (current != stHandles[i]) {
 
                         if (i > 0) {
 
-                            coModel.push({ "handle": current, "count": count });
-                            current = coHandles[i];
+                            stModel.push({ "handle": current, "count": count });
+                            current = stHandles[i];
                             count = 1;
                         }
                     } else {
@@ -272,13 +284,13 @@ module app {
 
                 rtModel = rtModel.sort(compare);
                 rpModel = rpModel.sort(compare);
-                coModel = coModel.sort(compare);
+                stModel = stModel.sort(compare);
 
 
                 return {
                     "rpModel": rpModel,
                     "rtModel": rtModel,
-                    "coModel": coModel
+                    "stModel": stModel
                 };
 
             }
@@ -290,7 +302,7 @@ module app {
 
                 var rtModel = countHandles().rtModel;
                 var rpModel = countHandles().rpModel;
-                var coModel = countHandles().coModel;
+                var stModel = countHandles().stModel;
 
 
                 var returnObj = {
@@ -305,10 +317,10 @@ module app {
                         "percent": counts.reply.percent,
                         "favorites": rpModel
                     },
-                    "comments": {
-                        "total": counts.declaration.total,
-                        "percent": counts.declaration.percent,
-                        "favorites": coModel
+                    "statements": {
+                        "total": counts.statement.total,
+                        "percent": counts.statement.percent,
+                        "favorites": stModel
                     }
                 };
 
