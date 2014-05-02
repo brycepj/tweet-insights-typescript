@@ -95,6 +95,7 @@ module app {
                 var tweetsToday = [];
 
                 var prevDate = null;
+                var lastIndex = tweetArray.length - 1;
 
                 //sort tweets into days
                 for (var i = 0; i < tweetArray.length; i++) {
@@ -102,20 +103,21 @@ module app {
                     var obj = tweetArray[i];
                     var newDate = obj.created_at;
 
-                    if (i === 0) { //if first tweet initialize prev date and save tweet to tweetsToday array
+                    if (i === 0) {
                         prevDate = newDate;
                         tweetsToday.push(obj);
-                    } else { // after first tweet
-                        if (newDate === prevDate) { // if it is the same day as the last tweet
+                    } else if (i === lastIndex) {
+                        tweetsToday.push(obj);
+                        sortedTweets.push(tweetsToday);
+                    }
+                    else { 
+                        if (newDate === prevDate) { 
                             tweetsToday.push(obj);
-                            if (i === tweetArray.length - 1) {
-                                sortedTweets.push(tweetsToday);
-                            }
-                        } else { // if todays tweet happened on a different day than the last
-                            sortedTweets.push(tweetsToday); //unload tweetsToday array into sortedTweets
-                            tweetsToday = []; //clear tweetsToday
-                            tweetsToday.push(obj); // add today to tweetsToday
-                            prevDate = newDate; //update prevdate, so next tweet can check
+                        } else {
+                            sortedTweets.push(tweetsToday);
+                            tweetsToday = []; 
+                            tweetsToday.push(obj); 
+                            prevDate = newDate; 
                         }
 
                     }
@@ -137,6 +139,9 @@ module app {
 
                     newObj = {
                         "date": date,
+                        "day": obj[0].day,
+                        "month": obj[0].month,
+                        "year": obj[0].year,
                         "tweets": obj
                     };
 

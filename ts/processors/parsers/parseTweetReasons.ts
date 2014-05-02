@@ -4,20 +4,23 @@ module app {
 
         export function parseTweetReasons(dataByDate) {
 
-            var data = dataByDate;
+            var data = dataByDate.forTotals;
 
+            console.log('what we are working with next', data);
             function parseReasons() {
                 var parsed = [];
                 for (var i = 0; i < data.length; i++) {
+
                     var day = data[i];
 
+                    for (var j = 0; j < day.length; j++) {
+                        var tweet = day[j];
 
-                    for (var j = 0; j < day.tweetData.length; j++) {
                         var stats = {
                             type: null,
                             user: null
                         };
-                        var tweet = day.tweetData[j];
+
                         var text = tweet.text;
                         var RT = text.substring(0, 2);
 
@@ -31,24 +34,77 @@ module app {
                             stats.type = "retweet";
                             stats.user = tweet.user_mentions[0].screen_name;
                         } else {
-                            stats.type = "declared";
+                            var mentions = tweet.user_mentions.length;
+                            var mentionsList = [];
+
+                            stats.type = "comment";
+                            stats.user = (function() {
+                                switch (mentions) {
+                                    case 0:
+                                        break;
+                                    case 1:
+                                        mentionsList.push(tweet.user_mentions[0].screen_name);
+                                        break;
+                                    case 2:
+                                        mentionsList.push(tweet.user_mentions[0].screen_name);
+                                        mentionsList.push(tweet.user_mentions[1].screen_name);
+                                        break;
+                                    case 3:
+                                        mentionsList.push(tweet.user_mentions[0].screen_name);
+                                        mentionsList.push(tweet.user_mentions[1].screen_name);
+                                        mentionsList.push(tweet.user_mentions[2].screen_name);
+                                        break;
+                                    case 4:
+                                        mentionsList.push(tweet.user_mentions[0].screen_name);
+                                        mentionsList.push(tweet.user_mentions[1].screen_name);
+                                        mentionsList.push(tweet.user_mentions[2].screen_name);
+                                        mentionsList.push(tweet.user_mentions[3].screen_name);
+                                        break;
+                                    case 5:
+                                        mentionsList.push(tweet.user_mentions[0].screen_name);
+                                        mentionsList.push(tweet.user_mentions[1].screen_name);
+                                        mentionsList.push(tweet.user_mentions[2].screen_name);
+                                        mentionsList.push(tweet.user_mentions[3].screen_name);
+                                        mentionsList.push(tweet.user_mentions[4].screen_name);
+                                        break;
+                                    case 6:
+                                        mentionsList.push(tweet.user_mentions[0].screen_name);
+                                        mentionsList.push(tweet.user_mentions[1].screen_name);
+                                        mentionsList.push(tweet.user_mentions[2].screen_name);
+                                        mentionsList.push(tweet.user_mentions[3].screen_name);
+                                        mentionsList.push(tweet.user_mentions[4].screen_name);
+                                        mentionsList.push(tweet.user_mentions[5].screen_name);
+                                        break;
+
+                                    default:
+                                        console.log('something screwed up', i, j);
+                                        break;
+                                }
+
+
+                                return mentionsList;
+
+                            })();
+                        }
+                        if (stats.user.length === 0) {
                             delete stats.user;
                         }
-
                         parsed.push(stats);
                     }
                 }
+
                 return parsed;
             }
+
 
 
             function getReasonCount() {
 
                 var parsed = parseReasons();
                 var replyCount = 0;
-                var declarationCount = 0;
+                var commentCount = 0;
                 var retweetCount = 0;
-                var replyPercent, declarationPercent, retweetPercent;
+                var replyPercent, commentPercent, retweetPercent;
 
 
                 for (var i = 0; i < parsed.length; i++) {
@@ -61,8 +117,8 @@ module app {
                         case "retweet":
                             retweetCount++;
                             break;
-                        case "declared":
-                            declarationCount++;
+                        case "comment":
+                            commentCount++;
                             break;
                         default:
                             console.log('something screwed up');
@@ -74,9 +130,9 @@ module app {
 
                 replyPercent = ((replyCount / parsed.length) * 100).toFixed(2);
                 retweetPercent = ((retweetCount / parsed.length) * 100).toFixed(2);
-                declarationPercent = ((declarationCount / parsed.length) * 100).toFixed(2);
+                commentPercent = ((commentCount / parsed.length) * 100).toFixed(2);
 
-
+                console.log(replyPercent, retweetPercent, commentPercent)
                                 return {
                     "retweet": {
                         "total": retweetCount,
@@ -87,18 +143,19 @@ module app {
                         "percent": replyPercent
                     },
                     "declaration": {
-                        "total": declarationCount,
-                        "percent": declarationPercent
+                        "total": commentCount,
+                        "percent": commentPercent
                     }
                 }
 
 
-                            }
+           }
 
             function storeHandles() {
                 var parsed = parseReasons();
                 var rtStore = [];
                 var rpStore = [];
+                var coStore = [];
 
                 for (var i = 0; i < parsed.length; i++) {
                     if (parsed[i].type !== "declared") {
@@ -109,14 +166,21 @@ module app {
                             case "retweet":
                                 rtStore.push(parsed[i].user);
                                 break;
+                            case "comment":
+                                if (parsed[i].user) {
+                                    for (var j = 0; j < parsed[i].user.length; j++) {
+                                        coStore.push(parsed[i].user[j]);
+                                    }
+                                    break;
+                                }
                         }
                     }
 
                 }
-
                                 return {
                     "retweetHandles": rtStore.sort(),
-                    "replyHandles": rpStore.sort()
+                    "replyHandles": rpStore.sort(),
+                    "commentHandles": coStore.sort()
                 }
 
 
@@ -127,8 +191,10 @@ module app {
                 var handles = storeHandles();
                 var rpHandles = handles.replyHandles;
                 var rtHandles = handles.retweetHandles;
+                var coHandles = handles.commentHandles;
                 var rtModel = [];
                 var rpModel = [];
+                var coModel = [];
 
 
                 var current = null;
@@ -175,6 +241,27 @@ module app {
                     }
 
                 }
+
+                for (var i = 0; i < coHandles.length; i++) {
+
+                    if (i === 0) {
+                        current = coHandles[0];
+
+                    }
+
+                    if (current != coHandles[i]) {
+
+                        if (i > 0) {
+
+                            coModel.push({ "handle": current, "count": count });
+                            current = coHandles[i];
+                            count = 1;
+                        }
+                    } else {
+                        count++;
+                    }
+
+                }
                 function compare(a, b) {
                     if (a.count > b.count)
                         return -1;
@@ -185,11 +272,13 @@ module app {
 
                 rtModel = rtModel.sort(compare);
                 rpModel = rpModel.sort(compare);
+                coModel = coModel.sort(compare);
 
 
                 return {
                     "rpModel": rpModel,
-                    "rtModel": rtModel
+                    "rtModel": rtModel,
+                    "coModel": coModel
                 };
 
             }
@@ -201,6 +290,7 @@ module app {
 
                 var rtModel = countHandles().rtModel;
                 var rpModel = countHandles().rpModel;
+                var coModel = countHandles().coModel;
 
 
                 var returnObj = {
@@ -215,9 +305,10 @@ module app {
                         "percent": counts.reply.percent,
                         "favorites": rpModel
                     },
-                    "declarations": {
+                    "comments": {
                         "total": counts.declaration.total,
-                        "percent": counts.declaration.percent
+                        "percent": counts.declaration.percent,
+                        "favorites": coModel
                     }
                 };
 

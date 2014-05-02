@@ -11,7 +11,7 @@ module app {
 
                 formattedSeries = [
 
-                    ['Declarations', reasons.declarations.total],
+                    ['Declarations', reasons.comments.total],
                     ['Replies', reasons.replies.total],
                     ['Retweets', reasons.retweets.total]
                 ];
