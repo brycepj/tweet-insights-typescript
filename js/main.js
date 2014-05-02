@@ -16,7 +16,7 @@ var app;
 (function (app) {
     (function (util) {
         function initModels() {
-            var getRawData = $.getJSON('data/mitchell.json');
+            var getRawData = $.getJSON('data/brooks.json');
             var freshData, dataByDate;
             var reasonsModel;
             var reasonsConfig;
@@ -697,19 +697,20 @@ var app;
 
             TweetReasonsView.prototype.render = function () {
                 var m = this.model;
-                /*
+
+                // create a template for all of the data
+                // render the template with data from the model
                 $('#container').highcharts({
-                chart: {
-                type: m.chartType
-                },
-                title: {
-                text: m.chartTitleText
-                },
-                series: [{
-                data: m.seriesData
-                }]
+                    chart: {
+                        type: m.chartType
+                    },
+                    title: {
+                        text: m.chartTitleText
+                    },
+                    series: [{
+                            data: m.seriesData
+                        }]
                 });
-                */
             };
             return TweetReasonsView;
         })(Backbone.View);

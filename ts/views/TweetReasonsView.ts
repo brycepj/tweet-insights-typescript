@@ -23,7 +23,10 @@ module app {
             render(): any {
 
                 var m = this.model;
-/*
+                // create a template for all of the data
+                // render the template with data from the model
+                
+                
                 $('#container').highcharts({
                     chart: {
                         type: m.chartType
@@ -35,7 +38,7 @@ module app {
                         data: m.seriesData
                     }]
                 });
-*/
+
             }
 
 
