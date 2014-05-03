@@ -157,7 +157,7 @@ var app;
                 console.log('the data we are working with here', this.model);
             }
             TweetReasonsConfig.prototype.init = function () {
-                this.model = this.formatData();
+                this.model = { model: this.data, chartData: this.formatData() };
             };
 
             TweetReasonsConfig.prototype.formatData = function () {
@@ -600,9 +600,9 @@ var app;
                 stModel = stModel.sort(compare);
 
                 return {
-                    "rpModel": rpModel,
-                    "rtModel": rtModel,
-                    "stModel": stModel
+                    "rpModel": { all: rpModel, topTen: rpModel.slice(0, 10) },
+                    "rtModel": { all: rtModel, topTen: rtModel.slice(0, 10) },
+                    "stModel": { all: stModel, topTen: stModel.slice(0, 10) }
                 };
             }
 
@@ -687,24 +687,37 @@ var app;
             function TweetReasonsView(model) {
                 _super.call(this);
 
+                this.data = model;
                 this.model = model;
 
-                this.init();
+                this.$el = $('#target');
 
-                this.id = "target";
+                this.init();
             }
             TweetReasonsView.prototype.init = function () {
                 var model = this.model;
 
-                this.template = _.template($('#tweet-reasons-template').html(), model);
                 this.render();
             };
 
             TweetReasonsView.prototype.render = function () {
-                var m = this.model;
+                this.renderTemplate();
+                this.renderChart();
+            };
 
-                // create a template for all of the data
-                // render the template with data from the model
+            TweetReasonsView.prototype.renderTemplate = function () {
+                var m = this.data;
+
+                var template = _.template($("#tweet-reasons-template").html(), { reasons: m.model });
+
+                this.$el.html(template);
+
+                console.log(m, 'm');
+            };
+
+            TweetReasonsView.prototype.renderChart = function () {
+                var m = this.data.chartData;
+
                 $('#container').highcharts({
                     chart: {
                         type: m.chartType
@@ -716,8 +729,6 @@ var app;
                             data: m.seriesData
                         }]
                 });
-
-                this.$el.html(this.template);
             };
             return TweetReasonsView;
         })(Backbone.View);

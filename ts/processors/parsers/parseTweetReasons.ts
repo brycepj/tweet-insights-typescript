@@ -287,10 +287,11 @@ module app {
                 stModel = stModel.sort(compare);
 
 
+
                 return {
-                    "rpModel": rpModel,
-                    "rtModel": rtModel,
-                    "stModel": stModel
+                    "rpModel": {all:rpModel,topTen:rpModel.slice(0,10)},
+                    "rtModel": {all:rtModel,topTen:rtModel.slice(0,10)},
+                    "stModel": {all:stModel,topTen:stModel.slice(0,10)}
                 };
 
             }

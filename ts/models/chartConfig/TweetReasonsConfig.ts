@@ -22,7 +22,7 @@ module app {
 
             init() {
                 
-                this.model = this.formatData();
+                this.model = {model:this.data,chartData:this.formatData()};
                 
             }
             

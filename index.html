@@ -10,7 +10,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" href="css/build/style.css">
+    <style>
+        .favorite-users {
+            float:left;
+        }
 
+        #container {
+            float:left;
+        }
+
+        h2 {
+            font-weight:bold;
+        }
+    </style>
 </head>
 <body>
 
@@ -22,28 +34,42 @@
 
 
 
-<div id="container" style="width:100%; height:600px;"></div>
+<div id="container" style="width:60%; height:600px;"></div>
 
 <script text="type/template" id="tweet-reasons-template">
 
 <div class="favorite-users">
-	<div class="fu-type-section">
-		<h2> <%= model.total %> </h2>
+
+<h1>Total: <%=reasons.total%></h1>
+
+  <div class="fu-type-section">
+		<h2>  replies </h2>
 		<ul class="fu-list">
-			<li class="fu-item"><span class="fu-count"></span></li>
+        <% _.each(reasons.replies.favorites.topTen, function(person) { %>
+
+			<li class="fu-item">@<%= person.handle %>-<span class="fu-count"><%= person.count %></span></li>
+
+            <% }); %>
 		</ul>
 	</div>
 	<div class="fu-type-section">
-		<h2>replies</h2>
+		<h2>retweets</h2>
 		<ul class="fu-list">
-			<li class="fu-item"><span class="fu-count"></span></li>
+        <% _.each(reasons.retweets.favorites.topTen, function(person) { %>
+
+    <li class="fu-item">@<%= person.handle %>-<span class="fu-count"><%= person.count %></span></li>
+
+    <% }); %>
 		</ul>
 	</div>
 	<div class="fu-type-section">
 		<h2>statements</h2>
 		<ul class="fu-list">
-			<li class="fu-item"><span class="fu-count"></span></li>
-		</ul>
+        <% _.each(reasons.statements.favorites.topTen, function(person) { %>
+
+    <li class="fu-item">@<%= person.handle %>-<span class="fu-count"><%= person.count %></span></li>
+
+    <% }); %>		</ul>
 	</div>
 </div>
 
@@ -61,7 +87,7 @@
 <script>
     $(document).ready(function(){
 		
-    	console.log('execute onReady DOM script tag')
+    	console.log('execute onReady DOM script tag');
     
     });
 
