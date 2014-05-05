@@ -13,8 +13,6 @@ module app {
                 this.data = DataByDate;                
                 
                 this.init();
-                
-                console.log('tweet reasons model',this.model);
 
             }
 

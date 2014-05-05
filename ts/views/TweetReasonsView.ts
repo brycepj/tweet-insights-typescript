@@ -39,8 +39,6 @@ module app {
 
                 this.$el.html( template );
 
-                console.log(m,'m');
-
 
             }
 

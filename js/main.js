@@ -17,8 +17,8 @@ var app;
     (function (util) {
         function initModels() {
             var getRawData = $.getJSON('data/brooks.json');
-            var freshData, dataByDate;
-            var reasonsModel;
+            var freshData, dataByDate, blueData;
+            var reasonsModel, blueModel;
             var reasonsConfig;
 
             getRawData.done(function (data) {
@@ -28,10 +28,14 @@ var app;
             }).done(function (data) {
                 dataByDate = new app.models.DataByDate(freshData);
             }).done(function (data) {
+                blueData = app.processors.blueScrubber(dataByDate.model.forTotals);
                 reasonsModel = new app.models.TweetReasonsModel(dataByDate.model);
+
+                console.log('here is the blue data', blueData);
             }).fail(function (data) {
                 console.log('request failed');
             }).done(function (data) {
+                blueModel = new app.models.BlueModel(blueData);
                 reasonsConfig = new app.models.TweetReasonsConfig(reasonsModel.model);
             }).done(function () {
                 app.util.initViews({
@@ -48,8 +52,6 @@ var app;
     (function (util) {
         function initViews(models) {
             var tweetReasonsView = new app.views.TweetReasonsView(models.tweetReasons.model);
-
-            console.log(tweetReasonsView);
         }
         util.initViews = initViews;
     })(app.util || (app.util = {}));
@@ -124,8 +126,6 @@ var app;
                 this.data = DataByDate;
 
                 this.init();
-
-                console.log('tweet reasons model', this.model);
             }
             TweetReasonsModel.prototype.init = function () {
                 this.model = {};
@@ -140,6 +140,27 @@ var app;
             return TweetReasonsModel;
         })(Backbone.Model);
         models.TweetReasonsModel = TweetReasonsModel;
+    })(app.models || (app.models = {}));
+    var models = app.models;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (models) {
+        var BlueModel = (function (_super) {
+            __extends(BlueModel, _super);
+            function BlueModel(blueData) {
+                _super.call(this);
+
+                this.data = blueData;
+            }
+            BlueModel.prototype.init = function () {
+            };
+
+            BlueModel.prototype.parseBlue = function () {
+            };
+            return BlueModel;
+        })(Backbone.Model);
+        models.BlueModel = BlueModel;
     })(app.models || (app.models = {}));
     var models = app.models;
 })(app || (app = {}));
@@ -173,6 +194,7 @@ var app;
 })(app || (app = {}));
 /// <reference path="TweetReasonsConfig.ts"/>
 /// <reference path="TweetReasonsModel.ts"/>
+/// <reference path="BlueModel.ts"/>
 /// <reference path="chartConfig/pkg.ts"/>
 var app;
 (function (app) {
@@ -197,7 +219,28 @@ var app;
     }
     app.scrubRawData = scrubRawData;
 })(app || (app = {}));
+var app;
+(function (app) {
+    (function (processors) {
+        function blueScrubber(data) {
+            var data = data;
+
+            for (var i = 0; i < data.length; i++) {
+                var obj = data[i];
+
+                for (var j = 0; j < obj.length; j++) {
+                    var obj1 = obj[j];
+                }
+            }
+
+            return data;
+        }
+        processors.blueScrubber = blueScrubber;
+    })(app.processors || (app.processors = {}));
+    var processors = app.processors;
+})(app || (app = {}));
 /// <reference path="scrubRawData.ts"/>
+/// <reference path="blueScrubber.ts"/>
 var app;
 (function (app) {
     (function (processors) {
@@ -479,7 +522,6 @@ var app;
                 retweetPercent = ((retweetCount / parsed.length) * 100).toFixed(2);
                 statementPercent = ((statementCount / parsed.length) * 100).toFixed(2);
 
-                console.log(replyPercent, retweetPercent, statementPercent);
                 return {
                     "retweet": {
                         "total": retweetCount,
@@ -711,8 +753,6 @@ var app;
                 var template = _.template($("#tweet-reasons-template").html(), { reasons: m.model });
 
                 this.$el.html(template);
-
-                console.log(m, 'm');
             };
 
             TweetReasonsView.prototype.renderChart = function () {

@@ -4,10 +4,7 @@ module app {
     
         export function initViews(models) {
 
-            var tweetReasonsView = new app.views.TweetReasonsView(models.tweetReasons.model);          
-            
-            console.log(tweetReasonsView);
-            
+            var tweetReasonsView = new app.views.TweetReasonsView(models.tweetReasons.model);
             
         }
     }

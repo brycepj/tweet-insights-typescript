@@ -144,7 +144,6 @@ module app {
                 retweetPercent = ((retweetCount / parsed.length) * 100).toFixed(2);
                 statementPercent = ((statementCount / parsed.length) * 100).toFixed(2);
 
-                console.log(replyPercent, retweetPercent, statementPercent)
                                 return {
                     "retweet": {
                         "total": retweetCount,
