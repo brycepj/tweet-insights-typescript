@@ -11,14 +11,26 @@ module app {
                 super();
 
                 this.data = DataByDate;
-
+                this.model = null;
                 this.init();
 
             }
 
             init():void{
-                this.model = {};
-
+                
+                this.scrubHashtags();
+                
+                this.parseHashtags();
+                
+            }
+            
+            scrubHashtags(){
+                this.model = app.processors.scrubHashtags(this.data);
+            }
+            
+            parseHashtags(){
+                this.model = app.processors.parseHashtags(this.model);
+            
             }
 
 

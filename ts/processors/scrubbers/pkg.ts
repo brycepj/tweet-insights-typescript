@@ -1,2 +1,3 @@
 /// <reference path="scrubRawData.ts"/>
-/// <reference path="blueScrubber.ts"/>
+
+/// <reference path="scrubHashtags.ts"/>

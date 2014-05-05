@@ -56,11 +56,13 @@ declare module app {
 }
 declare module app {
     module models {
-        class BlueModel extends Backbone.Model {
+        class HashtagModel extends Backbone.Model {
             public data: any;
-            constructor(blueData: any);
+            public model: any;
+            constructor(DataByDate: any);
             public init(): void;
-            public parseBlue(): void;
+            public scrubHashtags(): void;
+            public parseHashtags(): void;
         }
     }
 }
@@ -84,7 +86,7 @@ declare module app {
 }
 declare module app {
     module processors {
-        function blueScrubber(data: any): any;
+        function scrubHashtags(data: any): any[];
     }
 }
 declare module app {
@@ -124,6 +126,11 @@ declare module app {
                 };
             };
         };
+    }
+}
+declare module app {
+    module processors {
+        function parseHashtags(scrubbedHashtags: any): void;
     }
 }
 declare module app {
