@@ -137,6 +137,8 @@ module app {
                 };
             }
 
+            console.log(getPercentages(hashtagsPerTweet()));
+
             function getTopHashtags(dataSet) {
                 var hashtagData = dataSet;
                 var hashtagged = [];
