@@ -1,13 +1,7 @@
-/// <reference path="jquery.d.ts"/>
-/// <reference path="underscore.d.ts"/>
-/// <reference path="backbone.d.ts"/>
-/// <reference path="moment.d.ts"/>
-/// <reference path="highcharts.d.ts"/>
 var app;
 (function (app) {
     (function () {
         $(document).ready(function () {
-            //this is a good place to invoke site/view based functions, completely unrelated to one another
             app.util.initModels();
         });
     })();
@@ -54,9 +48,6 @@ var app;
     })(app.util || (app.util = {}));
     var util = app.util;
 })(app || (app = {}));
-/// <reference path="init.ts"/>
-/// <reference path="initModels.ts"/>
-/// <reference path="initViews.ts"/>
 var app;
 (function (app) {
     (function (models) {
@@ -103,9 +94,6 @@ var app;
     })(app.models || (app.models = {}));
     var models = app.models;
 })(app || (app = {}));
-/// <reference path="DataByDate.ts"/>
-/// <reference path="DataByHour.ts"/>
-/// <reference path="DataByWeekday.ts"/>
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -203,10 +191,6 @@ var app;
     })(app.models || (app.models = {}));
     var models = app.models;
 })(app || (app = {}));
-/// <reference path="TweetReasonsConfig.ts"/>
-/// <reference path="TweetReasonsModel.ts"/>
-/// <reference path="HashtagModel.ts"/>
-/// <reference path="chartConfig/pkg.ts"/>
 var app;
 (function (app) {
     function scrubRawData(data) {
@@ -262,8 +246,6 @@ var app;
     })(app.processors || (app.processors = {}));
     var processors = app.processors;
 })(app || (app = {}));
-/// <reference path="scrubRawData.ts"/>
-/// <reference path="scrubHashtags.ts"/>
 var app;
 (function (app) {
     (function (processors) {
@@ -715,6 +697,64 @@ var app;
             var data = scrubbedHashtags;
             var model;
 
+            function compare(a, b) {
+                if (a.hashtagPercent < b.hashtagPercent)
+                    return -1;
+                if (a.hashtagPercent > b.hashtagPercent)
+                    return 1;
+                return 0;
+            }
+
+            function percentOfTweet() {
+                var tweets = data;
+                var hashtagged = [];
+                var parsedHashtags = [];
+
+                for (var i = 0; i < tweets.length; i++) {
+                    var obj = tweets[i];
+
+                    if (obj.count !== 0) {
+                        hashtagged.push(obj);
+                    }
+                }
+
+                for (var j = 0; j < hashtagged.length; j++) {
+                    var tweet = hashtagged[j];
+                    var text = tweet.text;
+                    var hashtagText = 0;
+                    var numberOfHashtags = tweet.content.length;
+                    var percent;
+
+                    for (var k = 0; k < numberOfHashtags; k++) {
+                        var hashtag = tweet.content[k];
+                        var index1 = hashtag.indices[0];
+                        var index2 = hashtag.indices[1];
+
+                        var length = index2 - index1;
+
+                        hashtagText = hashtagText + length;
+                    }
+
+                    percent = (((hashtagText) / text.length) * 100).toFixed(2);
+
+                    parsedHashtags.push({
+                        tweetLength: text.length,
+                        tweetText: text,
+                        hashtagLength: hashtagText,
+                        hashtagPercent: percent
+                    });
+                }
+
+                parsedHashtags = _.filter(parsedHashtags, function (tag) {
+                    return tag.hashtagPercent > 30;
+                });
+
+                parsedHashtags = parsedHashtags.sort(compare);
+                return parsedHashtags;
+            }
+
+            console.log('percent of twtte', percentOfTweet());
+
             function hashtagsPerTweet() {
                 var counts = {
                     sins: 0,
@@ -912,7 +952,6 @@ var app;
                     return 0;
                 }
 
-                //sort by count, reverse the array to show highest first
                 (function () {
                     var sorted = commonHashtags.sort(compare);
                     var final = sorted.reverse();
@@ -935,9 +974,6 @@ var app;
     })(app.processors || (app.processors = {}));
     var processors = app.processors;
 })(app || (app = {}));
-/// <reference path="parseDataByDate.ts"/>
-/// <reference path="parseTweetReasons.ts"/>
-/// <reference path="parseHashtags.ts"/>
 var app;
 (function (app) {
     (function (processors) {
@@ -968,10 +1004,6 @@ var app;
     })(app.processors || (app.processors = {}));
     var processors = app.processors;
 })(app || (app = {}));
-/// <reference path="tweetReasonsFormatting.ts"/>
-/// <reference path="scrubbers/pkg.ts"/>
-/// <reference path="parsers/pkg.ts"/>
-/// <reference path="formatters/pkg.ts"/>
 var app;
 (function (app) {
     (function (views) {
@@ -1027,12 +1059,3 @@ var app;
     })(app.views || (app.views = {}));
     var views = app.views;
 })(app || (app = {}));
-/// <reference path="TweetReasonsView.ts"/>
-/// <reference path="lib/pkg.ts"/>
-/// <reference path="init/pkg.ts"/>
-/// <reference path="models/datasets/pkg.ts"/>
-/// <reference path="models/pkg.ts"/>
-/// <reference path="processors/pkg.ts"/>
-/// <reference path="utils/pkg.ts"/>
-/// <reference path="views/pkg.ts"/>
-// this is where the order matters
