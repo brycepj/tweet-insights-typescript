@@ -26,7 +26,7 @@ module app {
 
                 for (var i = 0; i < data.length; i++) {
                     var obj = data[i];
-                    var RT = function() {
+                    var RT = function () {
                         if (obj.text.slice(0, 2) === "RT") {
                             return true;
                         } else {
@@ -40,47 +40,63 @@ module app {
                             counts.zero.count++;
                             break;
                         case 1:
-                            if (RT()) { break; }
+                            if (RT()) {
+                                break;
+                            }
                             counts.one.count++;
                             counts.one.text.push(obj.text);
                             break;
                         case 2:
-                            if (RT()) { break; }
+                            if (RT()) {
+                                break;
+                            }
                             counts.two.count++;
                             counts.two.text.push(obj.text);
                             break;
                         case 3:
-                            if (RT()) { break; }
+                            if (RT()) {
+                                break;
+                            }
                             counts.three.count++;
                             counts.sins++;
                             counts.three.text.push(obj.text);
                             break;
                         case 4:
-                            if (RT()) { break; }
+                            if (RT()) {
+                                break;
+                            }
                             counts.four.count++;
                             counts.sins++;
                             counts.four.text.push(obj.text);
                             break;
                         case 5:
-                            if (RT()) { break; }
+                            if (RT()) {
+                                break;
+                            }
                             counts.five.count++;
                             counts.sins++;
                             counts.five.text.push(obj.text);
                             break;
                         case 6:
-                            if (RT()) { break; }
+                            if (RT()) {
+                                break;
+                            }
                             counts.six.count++;
                             counts.sins++;
                             counts.six.text.push(obj.text);
                             break;
                         case 7:
-                            if (RT()) { break; }
+                            if (RT()) {
+                                break;
+                            }
                             counts.seven.count++;
                             counts.sins++;
                             counts.seven.text.push(obj.text);
                             break;
                         default:
-                            if (RT()) { break; }
+                            if (RT()) {
+                                break;
+                            }
                             counts.sevenPlus.count++;
                             counts.sins++;
                             counts.sevenPlus.text.push(obj.text);
@@ -91,7 +107,7 @@ module app {
                 return counts;
             }
 
-            function getPercentages(counts){
+            function getPercentages(counts) {
                 var totals = counts;
                 var totalTweets = data.length;
                 var totalWithSins =
@@ -109,26 +125,46 @@ module app {
 
                 var topTweets = 10;
 
-                var combineText = totals.sevenPlus.text.concat(totals.seven.text,totals.six.text,totals.five.text,totals.four.text,totals.three.text);
-                var top20Offending = combineText.slice(0,20);
+                var combineText = totals.sevenPlus.text.concat(totals.seven.text, totals.six.text, totals.five.text, totals.four.text, totals.three.text);
+                var top20Offending = combineText.slice(0, 20);
 
                 return {
-                    totalTweets:totalTweets,
-                    percent_with_hashtags:((totalWithHashtags/totalTweets)*100).toFixed(2),
-                    percent_with_sins:((totalWithSins/totalTweets)*100).toFixed(2),
-                    topTweets:top20Offending,
-                    allOffending:combineText
+                    totalTweets: totalTweets,
+                    percent_with_hashtags: ((totalWithHashtags / totalTweets) * 100).toFixed(2),
+                    percent_with_sins: ((totalWithSins / totalTweets) * 100).toFixed(2),
+                    topTweets: top20Offending,
+                    allOffending: combineText
                 };
             }
 
+            function getTopHashtags(dataSet) {
+                var hashtagData = dataSet;
+                var hashtagged = [];
 
+                for (var i = 0; i < hashtagData.length; i++) {
+                    var obj = hashtagData[i];
 
-            console.log(getPercentages(hashtagsPerTweet()));
+                    if (obj.content.length > 0) {
+
+                        for (var j = 0; j < obj.content.length; j++) {
+                            var hashtag = obj.content[j];
+
+                            hashtagged.push(hashtag.text);
+
+                        }
+
+                    }
+
+                }
+                console.log('execute top hashtags', hashtagged);
+            }
+
+            getTopHashtags(data);
+
             // what percentage of your tweets contain hashtags
             // what percentage of your tweets contain major sins
             // what are your most offending tweets
             //
-
 
 
         }

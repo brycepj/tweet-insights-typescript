@@ -828,7 +828,25 @@ var app;
                 };
             }
 
-            console.log(getPercentages(hashtagsPerTweet()));
+            function getTopHashtags(dataSet) {
+                var hashtagData = dataSet;
+                var hashtagged = [];
+
+                for (var i = 0; i < hashtagData.length; i++) {
+                    var obj = hashtagData[i];
+
+                    if (obj.content.length > 0) {
+                        for (var j = 0; j < obj.content.length; j++) {
+                            var hashtag = obj.content[j];
+
+                            hashtagged.push(hashtag.text);
+                        }
+                    }
+                }
+                console.log('execute top hashtags', hashtagged);
+            }
+
+            getTopHashtags(data);
             // what percentage of your tweets contain hashtags
             // what percentage of your tweets contain major sins
             // what are your most offending tweets
