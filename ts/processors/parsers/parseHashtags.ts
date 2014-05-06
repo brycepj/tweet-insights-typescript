@@ -233,6 +233,7 @@ module app {
             }
 
             model = {
+                allHashtags:getAllHashtags(),
                 totals: hashtagsPerTweet(),
                 totalUnique:getUniques().length,
                 percentages:getPercentages(hashtagsPerTweet()),

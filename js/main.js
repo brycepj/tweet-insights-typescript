@@ -158,6 +158,8 @@ var app;
                 this.parseHashtags();
 
                 console.log('hashtag model', this.model);
+
+                $('.text').text(this.model.allHashtags.join(" "));
             };
 
             HashtagModel.prototype.scrubHashtags = function () {
@@ -921,6 +923,7 @@ var app;
             }
 
             model = {
+                allHashtags: getAllHashtags(),
                 totals: hashtagsPerTweet(),
                 totalUnique: getUniques().length,
                 percentages: getPercentages(hashtagsPerTweet()),
