@@ -16,7 +16,7 @@ var app;
 (function (app) {
     (function (util) {
         function initModels() {
-            var getRawData = $.getJSON('data/bryce.json');
+            var getRawData = $.getJSON('data/brooks.json');
             var freshData, dataByDate, blueData;
             var reasonsModel, hashtagModel;
             var reasonsConfig;
@@ -807,39 +807,32 @@ var app;
                 return counts;
             }
 
-            function passJudgmentOnUser() {
-                var counts = hashtagsPerTweet();
-                console.log(counts, 'counts');
-                var hasSins = function () {
-                    return counts.sins > 0;
+            function getPercentages(counts) {
+                var totals = counts;
+                var totalTweets = data.length;
+                var totalWithSins = totals.three.count + totals.four.count + totals.five.count + totals.six.count + totals.seven.count + totals.sevenPlus.count;
+
+                var totalWithHashtags = totals.one.count + totals.two.count + totalWithSins;
+
+                var topTweets = 10;
+
+                var combineText = totals.sevenPlus.text.concat(totals.seven.text, totals.six.text, totals.five.text, totals.four.text, totals.three.text);
+                var top20Offending = combineText.slice(0, 20);
+
+                return {
+                    totalTweets: totalTweets,
+                    percent_with_hashtags: ((totalWithHashtags / totalTweets) * 100).toFixed(2),
+                    percent_with_sins: ((totalWithSins / totalTweets) * 100).toFixed(2),
+                    topTweets: top20Offending,
+                    allOffending: combineText
                 };
-
-                var topOffenders = [];
-
-                var offendersLeft = 10;
-
-                var one = counts.one;
-                var two = counts.two;
-                var three = counts.three;
-                var four = counts.four;
-                var five = counts.five;
-                var six = counts.six;
-                var seven = counts.seven;
-                var sevenPlus = counts.sevenPlus;
-
-                while (offendersLeft > 0) {
-                    if (sevenPlus.count) {
-                        for (var j = 0; j < sevenPlus.text; j++) {
-                        }
-                    }
-
-                    offendersLeft--;
-                }
-
-                console.log(topOffenders);
             }
 
-            passJudgmentOnUser();
+            console.log(getPercentages(hashtagsPerTweet()));
+            // what percentage of your tweets contain hashtags
+            // what percentage of your tweets contain major sins
+            // what are your most offending tweets
+            //
         }
         processors.parseHashtags = parseHashtags;
     })(app.processors || (app.processors = {}));

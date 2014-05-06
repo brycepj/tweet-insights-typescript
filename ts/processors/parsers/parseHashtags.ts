@@ -91,91 +91,43 @@ module app {
                 return counts;
             }
 
-            function passJudgmentOnUser() {
+            function getPercentages(counts){
+                var totals = counts;
+                var totalTweets = data.length;
+                var totalWithSins =
+                    totals.three.count +
+                    totals.four.count +
+                    totals.five.count +
+                    totals.six.count +
+                    totals.seven.count +
+                    totals.sevenPlus.count;
 
-                var counts = hashtagsPerTweet();
-                console.log(counts,'counts');
-                var hasSins = function() { return counts.sins > 0; };
+                var totalWithHashtags = totals.one.count +
+                    totals.two.count +
+                    totalWithSins;
 
-                var topOffenders = [];
 
-                var offendersLeft = 10;
+                var topTweets = 10;
 
-                var one = counts.one;
-                var two = counts.two;
-                var three = counts.three;
-                var four = counts.four;
-                var five = counts.five;
-                var six = counts.six;
-                var seven = counts.seven;
-                var sevenPlus = counts.sevenPlus;
+                var combineText = totals.sevenPlus.text.concat(totals.seven.text,totals.six.text,totals.five.text,totals.four.text,totals.three.text);
+                var top20Offending = combineText.slice(0,20);
 
-                if (offendersLeft > 0) {
-                    if (sevenPlus.count) {
-                        
-                        for (var j = 0; j < sevenPlus.text.length; j++) {
-                            if (offendersLeft > 0) {
-                            topOffenders.push(sevenPlus.text[j]);
-                            offendersLeft--;
-                            } else {
-                                return false;
-                            }
-                        }
-                    }
-                    if (seven.count) {
-                        for (var j = 0; j < seven.text.length; j++) {
-                            if (offendersLeft > 0) {
-                            topOffenders.push(seven.text[j]);
-                            offendersLeft--;
-                        } else {
-                                return false;
-                            }
-                    }
-                    if (six.count) {
-                        for (var j = 0; j < six.text.length; j++) {
-                            if (offendersLeft > 0) {
-                            topOffenders.push(six.text[j]);
-                            offendersLeft--;
-                        } else {
-                                return false;
-                            }
-                    }
-                    if (five.count) {
-                        for (var j = 0; j < five.text.length; j++) {
-                            if (offendersLeft > 0) {
-                            topOffenders.push(five.text[j]);
-                            offendersLeft--;
-                        } else {
-                                return false;
-                            }
-                    }
-                    
-                    if (four.count) {
-                        for (var j = 0; j < four.text.length; j++) {
-                            if (offendersLeft > 0) {
-                            topOffenders.push(four.text[j]);
-                            offendersLeft--;
-                        } else {
-                                return false;
-                            }
-                    }
-                    
-                    if (three.count) {
-                        for (var j = 0; j < three.text.length; j++) {
-                            if (offendersLeft > 0) {
-                            topOffenders.push(three.text[j]);
-                            offendersLeft--;
-                        } else {
-                                return false;
-                            }
-                    }
-
-                }
-                //rewrite this thing (IT IS BAD)
-                console.log(topOffenders);
+                return {
+                    totalTweets:totalTweets,
+                    percent_with_hashtags:((totalWithHashtags/totalTweets)*100).toFixed(2),
+                    percent_with_sins:((totalWithSins/totalTweets)*100).toFixed(2),
+                    topTweets:top20Offending,
+                    allOffending:combineText
+                };
             }
 
-            passJudgmentOnUser();
+
+
+            console.log(getPercentages(hashtagsPerTweet()));
+            // what percentage of your tweets contain hashtags
+            // what percentage of your tweets contain major sins
+            // what are your most offending tweets
+            //
 
 
 
