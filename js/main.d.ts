@@ -130,7 +130,7 @@ declare module app {
 }
 declare module app {
     module processors {
-        function parseHashtags(scrubbedHashtags: any): void;
+        function parseHashtags(scrubbedHashtags: any): any;
     }
 }
 declare module app {

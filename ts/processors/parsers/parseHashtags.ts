@@ -5,8 +5,7 @@ module app {
         export function parseHashtags(scrubbedHashtags) {
 
             var data = scrubbedHashtags;
-
-            console.log('scrubbed hashtags', data);
+            var model;
 
             function hashtagsPerTweet() {
 
@@ -23,17 +22,15 @@ module app {
                     sevenPlus: { count: 0, text: [] }
                 };
 
-
                 for (var i = 0; i < data.length; i++) {
                     var obj = data[i];
-                    var RT = function () {
+                    var RT = function() {
                         if (obj.text.slice(0, 2) === "RT") {
                             return true;
                         } else {
                             return false;
                         }
                     };
-
 
                     switch (obj.count) {
                         case 0:
@@ -101,7 +98,6 @@ module app {
                             counts.sins++;
                             counts.sevenPlus.text.push(obj.text);
                             break;
-
                     }
                 }
                 return counts;
@@ -137,10 +133,8 @@ module app {
                 };
             }
 
-            console.log(getPercentages(hashtagsPerTweet()));
-
-            function getTopHashtags(dataSet) {
-                var hashtagData = dataSet;
+            function getAllHashtags() {
+                var hashtagData = data;
                 var hashtagged = [];
 
                 for (var i = 0; i < hashtagData.length; i++) {
@@ -152,22 +146,99 @@ module app {
                             var hashtag = obj.content[j];
 
                             hashtagged.push(hashtag.text);
-
-                        }
-
+                       }
                     }
-
                 }
-                console.log('execute top hashtags', hashtagged.sort());
+                return hashtagged.sort();
             }
 
-            getTopHashtags(data);
+            function getUniques() {
+                var rawHashtags = getAllHashtags();
+                var uniques = _.uniq(rawHashtags, true)
+                return uniques;
+            }
 
-            // what percentage of your tweets contain hashtags
-            // what percentage of your tweets contain major sins
-            // what are your most offending tweets
-            //
+            function countUniques() {
 
+                var completeList = getAllHashtags();
+                var prev = null;
+                var count = 1;
+                var countedHashtags = [];
+                var commonHashtags = [];
+                var lastIndex = completeList.length - 1;
+                var returnArray;
+
+                for (var i = 0; i < completeList.length; i++) {
+                    var current = completeList[i];
+
+                    if (i === 0) {
+                        prev = current;
+                    }
+
+                    if (i === lastIndex) {
+                        var final = {
+                            "hashtag": prev,
+                            "count": count
+                        };
+                        
+                        countedHashtags.push(final);
+                    }
+
+                    if (i > 0) {
+                        if (current === prev) {
+                            count++;
+                        } else {
+
+                            var final = {
+                                "hashtag": prev,
+                                "count": count
+                            };
+                            countedHashtags.push(final);
+
+                            prev = current;
+                            count = 1;
+
+                        }
+                    }
+                }
+
+                //remove single uses
+                for (var i = 0; i < countedHashtags.length; i++) {
+
+                    var obj = countedHashtags[i];
+
+                    if (obj.count !== 1) {
+                        commonHashtags.push(obj);
+                    }
+                }
+
+                function compare(a, b) {
+                    if (a.count < b.count)
+                        return -1;
+                    if (a.count > b.count)
+                        return 1;
+                    return 0;
+                }
+
+                //sort by count, reverse the array to show highest first
+                (function() {
+                    var sorted = commonHashtags.sort(compare);
+                    var final = sorted.reverse();
+                    returnArray = final;
+
+                })();
+
+                return returnArray;
+
+            }
+
+            model = {
+                totals: hashtagsPerTweet(),
+                totalUnique:getUniques().length,
+                percentages:getPercentages(hashtagsPerTweet()),
+                favorites:countUniques()     
+            }
+            return model;
 
         }
     }

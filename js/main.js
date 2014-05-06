@@ -156,6 +156,8 @@ var app;
                 this.scrubHashtags();
 
                 this.parseHashtags();
+
+                console.log('hashtag model', this.model);
             };
 
             HashtagModel.prototype.scrubHashtags = function () {
@@ -709,8 +711,7 @@ var app;
     (function (processors) {
         function parseHashtags(scrubbedHashtags) {
             var data = scrubbedHashtags;
-
-            console.log('scrubbed hashtags', data);
+            var model;
 
             function hashtagsPerTweet() {
                 var counts = {
@@ -828,10 +829,8 @@ var app;
                 };
             }
 
-            console.log(getPercentages(hashtagsPerTweet()));
-
-            function getTopHashtags(dataSet) {
-                var hashtagData = dataSet;
+            function getAllHashtags() {
+                var hashtagData = data;
                 var hashtagged = [];
 
                 for (var i = 0; i < hashtagData.length; i++) {
@@ -845,14 +844,89 @@ var app;
                         }
                     }
                 }
-                console.log('execute top hashtags', hashtagged.sort());
+                return hashtagged.sort();
             }
 
-            getTopHashtags(data);
-            // what percentage of your tweets contain hashtags
-            // what percentage of your tweets contain major sins
-            // what are your most offending tweets
-            //
+            function getUniques() {
+                var rawHashtags = getAllHashtags();
+                var uniques = _.uniq(rawHashtags, true);
+                return uniques;
+            }
+
+            function countUniques() {
+                var completeList = getAllHashtags();
+                var prev = null;
+                var count = 1;
+                var countedHashtags = [];
+                var commonHashtags = [];
+                var lastIndex = completeList.length - 1;
+                var returnArray;
+
+                for (var i = 0; i < completeList.length; i++) {
+                    var current = completeList[i];
+
+                    if (i === 0) {
+                        prev = current;
+                    }
+
+                    if (i === lastIndex) {
+                        var final = {
+                            "hashtag": prev,
+                            "count": count
+                        };
+
+                        countedHashtags.push(final);
+                    }
+
+                    if (i > 0) {
+                        if (current === prev) {
+                            count++;
+                        } else {
+                            var final = {
+                                "hashtag": prev,
+                                "count": count
+                            };
+                            countedHashtags.push(final);
+
+                            prev = current;
+                            count = 1;
+                        }
+                    }
+                }
+
+                for (var i = 0; i < countedHashtags.length; i++) {
+                    var obj = countedHashtags[i];
+
+                    if (obj.count !== 1) {
+                        commonHashtags.push(obj);
+                    }
+                }
+
+                function compare(a, b) {
+                    if (a.count < b.count)
+                        return -1;
+                    if (a.count > b.count)
+                        return 1;
+                    return 0;
+                }
+
+                //sort by count, reverse the array to show highest first
+                (function () {
+                    var sorted = commonHashtags.sort(compare);
+                    var final = sorted.reverse();
+                    returnArray = final;
+                })();
+
+                return returnArray;
+            }
+
+            model = {
+                totals: hashtagsPerTweet(),
+                totalUnique: getUniques().length,
+                percentages: getPercentages(hashtagsPerTweet()),
+                favorites: countUniques()
+            };
+            return model;
         }
         processors.parseHashtags = parseHashtags;
     })(app.processors || (app.processors = {}));

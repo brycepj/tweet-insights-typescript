@@ -22,6 +22,8 @@ module app {
                 
                 this.parseHashtags();
                 
+                console.log('hashtag model',this.model);
+                
             }
             
             scrubHashtags(){
