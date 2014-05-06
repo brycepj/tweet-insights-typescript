@@ -828,6 +828,8 @@ var app;
                 };
             }
 
+            console.log(getPercentages(hashtagsPerTweet()));
+
             function getTopHashtags(dataSet) {
                 var hashtagData = dataSet;
                 var hashtagged = [];
@@ -843,7 +845,7 @@ var app;
                         }
                     }
                 }
-                console.log('execute top hashtags', hashtagged);
+                console.log('execute top hashtags', hashtagged.sort());
             }
 
             getTopHashtags(data);
