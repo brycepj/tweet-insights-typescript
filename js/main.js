@@ -11,8 +11,8 @@ var app;
     (function (util) {
         function initModels() {
             var getRawData = $.getJSON('data/brooks.json');
-            var freshData, dataByDate, blueData;
-            var reasonsModel, hashtagModel;
+            var freshData, dataByDate, blueData, textByDate;
+            var reasonsModel, hashtagModel, narcModel;
             var reasonsConfig;
 
             getRawData.done(function (data) {
@@ -21,9 +21,11 @@ var app;
                 console.log('fresh data length', freshData.length, freshData);
             }).done(function (data) {
                 dataByDate = new app.models.DataByDate(freshData);
+                textByDate = new app.models.TextByDate(dataByDate.model);
             }).done(function (data) {
                 hashtagModel = new app.models.HashtagModel(dataByDate.model.forTotals);
                 reasonsModel = new app.models.TweetReasonsModel(dataByDate.model);
+                narcModel = new app.models.NarcModel(textByDate.model);
             }).fail(function (data) {
                 console.log('request failed');
             }).done(function (data) {
@@ -103,6 +105,34 @@ var __extends = this.__extends || function (d, b) {
 var app;
 (function (app) {
     (function (models) {
+        var TextByDate = (function (_super) {
+            __extends(TextByDate, _super);
+            function TextByDate(DataByDate) {
+                _super.call(this);
+
+                this.data = DataByDate;
+                this.model = null;
+
+                this.init();
+            }
+            TextByDate.prototype.init = function () {
+                this.scrubTextByDate();
+            };
+
+            TextByDate.prototype.scrubTextByDate = function () {
+                var data = this.data;
+
+                this.model = app.processors.scrubTextByDate(data);
+            };
+            return TextByDate;
+        })(Backbone.Model);
+        models.TextByDate = TextByDate;
+    })(app.models || (app.models = {}));
+    var models = app.models;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (models) {
         var TweetReasonsModel = (function (_super) {
             __extends(TweetReasonsModel, _super);
             function TweetReasonsModel(DataByDate) {
@@ -166,6 +196,40 @@ var app;
 var app;
 (function (app) {
     (function (models) {
+        var NarcModel = (function (_super) {
+            __extends(NarcModel, _super);
+            function NarcModel(TextByDate) {
+                _super.call(this);
+
+                this.data = TextByDate;
+                this.model = {
+                    forDays: [],
+                    forTotals: []
+                };
+                this.init();
+            }
+            NarcModel.prototype.init = function () {
+                console.log('text data for narc model', this.data);
+
+                this.parseNarcTotals();
+            };
+
+            NarcModel.prototype.parseNarcTotals = function () {
+                var data = this.data.forTotals;
+                this.model.forTotals = app.processors.parseNarcTotals(data);
+            };
+
+            NarcModel.prototype.parseNarcByDay = function () {
+            };
+            return NarcModel;
+        })(Backbone.Model);
+        models.NarcModel = NarcModel;
+    })(app.models || (app.models = {}));
+    var models = app.models;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (models) {
         var TweetReasonsConfig = (function (_super) {
             __extends(TweetReasonsConfig, _super);
             function TweetReasonsConfig(TweetReasons) {
@@ -173,8 +237,6 @@ var app;
 
                 this.data = TweetReasons;
                 this.init();
-
-                console.log('the data we are working with here', this.model);
             }
             TweetReasonsConfig.prototype.init = function () {
                 this.model = { model: this.data, chartData: this.formatData() };
@@ -213,6 +275,60 @@ var app;
         return clean;
     }
     app.scrubRawData = scrubRawData;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (processors) {
+        function scrubTextByDate(data) {
+            var data = data;
+            var model = {
+                forTotals: [],
+                forDays: []
+            };
+
+            console.log('data', data);
+
+            function textDataForTotals() {
+                for (var i = 0; i < data.forTotals.length; i++) {
+                    var obj = data.forTotals[i];
+
+                    for (var j = 0; j < obj.length; j++) {
+                        var tweet = obj[j];
+
+                        model.forTotals.push(tweet.text);
+                    }
+                }
+            }
+
+            function textDataForDays() {
+                for (var i = 0; i < data.forDays.length; i++) {
+                    var obj = data.forDays[i];
+                    var newTweetObj = {
+                        date: obj.date,
+                        day: obj.day,
+                        month: obj.month,
+                        year: obj.year,
+                        text: []
+                    };
+
+                    for (var j = 0; j < obj.tweets.length; j++) {
+                        var tweet = obj.tweets[j];
+
+                        newTweetObj.text.push(tweet.text);
+                    }
+
+                    model.forDays.push(newTweetObj);
+                }
+            }
+
+            textDataForTotals();
+            textDataForDays();
+
+            return model;
+        }
+        processors.scrubTextByDate = scrubTextByDate;
+    })(app.processors || (app.processors = {}));
+    var processors = app.processors;
 })(app || (app = {}));
 var app;
 (function (app) {
@@ -390,6 +506,61 @@ var app;
             };
         }
         processors.parseDataByDate = parseDataByDate;
+    })(app.processors || (app.processors = {}));
+    var processors = app.processors;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (processors) {
+        function parseNarcTotals(textByDate) {
+            var data = textByDate;
+
+            var narcList = ["i", "me", "my", "mine", "myself", "i've", "i'm", "i'd", 'im', 'id', 'ive'];
+
+            function countNarcs() {
+                var narcCount = {
+                    counts: {},
+                    totalNarc: 0,
+                    totalWords: 0,
+                    totalTweets: 0,
+                    totalTweetsWithNarc: 0,
+                    percentTweetsNarc: null
+                };
+
+                for (var i = 0; i < data.length; i++) {
+                    var tweet = data[i];
+                    var firstLetter = tweet;
+
+                    tweet = tweet.split(" ");
+
+                    for (var j = 0; j < tweet.length; j++) {
+                        var currentWord = tweet[j];
+                        var hasNarc = false;
+                        narcCount.totalTweets++;
+                        for (var k = 0; k < narcList.length; k++) {
+                            narcCount.totalWords++;
+                            if (currentWord === narcList[k]) {
+                                narcCount.totalNarc++;
+
+                                if (!hasNarc) {
+                                    hasNarc = true;
+                                }
+                            }
+                        }
+                        if (hasNarc) {
+                            narcCount.totalTweetsWithNarc++;
+                        }
+                    }
+                }
+                narcCount.percentTweetsNarc = (((narcCount.totalTweetsWithNarc / narcCount.totalTweets) * 100)).toFixed(2);
+                console.log('narc count', narcCount);
+            }
+
+            countNarcs();
+
+            return "HELLOW WORLD";
+        }
+        processors.parseNarcTotals = parseNarcTotals;
     })(app.processors || (app.processors = {}));
     var processors = app.processors;
 })(app || (app = {}));

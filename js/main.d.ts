@@ -41,6 +41,17 @@ declare module app {
 }
 declare module app {
     module models {
+        class TextByDate extends Backbone.Model {
+            public data: any;
+            public model: any;
+            constructor(DataByDate: any);
+            public init(): void;
+            public scrubTextByDate(): void;
+        }
+    }
+}
+declare module app {
+    module models {
     }
 }
 declare module app {
@@ -68,6 +79,18 @@ declare module app {
 }
 declare module app {
     module models {
+        class NarcModel extends Backbone.Model {
+            public data: any;
+            public model: any;
+            constructor(TextByDate: any);
+            public init(): void;
+            public parseNarcTotals(): void;
+            public parseNarcByDay(): void;
+        }
+    }
+}
+declare module app {
+    module models {
         class TweetReasonsConfig extends Backbone.Model {
             public data: any;
             public model: any;
@@ -86,6 +109,14 @@ declare module app {
 }
 declare module app {
     module processors {
+        function scrubTextByDate(data: any): {
+            forTotals: any[];
+            forDays: any[];
+        };
+    }
+}
+declare module app {
+    module processors {
         function scrubHashtags(data: any): any[];
     }
 }
@@ -95,6 +126,11 @@ declare module app {
             forTotals: any[];
             forDays: any[];
         };
+    }
+}
+declare module app {
+    module processors {
+        function parseNarcTotals(textByDate: any): string;
     }
 }
 declare module app {

@@ -13,11 +13,6 @@ module app {
                 this.data = TweetReasons;
                 this.init();
                 
-                
-                console.log('the data we are working with here', this.model);
-
-
-
             }
 
             init() {
