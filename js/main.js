@@ -697,64 +697,6 @@ var app;
             var data = scrubbedHashtags;
             var model;
 
-            function compare(a, b) {
-                if (a.hashtagPercent < b.hashtagPercent)
-                    return -1;
-                if (a.hashtagPercent > b.hashtagPercent)
-                    return 1;
-                return 0;
-            }
-
-            function percentOfTweet() {
-                var tweets = data;
-                var hashtagged = [];
-                var parsedHashtags = [];
-
-                for (var i = 0; i < tweets.length; i++) {
-                    var obj = tweets[i];
-
-                    if (obj.count !== 0) {
-                        hashtagged.push(obj);
-                    }
-                }
-
-                for (var j = 0; j < hashtagged.length; j++) {
-                    var tweet = hashtagged[j];
-                    var text = tweet.text;
-                    var hashtagText = 0;
-                    var numberOfHashtags = tweet.content.length;
-                    var percent;
-
-                    for (var k = 0; k < numberOfHashtags; k++) {
-                        var hashtag = tweet.content[k];
-                        var index1 = hashtag.indices[0];
-                        var index2 = hashtag.indices[1];
-
-                        var length = index2 - index1;
-
-                        hashtagText = hashtagText + length;
-                    }
-
-                    percent = (((hashtagText) / text.length) * 100).toFixed(2);
-
-                    parsedHashtags.push({
-                        tweetLength: text.length,
-                        tweetText: text,
-                        hashtagLength: hashtagText,
-                        hashtagPercent: percent
-                    });
-                }
-
-                parsedHashtags = _.filter(parsedHashtags, function (tag) {
-                    return tag.hashtagPercent > 30;
-                });
-
-                parsedHashtags = parsedHashtags.sort(compare);
-                return parsedHashtags;
-            }
-
-            console.log('percent of twtte', percentOfTweet());
-
             function hashtagsPerTweet() {
                 var counts = {
                     sins: 0,

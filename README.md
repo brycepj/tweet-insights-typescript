@@ -65,3 +65,35 @@
 - favorite topics to tweet about
 - percentage to people vs statements
 - favorite source to tweet from
+
+   function new_count(word) {
+                word = word.toLowerCase();                                     //word.downcase!
+                if(word.length <= 3) { return 1; }                             //return 1 if word.length <= 3
+                word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');   //word.sub!(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '')
+                word = word.replace(/^y/, '');                                 //word.sub!(/^y/, '')
+                return word.match(/[aeiouy]{1,2}/g).length;                    //word.scan(/[aeiouy]{1,2}/).size
+            }
+
+            console.log(new_count('initiate'),"4");
+            console.log(new_count('city'),"2");
+            console.log(new_count('atmosphere'),"3");
+            console.log(new_count('was'),"1");
+            console.log(new_count('I'),"1");
+            console.log(new_count('thinking'),"2");
+            console.log(new_count('buzzworthy'),"3");
+            console.log(new_count('buzzfeed'),"2");
+            console.log(new_count('through'),"1");
+            console.log(new_count('thoroughfare'),"3");
+            console.log(new_count('babyback'),"3");
+            console.log(new_count('placement'),"2");
+            console.log(new_count('doctrine'),"2");
+            console.log(new_count('replacement'),"3");
+            console.log(new_count('regardless'),"3");
+            console.log(new_count('baseball'),"2");
+            console.log(new_count('obliterate'),"4");
+            console.log(new_count('horizontally'),"5");
+
+Don't forget about the narcicissm index:
+
+I, Me, My, I've, I'm, I'd, Mine, Im, ive, id, i (by day, totals)
+
