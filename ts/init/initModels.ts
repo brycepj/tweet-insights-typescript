@@ -4,7 +4,7 @@ module app {
     
         export function initModels() {
 
-            var getRawData = $.getJSON('data/brooks.json');
+            var getRawData = $.getJSON('data/ben.json');
             var freshData,dataByDate, blueData,textByDate;
             var reasonsModel,hashtagModel,narcModel;
             var reasonsConfig;

@@ -12,27 +12,26 @@ module app {
 
                 this.data = TextByDate;
                 this.model = {
-                    forDays:[],
-                    forTotals:[]
+                    forDays:null,
+                    forTotals:null
                 };
                 this.init();
 
             }
 
-            // % of tweets you mention yourself in
-            // Avg number of times you mention yourself per tweet
-            // Count of individual words
-            
+            //
+
+
             
             // days 
             // same stats but for different model
             // most narcisstic days, weeks, months
             
             init():void{
-               
-                console.log('text data for narc model',this.data);
-                
+
                 this.parseNarcTotals();
+
+                console.log('for totals', this.model.forTotals);
             
             }
             

@@ -4,61 +4,85 @@ module app {
 
         export function parseNarcTotals(textByDate) {
 
-            var data = textByDate;
+            var data = app.processors.scrubForWords(textByDate);
 
-            var narcList = ["i", "me", "my", "mine", "myself", "i've", "i'm", "i'd", 'im', 'id', 'ive'];
+            var narcList = ["i", "me", "my", "mine", "myself", "i've", "i'm", "i'd", 'ive', 'im', 'id'];
+            var totalTweets = 0;
+            var narcTweets = 0;
+            var count = [0,0,0,0,0,0,0,0,0,0,0];
 
 
-            // probably want to rewrite this guy, seriously you probably need to rewrite all of this. Scrub first!
 
-            function countNarcs() {
-                var narcCount = {
-                    counts: {},
-                    totalNarc: 0,
-                    totalWords: 0,
-                    totalTweets: 0,
-                    totalTweetsWithNarc: 0,
-                    percentTweetsNarc: null
-
-                }
+            function getPercent() {
 
                 for (var i = 0; i < data.length; i++) {
+
                     var tweet = data[i];
-                    var firstLetter = tweet
-
-
-                    tweet = tweet.split(" ");
+                    var hasNarc = false;
+                    totalTweets++;
 
                     for (var j = 0; j < tweet.length; j++) {
-                        var currentWord = tweet[j];
-                        var hasNarc = false;
-                        narcCount.totalTweets++;
-                        for (var k = 0; k < narcList.length; k++) {
-                            narcCount.totalWords++;
-                            if (currentWord === narcList[k]) {
-                                narcCount.totalNarc++
 
-                                if (!hasNarc) {
-                                    hasNarc = true;
-                                }
+                        var word = tweet[j];
+
+
+                        for (var k = 0; k < narcList.length; k++) {
+
+                            var narcWord = narcList[k];
+
+                            if (word === narcWord) {
+
+                                count[k]++;
+                                hasNarc = true;
+
                             }
-                        }
-                        if (hasNarc) {
-                            narcCount.totalTweetsWithNarc++;
                         }
                     }
 
+                    if (hasNarc) {
+                        narcTweets++;
+                    }
+
                 }
-                narcCount.percentTweetsNarc = (((narcCount.totalTweetsWithNarc / narcCount.totalTweets) * 100)).toFixed(2);
-                console.log('narc count', narcCount);
             }
 
+            function calc() {
+
+                var percent = ((narcTweets/totalTweets)*100).toFixed(2);
+                var counts = _.zip(narcList,count);
+                var c = counts;
+
+                var fCounts = {
+                    "I":c[0][1],
+                    "me":c[1][1],
+                    "my":c[2][1],
+                    "mine":c[3][1],
+                    "myself":c[4][1],
+                    "I've":c[5][1] + c[8][1],
+                    "I'm":c[6][1] + c[9][1],
+                    "I'd":c[7][1] + c[10][1]
+
+                };
 
 
 
-            countNarcs();
 
-            return "HELLOW WORLD";
+
+
+                return {
+                    percent:percent,
+                    counts:fCounts
+                };
+            }
+
+            getPercent();
+
+            return calc();
+
         }
     }
 }
+
+// % of tweets you mention yourself in
+// Avg number of times you mention yourself per tweet
+// Count of individual words

@@ -117,6 +117,11 @@ declare module app {
 }
 declare module app {
     module processors {
+        function scrubForWords(data: any): void;
+    }
+}
+declare module app {
+    module processors {
         function scrubHashtags(data: any): any[];
     }
 }
@@ -130,7 +135,11 @@ declare module app {
 }
 declare module app {
     module processors {
-        function parseNarcTotals(textByDate: any): string;
+        function parseNarcTotals(textByDate: any): {
+            percent: number;
+            frequency: number;
+            counts: any[];
+        };
     }
 }
 declare module app {

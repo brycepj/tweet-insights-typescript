@@ -10,7 +10,7 @@ var app;
 (function (app) {
     (function (util) {
         function initModels() {
-            var getRawData = $.getJSON('data/brooks.json');
+            var getRawData = $.getJSON('data/ben.json');
             var freshData, dataByDate, blueData, textByDate;
             var reasonsModel, hashtagModel, narcModel;
             var reasonsConfig;
@@ -203,15 +203,15 @@ var app;
 
                 this.data = TextByDate;
                 this.model = {
-                    forDays: [],
-                    forTotals: []
+                    forDays: null,
+                    forTotals: null
                 };
                 this.init();
             }
             NarcModel.prototype.init = function () {
-                console.log('text data for narc model', this.data);
-
                 this.parseNarcTotals();
+
+                console.log('for totals', this.model.forTotals);
             };
 
             NarcModel.prototype.parseNarcTotals = function () {
@@ -327,6 +327,51 @@ var app;
             return model;
         }
         processors.scrubTextByDate = scrubTextByDate;
+    })(app.processors || (app.processors = {}));
+    var processors = app.processors;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (processors) {
+        function scrubForWords(data) {
+            var arrayedText = _.map(data, function (value) {
+                return value.split(" ");
+            });
+
+            function noSymbols() {
+                for (var i = 0; i < arrayedText.length; i++) {
+                    var noSymbols = _.filter(arrayedText[i], function (string) {
+                        var firstLetter = string.slice(0, 1);
+                        var firstFour = string.slice(0, 4);
+                        return firstLetter !== "@" && firstLetter !== "#" && firstFour !== "http";
+                    });
+
+                    arrayedText[i] = noSymbols;
+                }
+                return arrayedText;
+            }
+
+            function noPunctuation() {
+                var array = noSymbols();
+
+                for (var i = 0; i < array.length; i++) {
+                    var tweet = array[i];
+
+                    for (var j = 0; j < tweet.length; j++) {
+                        var word = tweet[j];
+
+                        var punctuationless = word.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+                        var finalString = punctuationless.replace(/\s{2,}/g, " ");
+
+                        tweet[j] = finalString.toLowerCase();
+                    }
+                }
+                return array;
+            }
+
+            return noPunctuation();
+        }
+        processors.scrubForWords = scrubForWords;
     })(app.processors || (app.processors = {}));
     var processors = app.processors;
 })(app || (app = {}));
@@ -513,52 +558,63 @@ var app;
 (function (app) {
     (function (processors) {
         function parseNarcTotals(textByDate) {
-            var data = textByDate;
+            var data = app.processors.scrubForWords(textByDate);
 
-            var narcList = ["i", "me", "my", "mine", "myself", "i've", "i'm", "i'd", 'im', 'id', 'ive'];
+            var narcList = ["i", "me", "my", "mine", "myself", "i've", "i'm", "i'd", 'ive', 'im', 'id'];
+            var totalTweets = 0;
+            var narcTweets = 0;
+            var count = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-            function countNarcs() {
-                var narcCount = {
-                    counts: {},
-                    totalNarc: 0,
-                    totalWords: 0,
-                    totalTweets: 0,
-                    totalTweetsWithNarc: 0,
-                    percentTweetsNarc: null
-                };
-
+            function getPercent() {
                 for (var i = 0; i < data.length; i++) {
                     var tweet = data[i];
-                    var firstLetter = tweet;
-
-                    tweet = tweet.split(" ");
+                    var hasNarc = false;
+                    totalTweets++;
 
                     for (var j = 0; j < tweet.length; j++) {
-                        var currentWord = tweet[j];
-                        var hasNarc = false;
-                        narcCount.totalTweets++;
-                        for (var k = 0; k < narcList.length; k++) {
-                            narcCount.totalWords++;
-                            if (currentWord === narcList[k]) {
-                                narcCount.totalNarc++;
+                        var word = tweet[j];
 
-                                if (!hasNarc) {
-                                    hasNarc = true;
-                                }
+                        for (var k = 0; k < narcList.length; k++) {
+                            var narcWord = narcList[k];
+
+                            if (word === narcWord) {
+                                count[k]++;
+                                hasNarc = true;
                             }
                         }
-                        if (hasNarc) {
-                            narcCount.totalTweetsWithNarc++;
-                        }
+                    }
+
+                    if (hasNarc) {
+                        narcTweets++;
                     }
                 }
-                narcCount.percentTweetsNarc = (((narcCount.totalTweetsWithNarc / narcCount.totalTweets) * 100)).toFixed(2);
-                console.log('narc count', narcCount);
             }
 
-            countNarcs();
+            function calc() {
+                var percent = ((narcTweets / totalTweets) * 100).toFixed(2);
+                var counts = _.zip(narcList, count);
+                var c = counts;
 
-            return "HELLOW WORLD";
+                var fCounts = {
+                    "I": c[0][1],
+                    "me": c[1][1],
+                    "my": c[2][1],
+                    "mine": c[3][1],
+                    "myself": c[4][1],
+                    "I've": c[5][1] + c[8][1],
+                    "I'm": c[6][1] + c[9][1],
+                    "I'd": c[7][1] + c[10][1]
+                };
+
+                return {
+                    percent: percent,
+                    counts: fCounts
+                };
+            }
+
+            getPercent();
+
+            return calc();
         }
         processors.parseNarcTotals = parseNarcTotals;
     })(app.processors || (app.processors = {}));
