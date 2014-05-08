@@ -27,11 +27,14 @@ module app {
 
                 this.parseNarcTotals(initialData);
                 this.parseNarcDays(initialData);
+                
+                console.log('narcData',this.model);
 
             }
 
             parseNarcTotals(initialData) {
                 var data = initialData.forTotals;
+                
                 this.model.forTotals = app.processors.parseNarcTotals(data);
 
             }

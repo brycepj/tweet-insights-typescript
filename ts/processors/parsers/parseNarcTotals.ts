@@ -5,7 +5,6 @@ module app {
         export function parseNarcTotals(textByDate) {
 
             var data = app.processors.scrubForWords(textByDate);
-
             var narcList = ["i", "me", "my", "mine", "myself", "i've", "i'm", "i'd", 'ive', 'im', 'id'];
             var totalTweets = 0;
             var narcTweets = 0;

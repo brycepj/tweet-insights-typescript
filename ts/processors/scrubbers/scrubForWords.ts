@@ -13,8 +13,8 @@ module app {
 
                     var noSymbols = _.filter(arrayedText[i], function (string) {
                         var firstLetter = string.slice(0, 1);
-                        var firstFour = string.slice(0,4);
-                        return firstLetter !== "@" && firstLetter !== "#" && firstFour !== "http";
+                        var firstFour = string.slice(0,4);                      
+                            return firstLetter !== "@" && firstFour !== "http";
                     });
 
                     arrayedText[i] = noSymbols;
@@ -22,8 +22,6 @@ module app {
                 }
             return arrayedText;
             }
-
-
 
             function noPunctuation(){
                 var array = noSymbols();

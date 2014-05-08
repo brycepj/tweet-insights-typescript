@@ -2,3 +2,4 @@
 /// <reference path="HashtagModel.ts"/>
 /// <reference path="NarcModel.ts"/>
 /// <reference path="chartConfig/pkg.ts"/>
+/// <reference path="SentimentModel.ts"/>
