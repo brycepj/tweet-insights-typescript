@@ -4,7 +4,7 @@ module app {
 
         export function initModels() {
 
-            var getRawData = $.getJSON('data/brooks.json');
+            var getRawData = $.getJSON('data/austin.json');
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
             var freshData, dataByDate, blueData, textByDate;
             var reasonsModel, hashtagModel, narcModel, sentimentModel;
@@ -45,7 +45,6 @@ module app {
             $.when(getAFFIN, getRawData).done(function(AFFINdata) {
                 
                 sentimentData = AFFINdata[0];
-                console.log("sentiment data.JSON",sentimentData);
 
             }).done(function() {
                     

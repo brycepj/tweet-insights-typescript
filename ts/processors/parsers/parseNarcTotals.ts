@@ -46,25 +46,9 @@ module app {
             function calc() {
 
                 var percent = ((narcTweets/totalTweets)*100).toFixed(2);
-<<<<<<< HEAD
-                var counts = _.zip(narcList,count);
-                var c = counts;
 
-                var fCounts = {
-                    "I":c[0][1],
-                    "me":c[1][1],
-                    "my":c[2][1],
-                    "mine":c[3][1],
-                    "myself":c[4][1],
-                    "I've":c[5][1] + c[8][1],
-                    "I'm":c[6][1] + c[9][1],
-                    "I'd":c[7][1] + c[10][1]
-                };
-
-=======
                 var counts = _.object(narcList,count);
  
->>>>>>> e9c8a57449db5dbedc7010f6b188e2f40c2285b0
                 return {
                     percent:percent,
                     counts:counts

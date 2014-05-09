@@ -10,7 +10,7 @@ var app;
 (function (app) {
     (function (util) {
         function initModels() {
-            var getRawData = $.getJSON('data/brooks.json');
+            var getRawData = $.getJSON('data/austin.json');
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
             var freshData, dataByDate, blueData, textByDate;
             var reasonsModel, hashtagModel, narcModel, sentimentModel;
@@ -38,7 +38,6 @@ var app;
 
             $.when(getAFFIN, getRawData).done(function (AFFINdata) {
                 sentimentData = AFFINdata[0];
-                console.log("sentiment data.JSON", sentimentData);
             }).done(function () {
                 sentimentModel = new app.models.SentimentModel(textByDate.model, sentimentData);
             }).done(function () {
@@ -219,17 +218,6 @@ var app;
                 this.init();
             }
             NarcModel.prototype.init = function () {
-<<<<<<< HEAD
-                this.parseNarcTotals();
-                this.parseNarcTime();
-
-                console.log('narcissism totals', this.model.forTotals);
-                console.log('narcissism overtime', this.model.forDays);
-            };
-
-            NarcModel.prototype.parseNarcTotals = function () {
-                var data = this.data.forTotals;
-=======
                 var initialData = this.data;
 
                 this.parseNarcTotals(initialData);
@@ -240,22 +228,14 @@ var app;
 
             NarcModel.prototype.parseNarcTotals = function (initialData) {
                 var data = initialData.forTotals;
->>>>>>> e9c8a57449db5dbedc7010f6b188e2f40c2285b0
 
                 this.model.forTotals = app.processors.parseNarcTotals(data);
             };
 
-<<<<<<< HEAD
-            NarcModel.prototype.parseNarcTime = function () {
-                var data = this.data.forDays;
-
-                this.model.forDays = app.processors.parseNarcTime(data);
-=======
             NarcModel.prototype.parseNarcDays = function (initialData) {
                 var data = initialData.forDays;
 
                 this.model.forDays = app.processors.parseNarcDays(data);
->>>>>>> e9c8a57449db5dbedc7010f6b188e2f40c2285b0
             };
             return NarcModel;
         })(Backbone.Model);
@@ -751,6 +731,7 @@ var app;
 
             function calc() {
                 var percent = ((narcTweets / totalTweets) * 100).toFixed(2);
+
                 var counts = _.object(narcList, count);
 
                 return {
@@ -770,44 +751,6 @@ var app;
 var app;
 (function (app) {
     (function (processors) {
-<<<<<<< HEAD
-        function parseNarcTime(textByDate) {
-            var data = textByDate;
-
-            var array = [];
-
-            function createDays() {
-                for (var i = 0; i < data.length; i++) {
-                    var obj = data[i];
-
-                    array.push({
-                        date: obj.date,
-                        day: obj.day,
-                        month: obj.month,
-                        year: obj.year,
-                        hadNarc: false,
-                        count: 0
-                    });
-                }
-            }
-
-            function countNarc() {
-                var days = [];
-
-                for (var i = 0; i < data.length; i++) {
-                    var obj = data[i];
-
-                    days.push(obj.text);
-                }
-
-                console.log(days);
-            }
-
-            createDays();
-            countNarc();
-        }
-        processors.parseNarcTime = parseNarcTime;
-=======
         function parseSentimentForTotals(data, dict) {
             var tweetCount;
             var data = data.forTotals;
@@ -820,63 +763,113 @@ var app;
 
             function storeTweets() {
                 var tweets = data;
-                var rando = [];
-                var sum;
+
+                var countedTweets = [];
+                var sum = 0;
                 var total = 0;
                 var posCount = 0;
                 var negCount = 0;
+
                 for (var i = 0; i < tweets.length; i++) {
                     var tweet = tweets[i];
+                    var tweetBalance = 0;
+                    var tweetPosCount = 0;
+                    var tweetNegCount = 0;
+                    var posWords = [];
+                    var negWords = [];
 
                     for (var j = 0; j < tweet.length; j++) {
                         var word = tweet[j];
+                        total++;
 
                         for (var prop in dict) {
                             if (word === prop) {
                                 var score = dict[prop];
-                                rando.push(score);
-                                total++;
+                                sum += score;
+                                tweetBalance += score;
 
                                 if (score > 0) {
                                     posCount++;
+                                    tweetPosCount++;
+                                    posWords.push(prop);
                                 } else {
                                     negCount++;
+                                    tweetNegCount++;
+                                    negWords.push(prop);
                                 }
                             }
                         }
                     }
+
+                    countedTweets.push({
+                        isPos: tweetBalance > 0,
+                        isNeg: tweetBalance < 0,
+                        balance: tweetBalance,
+                        posWords: posWords.length > 0 ? posWords : null,
+                        negWords: negWords.length > 0 ? negWords : null
+                    });
                 }
-                sum = _.reduce(rando, function (memo, num) {
-                    return memo + num;
-                }, 0);
-                console.log('this is the sum', sum);
-                console.log('poscount', posCount);
-                console.log('negcount', negCount);
-                console.log('total', total);
+
+                return {
+                    totals: {
+                        balance: sum,
+                        posWords: posCount,
+                        negWords: negCount,
+                        totalWords: total,
+                        posTweets: null,
+                        negTweets: null,
+                        neuTweets: null,
+                        mostNegative: [],
+                        mostPositive: []
+                    },
+                    tweets: countedTweets
+                };
             }
 
-            storeTweets();
+            function analyzeSentiments() {
+                var data = storeTweets();
 
-            return {
-                totals: {
-                    balance: -1000,
-                    posWords: 0,
-                    negWords: 0,
-                    neutWords: 0,
-                    posTweetsPercent: 45,
-                    negTweetsPercent: 45,
-                    mostNegative: [],
-                    mostPositive: []
-                },
-                tweets: [{
-                        isPos: true,
-                        isNeg: false,
-                        balance: 4,
-                        posWords: [],
-                        negWords: [],
-                        text: "this is the actual text that is fing negative"
-                    }]
-            };
+                var topNeg = _.sortBy(data.tweets, function (tweets) {
+                    return -tweets.balance;
+                });
+                var topPos = _.sortBy(data.tweets, function (tweets) {
+                    return tweets.balance;
+                });
+
+                topNeg = topNeg.slice(0, 5);
+                topPos = topPos.slice(0, 5);
+
+                var posTweetCount = 0;
+                var negTweetCount = 0;
+                var neuTweetCount = 0;
+
+                for (var i = 0; i < data.tweets.length; i++) {
+                    var tweet = data.tweets[i];
+
+                    if (tweet.isPos) {
+                        posTweetCount++;
+                    } else if (tweet.isNeg) {
+                        negTweetCount++;
+                    } else {
+                        neuTweetCount++;
+                    }
+                }
+
+                data.totals.mostNegative = topNeg;
+                data.totals.mostPositive = topPos;
+                data.totals.posTweets = posTweetCount;
+                data.totals.negTweets = negTweetCount;
+                data.totals.neuTweets = neuTweetCount;
+
+                return data;
+            }
+
+            function aggregateForCloud() {
+                var data = analyzeSentiments();
+                console.log(data);
+            }
+
+            aggregateForCloud();
         }
         processors.parseSentimentForTotals = parseSentimentForTotals;
     })(app.processors || (app.processors = {}));
@@ -925,7 +918,6 @@ var app;
             return countNarc();
         }
         processors.parseNarcDays = parseNarcDays;
->>>>>>> e9c8a57449db5dbedc7010f6b188e2f40c2285b0
     })(app.processors || (app.processors = {}));
     var processors = app.processors;
 })(app || (app = {}));
