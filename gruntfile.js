@@ -67,9 +67,23 @@ module.exports = function(grunt) {
 						options : {
 							target : 'es5',
 							sourceMap : false,
-							declaration : true,
+							declaration : false,
 							removeComments : true
 						}
+						
+					},
+					
+					workers: {
+						src : 'ts/workers/*.ts',
+						outDir : 'js/workers',
+						options : {
+							target : 'es5',
+							sourceMap : false,
+							declaration : false,
+							removeComments : true
+						}
+
+						
 					}
 				}
 

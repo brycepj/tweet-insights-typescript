@@ -34,7 +34,6 @@ module app {
 
             parseNarcTotals(initialData) {
                 var data = initialData.forTotals;
-                
 
                 this.model.forTotals = app.processors.parseNarcTotals(data);
 

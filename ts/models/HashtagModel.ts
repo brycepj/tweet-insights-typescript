@@ -24,8 +24,6 @@ module app {
                 
                 console.log('hashtag model',this.model);
                 
-                $('.text').text(this.model.allHashtags.join(" "));
-                
             }
             
             scrubHashtags(){

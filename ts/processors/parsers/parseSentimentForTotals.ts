@@ -4,7 +4,11 @@ module app {
 
         export function parseSentimentForTotals(data, dict) {
             var tweetCount;
+
             var data = data.forTotals;
+
+            var fullTweets = data.slice(0);
+
             var dict = dict;
 
             data = data.slice(0);
@@ -13,7 +17,6 @@ module app {
             // array (has tweets) of arrays (has words)
 
             data = app.processors.scrubForWords(data);
-
 
             function storeTweets() {
 
@@ -55,67 +58,56 @@ module app {
                                     tweetNegCount++;
                                     negWords.push(prop);
                                 }
-
-
                             } // end word match conditional
-
-
                         } //end dict loop
-
-
                     } //end word loop
 
 
-                        countedTweets.push({
-                            isPos: tweetBalance > 0,
-                            isNeg: tweetBalance < 0,
-                            balance: tweetBalance,
-                            posWords: posWords.length>0?posWords:null,
-                            negWords: negWords.length>0?negWords:null
-                        });
-
-
-
+                    countedTweets.push({
+                        index: i,
+                        isPos: tweetBalance > 0,
+                        isNeg: tweetBalance < 0,
+                        balance: tweetBalance,
+                        posWords: posWords.length > 0 ? posWords : null,
+                        negWords: negWords.length > 0 ? negWords : null,
+                        fullText: null,
+                        RT: null
+                    });
                 } //end tweet loop
-
 
                 return {
                     totals: {
                         balance: sum,
-                        posWords: posCount,
-                        negWords: negCount,
                         totalWords: total,
                         posTweets: null,
                         negTweets: null,
-                        neuTweets:null,
+                        neuTweets: null,
                         mostNegative: [],
-                        mostPositive: []
+                        mostPositive: [],
+                        fullText: fullTweets,
+                        allNeg: null,
+                        allPos: null,
+                        allNegPos: null
 
                     },
                     tweets: countedTweets
 
                 };
-
-
             }
 
-            function analyzeSentiments(){
+            function analyzeSentiments() {
 
                 var data = storeTweets();
 
-                var topNeg = _.sortBy(data.tweets, function(tweets){ return -tweets.balance });
-                var topPos = _.sortBy(data.tweets, function(tweets){ return tweets.balance });
+                var topNeg = _.sortBy(data.tweets, function(tweets) { return tweets.balance });
+                var topPos = _.sortBy(data.tweets, function(tweets) { return -tweets.balance });
 
-
-
-                topNeg = topNeg.slice(0,5);
-                topPos = topPos.slice(0,5);
-
+                topNeg = topNeg.slice(0, 25);
+                topPos = topPos.slice(0, 25);
 
                 var posTweetCount = 0;
                 var negTweetCount = 0;
                 var neuTweetCount = 0;
-
 
                 for (var i = 0; i < data.tweets.length; i++) {
                     var tweet = data.tweets[i];
@@ -127,9 +119,8 @@ module app {
                     } else {
                         neuTweetCount++;
                     }
-                    
                 }
-                
+
                 data.totals.mostNegative = topNeg;
                 data.totals.mostPositive = topPos;
                 data.totals.posTweets = posTweetCount;
@@ -141,20 +132,100 @@ module app {
 
             }
 
-            function aggregateForCloud(){
+            function aggregateForCloud() {
                 var data = analyzeSentiments();
-                console.log(data);
 
-                // still need to figure how to pass something about the original tweet down the line
+                var allNeg = [];
+                var allPos = [];
 
+                console.log('here is what we have to analyze', data);
 
+                // full list of all negative words
+                // full list of all positive words
+                // full list of all charged words
+                //
+                for (var i = 0; i < data.tweets.length; i++) {
+
+                    var tweet = data.tweets[i];
+                    var posWords = tweet.posWords ? tweet.posWords : [];
+                    var negWords = tweet.negWords ? tweet.negWords : [];
+
+                    if (posWords.length > 0) {
+                        allPos.push(posWords);
+                    }
+
+                    if (negWords.length > 0) {
+                        allNeg.push(negWords);
+                    }
+
+                }
+
+                allNeg = _.flatten(allNeg);
+                allPos = _.flatten(allPos);
+
+                data.totals.allNeg = allNeg.sort();
+                data.totals.allPos = allPos.sort();
+                data.totals.allNegPos = allNeg.concat(allPos);
+
+                return data;
             }
 
-            aggregateForCloud();
+            function showTextForTop() {
+
+                var data = aggregateForCloud();
+                var tweets = data.totals.fullText;
+
+                var mostNeg = data.totals.mostNegative;
+                var mostPos = data.totals.mostPositive;
+
+
+                for (var i = 0; i < mostNeg.length; i++) {
+                    var first, second;
+                    var tweet = mostNeg[i];
+                    var index = tweet.index;
+
+                    var fullText = tweets[index];
+
+                    mostNeg[i].fullText = fullText;
+
+                    first = mostNeg[i].fullText.charAt(0);
+                    second = mostNeg[i].fullText.charAt(1);
+
+                    if (first == "R" && second == "T") {
+                        tweet.RT = true;
+                    } else {
+                        tweet.RT = false;
+                    }
+
+                }
+
+                for (var i = 0; i < mostPos.length; i++) {
+                    var first, second;
+                    var tweet = mostPos[i];
+                    var index = tweet.index;
+
+                    var fullText = tweets[index];
+
+                    mostPos[i].fullText = fullText;
+
+                    first = mostPos[i].fullText.charAt(0);
+                    second = mostPos[i].fullText.charAt(1);
+
+                    if (first == "R" && second == "T") {
+                        tweet.RT = true;
+                    } else {
+                        tweet.RT = false;
+                    }
+
+                }
+
+                return data;
+            }
+
+            return showTextForTop();
 
         }
 
     }
 }
 
-//consider passing in a reference to the original dataset, so we can grab the text
