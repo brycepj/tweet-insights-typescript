@@ -10,14 +10,14 @@ var app;
 (function (app) {
     (function (util) {
         function initModels() {
-            var getRawData = $.getJSON('data/ben.json');
+            var getRawData = $.getJSON('data/brooks.json');
+            var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
             var freshData, dataByDate, blueData, textByDate;
-            var reasonsModel, hashtagModel, narcModel;
+            var reasonsModel, hashtagModel, narcModel, sentimentModel;
             var reasonsConfig;
 
             getRawData.done(function (data) {
                 freshData = app.scrubRawData(data);
-
                 console.log('fresh data length', freshData.length, freshData);
             }).done(function (data) {
                 dataByDate = new app.models.DataByDate(freshData);
@@ -34,6 +34,14 @@ var app;
                 app.util.initViews({
                     tweetReasons: reasonsConfig
                 });
+            });
+
+            $.when(getAFFIN, getRawData).done(function (AFFINdata) {
+                sentimentData = AFFINdata[0];
+                console.log("sentiment data.JSON", sentimentData);
+            }).done(function () {
+                sentimentModel = new app.models.SentimentModel(textByDate.model, sentimentData);
+            }).done(function () {
             });
         }
         util.initModels = initModels;
@@ -202,13 +210,16 @@ var app;
                 _super.call(this);
 
                 this.data = TextByDate;
+
                 this.model = {
                     forDays: null,
                     forTotals: null
                 };
+
                 this.init();
             }
             NarcModel.prototype.init = function () {
+<<<<<<< HEAD
                 this.parseNarcTotals();
                 this.parseNarcTime();
 
@@ -218,14 +229,33 @@ var app;
 
             NarcModel.prototype.parseNarcTotals = function () {
                 var data = this.data.forTotals;
+=======
+                var initialData = this.data;
+
+                this.parseNarcTotals(initialData);
+                this.parseNarcDays(initialData);
+
+                console.log('narcData', this.model);
+            };
+
+            NarcModel.prototype.parseNarcTotals = function (initialData) {
+                var data = initialData.forTotals;
+>>>>>>> e9c8a57449db5dbedc7010f6b188e2f40c2285b0
 
                 this.model.forTotals = app.processors.parseNarcTotals(data);
             };
 
+<<<<<<< HEAD
             NarcModel.prototype.parseNarcTime = function () {
                 var data = this.data.forDays;
 
                 this.model.forDays = app.processors.parseNarcTime(data);
+=======
+            NarcModel.prototype.parseNarcDays = function (initialData) {
+                var data = initialData.forDays;
+
+                this.model.forDays = app.processors.parseNarcDays(data);
+>>>>>>> e9c8a57449db5dbedc7010f6b188e2f40c2285b0
             };
             return NarcModel;
         })(Backbone.Model);
@@ -256,6 +286,45 @@ var app;
             return TweetReasonsConfig;
         })(Backbone.Model);
         models.TweetReasonsConfig = TweetReasonsConfig;
+    })(app.models || (app.models = {}));
+    var models = app.models;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (models) {
+        var SentimentModel = (function (_super) {
+            __extends(SentimentModel, _super);
+            function SentimentModel(TextByDate, affin) {
+                _super.call(this);
+
+                this.data = TextByDate;
+                this.dict = affin;
+
+                this.model = {
+                    forDays: null,
+                    forTotals: null
+                };
+
+                this.init();
+            }
+            SentimentModel.prototype.init = function () {
+                this.parseSentimentForTotals();
+
+                console.log('sentiment model', this.model);
+            };
+
+            SentimentModel.prototype.parseSentimentForTotals = function () {
+                var data = this.data;
+                var dict = this.dict;
+
+                this.model.forTotals = app.processors.parseSentimentForTotals(data, dict);
+            };
+
+            SentimentModel.prototype.parseSentimentForDays = function () {
+            };
+            return SentimentModel;
+        })(Backbone.Model);
+        models.SentimentModel = SentimentModel;
     })(app.models || (app.models = {}));
     var models = app.models;
 })(app || (app = {}));
@@ -349,7 +418,7 @@ var app;
                     var noSymbols = _.filter(arrayedText[i], function (string) {
                         var firstLetter = string.slice(0, 1);
                         var firstFour = string.slice(0, 4);
-                        return firstLetter !== "@" && firstLetter !== "#" && firstFour !== "http";
+                        return firstLetter !== "@" && firstFour !== "http";
                     });
 
                     arrayedText[i] = noSymbols;
@@ -378,6 +447,91 @@ var app;
             return noPunctuation();
         }
         processors.scrubForWords = scrubForWords;
+    })(app.processors || (app.processors = {}));
+    var processors = app.processors;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (processors) {
+        function scrubForWordsDays(textByDate) {
+            var data = textByDate;
+            data = textByDate.slice(0);
+
+            function combineText() {
+                for (var i = 0; i < data.length; i++) {
+                    var day = data[i];
+                    var texts = day.text;
+                    var newString = "";
+
+                    for (var j = 0; j < texts.length; j++) {
+                        var text = texts[j];
+                        text = text + " ";
+                        newString += text;
+                    }
+
+                    day.text = newString;
+                }
+                return data;
+            }
+
+            function arrayedText() {
+                var data = combineText();
+
+                for (var i = 0; i < data.length; i++) {
+                    var text = data[i].text;
+
+                    text = text.split(" ");
+
+                    data[i].text = text;
+                }
+
+                return data;
+            }
+
+            function removeSymbols() {
+                var data = arrayedText();
+
+                for (var i = 0; i < data.length; i++) {
+                    var day = data[i];
+                    var fullStr = day.text;
+                    var noSymbolsToday = [];
+
+                    for (var j = 0; j < fullStr.length; j++) {
+                        var word = fullStr[j].toLowerCase();
+                        var firstLetter = _.first(word);
+                        var firstFour = word.slice(0, 4);
+
+                        if (word !== "" && firstLetter !== "@" && firstLetter !== "#" && firstFour !== "http") {
+                            noSymbolsToday.push(word);
+                        }
+                    }
+                    day.text = noSymbolsToday;
+                }
+                return data;
+            }
+
+            function removePunctuation() {
+                var data = removeSymbols();
+
+                for (var i = 0; i < data.length; i++) {
+                    var day = data[i];
+                    var text = day.text;
+
+                    for (var j = 0; j < text.length; j++) {
+                        var word = text[j];
+                        var punctuationless = word.replace(/[\.,-\/#!$?%\^&\*;:{}=\-_`~()]/g, "");
+                        var finalString = punctuationless.replace(/\s{2,}/g, " ");
+
+                        text[j] = finalString;
+                    }
+                }
+
+                return data;
+            }
+
+            return removePunctuation();
+        }
+        processors.scrubForWordsDays = scrubForWordsDays;
     })(app.processors || (app.processors = {}));
     var processors = app.processors;
 })(app || (app = {}));
@@ -565,7 +719,6 @@ var app;
     (function (processors) {
         function parseNarcTotals(textByDate) {
             var data = app.processors.scrubForWords(textByDate);
-
             var narcList = ["i", "me", "my", "mine", "myself", "i've", "i'm", "i'd", 'ive', 'im', 'id'];
             var totalTweets = 0;
             var narcTweets = 0;
@@ -598,23 +751,11 @@ var app;
 
             function calc() {
                 var percent = ((narcTweets / totalTweets) * 100).toFixed(2);
-                var counts = _.zip(narcList, count);
-                var c = counts;
-
-                var fCounts = {
-                    "I": c[0][1],
-                    "me": c[1][1],
-                    "my": c[2][1],
-                    "mine": c[3][1],
-                    "myself": c[4][1],
-                    "I've": c[5][1] + c[8][1],
-                    "I'm": c[6][1] + c[9][1],
-                    "I'd": c[7][1] + c[10][1]
-                };
+                var counts = _.object(narcList, count);
 
                 return {
                     percent: percent,
-                    counts: fCounts
+                    counts: counts
                 };
             }
 
@@ -629,6 +770,7 @@ var app;
 var app;
 (function (app) {
     (function (processors) {
+<<<<<<< HEAD
         function parseNarcTime(textByDate) {
             var data = textByDate;
 
@@ -665,6 +807,125 @@ var app;
             countNarc();
         }
         processors.parseNarcTime = parseNarcTime;
+=======
+        function parseSentimentForTotals(data, dict) {
+            var tweetCount;
+            var data = data.forTotals;
+            var dict = dict;
+
+            data = data.slice(0);
+            tweetCount = data.length;
+
+            data = app.processors.scrubForWords(data);
+
+            function storeTweets() {
+                var tweets = data;
+                var rando = [];
+                var sum;
+                var total = 0;
+                var posCount = 0;
+                var negCount = 0;
+                for (var i = 0; i < tweets.length; i++) {
+                    var tweet = tweets[i];
+
+                    for (var j = 0; j < tweet.length; j++) {
+                        var word = tweet[j];
+
+                        for (var prop in dict) {
+                            if (word === prop) {
+                                var score = dict[prop];
+                                rando.push(score);
+                                total++;
+
+                                if (score > 0) {
+                                    posCount++;
+                                } else {
+                                    negCount++;
+                                }
+                            }
+                        }
+                    }
+                }
+                sum = _.reduce(rando, function (memo, num) {
+                    return memo + num;
+                }, 0);
+                console.log('this is the sum', sum);
+                console.log('poscount', posCount);
+                console.log('negcount', negCount);
+                console.log('total', total);
+            }
+
+            storeTweets();
+
+            return {
+                totals: {
+                    balance: -1000,
+                    posWords: 0,
+                    negWords: 0,
+                    neutWords: 0,
+                    posTweetsPercent: 45,
+                    negTweetsPercent: 45,
+                    mostNegative: [],
+                    mostPositive: []
+                },
+                tweets: [{
+                        isPos: true,
+                        isNeg: false,
+                        balance: 4,
+                        posWords: [],
+                        negWords: [],
+                        text: "this is the actual text that is fing negative"
+                    }]
+            };
+        }
+        processors.parseSentimentForTotals = parseSentimentForTotals;
+    })(app.processors || (app.processors = {}));
+    var processors = app.processors;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (processors) {
+        function parseNarcDays(textByDate) {
+            var data = textByDate.slice(0);
+
+            data = app.processors.scrubForWordsDays(data);
+
+            var narcList = ["i", "me", "my", "mine", "myself", "i've", "i'm", "i'd", 'ive', 'im', 'id'];
+
+            function countNarc() {
+                var count = 0;
+                var narcList = ["i", "me", "my", "mine", "myself", "i've", "i'm", "i'd", 'ive', 'im', 'id'];
+
+                for (var i = 0; i < data.length; i++) {
+                    var day = data[i];
+                    var text = day.text;
+
+                    for (var j = 0; j < text.length; j++) {
+                        var word = text[j];
+
+                        for (var k = 0; k < narcList.length; k++) {
+                            if (word === narcList[k]) {
+                                count++;
+                            }
+                        }
+                    }
+                    data[i].count = count;
+
+                    if (data[i].count > 0) {
+                        data[i].hasNarc = true;
+                    } else {
+                        data[i].hasNarc = false;
+                    }
+
+                    count = 0;
+                }
+                return data;
+            }
+
+            return countNarc();
+        }
+        processors.parseNarcDays = parseNarcDays;
+>>>>>>> e9c8a57449db5dbedc7010f6b188e2f40c2285b0
     })(app.processors || (app.processors = {}));
     var processors = app.processors;
 })(app || (app = {}));

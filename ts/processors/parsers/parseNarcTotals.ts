@@ -5,7 +5,6 @@ module app {
         export function parseNarcTotals(textByDate) {
 
             var data = app.processors.scrubForWords(textByDate);
-
             var narcList = ["i", "me", "my", "mine", "myself", "i've", "i'm", "i'd", 'ive', 'im', 'id'];
             var totalTweets = 0;
             var narcTweets = 0;
@@ -47,6 +46,7 @@ module app {
             function calc() {
 
                 var percent = ((narcTweets/totalTweets)*100).toFixed(2);
+<<<<<<< HEAD
                 var counts = _.zip(narcList,count);
                 var c = counts;
 
@@ -61,9 +61,13 @@ module app {
                     "I'd":c[7][1] + c[10][1]
                 };
 
+=======
+                var counts = _.object(narcList,count);
+ 
+>>>>>>> e9c8a57449db5dbedc7010f6b188e2f40c2285b0
                 return {
                     percent:percent,
-                    counts:fCounts
+                    counts:counts
                 };
             }
 

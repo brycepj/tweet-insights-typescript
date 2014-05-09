@@ -4,46 +4,48 @@ module app {
 
         export class NarcModel extends Backbone.Model {
 
-            data:any;
-            model:any;
+            data: any;
+            model: any;
 
             constructor(TextByDate) {
                 super();
 
                 this.data = TextByDate;
+                
                 this.model = {
-                    forDays:null,
-                    forTotals:null
+                    forDays: null,
+                    forTotals: null
                 };
+                
                 this.init();
 
             }
 
+            init(): void {
 
-            
-            init():void{
+                var initialData = this.data;
 
-                this.parseNarcTotals();
-                this.parseNarcTime();
+                this.parseNarcTotals(initialData);
+                this.parseNarcDays(initialData);
+                
+                console.log('narcData',this.model);
 
-                console.log('narcissism totals', this.model.forTotals);
-                console.log('narcissism overtime', this.model.forDays);
-            
             }
-            
-            parseNarcTotals() {
 
-                var data = this.data.forTotals;
+            parseNarcTotals(initialData) {
+                var data = initialData.forTotals;
+                
 
                 this.model.forTotals = app.processors.parseNarcTotals(data);
 
             }
 
-            parseNarcTime() {
 
-                var data = this.data.forDays;
+            parseNarcDays(initialData) {
+                var data = initialData.forDays;
 
-                this.model.forDays = app.processors.parseNarcTime(data);
+                this.model.forDays = app.processors.parseNarcDays(data);
+
 
             }
 
