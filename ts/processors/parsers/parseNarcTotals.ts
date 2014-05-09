@@ -11,8 +11,6 @@ module app {
             var narcTweets = 0;
             var count = [0,0,0,0,0,0,0,0,0,0,0];
 
-
-
             function getPercent() {
 
                 for (var i = 0; i < data.length; i++) {
@@ -61,13 +59,7 @@ module app {
                     "I've":c[5][1] + c[8][1],
                     "I'm":c[6][1] + c[9][1],
                     "I'd":c[7][1] + c[10][1]
-
                 };
-
-
-
-
-
 
                 return {
                     percent:percent,
@@ -82,7 +74,3 @@ module app {
         }
     }
 }
-
-// % of tweets you mention yourself in
-// Avg number of times you mention yourself per tweet
-// Count of individual words

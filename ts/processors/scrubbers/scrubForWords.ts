@@ -2,7 +2,7 @@ module app {
     export module processors {
         export function scrubForWords(data) {
 
-
+            //break apart strings
             var arrayedText = _.map(data, function (value) {
                 return value.split(" ");
             });

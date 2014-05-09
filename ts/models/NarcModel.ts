@@ -19,33 +19,32 @@ module app {
 
             }
 
-            //
 
-
-            
-            // days 
-            // same stats but for different model
-            // most narcisstic days, weeks, months
             
             init():void{
 
                 this.parseNarcTotals();
+                this.parseNarcTime();
 
-                console.log('for totals', this.model.forTotals);
+                console.log('narcissism totals', this.model.forTotals);
+                console.log('narcissism overtime', this.model.forDays);
             
             }
             
             parseNarcTotals() {
+
                 var data = this.data.forTotals;
+
                 this.model.forTotals = app.processors.parseNarcTotals(data);
-               
-            
+
             }
 
-            parseNarcByDay() {
-            
-            
-            
+            parseNarcTime() {
+
+                var data = this.data.forDays;
+
+                this.model.forDays = app.processors.parseNarcTime(data);
+
             }
 
         }

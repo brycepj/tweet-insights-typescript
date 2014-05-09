@@ -210,16 +210,22 @@ var app;
             }
             NarcModel.prototype.init = function () {
                 this.parseNarcTotals();
+                this.parseNarcTime();
 
-                console.log('for totals', this.model.forTotals);
+                console.log('narcissism totals', this.model.forTotals);
+                console.log('narcissism overtime', this.model.forDays);
             };
 
             NarcModel.prototype.parseNarcTotals = function () {
                 var data = this.data.forTotals;
+
                 this.model.forTotals = app.processors.parseNarcTotals(data);
             };
 
-            NarcModel.prototype.parseNarcByDay = function () {
+            NarcModel.prototype.parseNarcTime = function () {
+                var data = this.data.forDays;
+
+                this.model.forDays = app.processors.parseNarcTime(data);
             };
             return NarcModel;
         })(Backbone.Model);
@@ -617,6 +623,48 @@ var app;
             return calc();
         }
         processors.parseNarcTotals = parseNarcTotals;
+    })(app.processors || (app.processors = {}));
+    var processors = app.processors;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (processors) {
+        function parseNarcTime(textByDate) {
+            var data = textByDate;
+
+            var array = [];
+
+            function createDays() {
+                for (var i = 0; i < data.length; i++) {
+                    var obj = data[i];
+
+                    array.push({
+                        date: obj.date,
+                        day: obj.day,
+                        month: obj.month,
+                        year: obj.year,
+                        hadNarc: false,
+                        count: 0
+                    });
+                }
+            }
+
+            function countNarc() {
+                var days = [];
+
+                for (var i = 0; i < data.length; i++) {
+                    var obj = data[i];
+
+                    days.push(obj.text);
+                }
+
+                console.log(days);
+            }
+
+            createDays();
+            countNarc();
+        }
+        processors.parseNarcTime = parseNarcTime;
     })(app.processors || (app.processors = {}));
     var processors = app.processors;
 })(app || (app = {}));
