@@ -3,7 +3,7 @@ module app {
         export function scrubForWordsDays(textByDate) {
             
             var data = textByDate;
-            data = textByDate.slice(0);
+            data = textByDate.concat();
             
             function combineText() {
 

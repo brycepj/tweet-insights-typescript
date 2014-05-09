@@ -1,6 +1,7 @@
 ## Next
 
 - ALL TIME RETWEETS, FAVORITES
+- https://github.com/gabceb/grunt-profanities/blob/master/lib/profanities/en.json
 
 ## Setup Models
 

@@ -38,6 +38,7 @@ module app {
                         month: obj.month,
                         year: obj.year,
                         text: []
+                        
 
                     };
 
@@ -48,8 +49,9 @@ module app {
 
                         newTweetObj.text.push(tweet.text);
                     }
-
+                    newTweetObj["quantity"] = newTweetObj.text.length;
                     model.forDays.push(newTweetObj);
+                   
                 }
             }
 

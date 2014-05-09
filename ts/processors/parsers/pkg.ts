@@ -2,6 +2,7 @@
 /// <reference path="parseNarcTotals.ts"/>
 
 /// <reference path="parseSentimentForTotals.ts"/>
+/// <reference path="parseSentimentForDays.ts"/>
 
 /// <reference path="parseNarcDays.ts"/>
 /// <reference path="parseTweetReasons.ts"/>
