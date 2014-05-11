@@ -102,8 +102,8 @@ module app {
                 var topNeg = _.sortBy(data.tweets, function(tweets) { return tweets.balance });
                 var topPos = _.sortBy(data.tweets, function(tweets) { return -tweets.balance });
 
-                topNeg = topNeg.slice(0, 25);
-                topPos = topPos.slice(0, 25);
+                topNeg = topNeg;
+                topPos = topPos;
 
                 var posTweetCount = 0;
                 var negTweetCount = 0;
@@ -137,8 +137,6 @@ module app {
 
                 var allNeg = [];
                 var allPos = [];
-
-                console.log('here is what we have to analyze', data);
 
                 // full list of all negative words
                 // full list of all positive words

@@ -8,10 +8,6 @@ module app {
                 forDays: []
             };
 
-            console.log('data', data);
-
-
-
             function textDataForTotals() {
 
                 for (var i = 0; i < data.forTotals.length; i++) {
@@ -37,7 +33,8 @@ module app {
                         day: obj.day,
                         month: obj.month,
                         year: obj.year,
-                        text: []
+                        text: [],
+                        textStr:null
                         
 
                     };
@@ -46,7 +43,7 @@ module app {
                     for (var j = 0; j < obj.tweets.length; j++) {
 
                         var tweet = obj.tweets[j];
-
+                        newTweetObj.textStr = tweet.text;
                         newTweetObj.text.push(tweet.text);
                     }
                     newTweetObj["quantity"] = newTweetObj.text.length;

@@ -13,7 +13,7 @@ var app;
             var getRawData = $.getJSON('data/bryce.json');
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
             var freshData, dataByDate, blueData, textByDate;
-            var reasonsModel, hashtagModel, narcModel, sentimentModel;
+            var reasonsModel, hashtagModel, narcModel, sentimentModel, readingModel;
             var reasonsConfig;
 
             getRawData.done(function (data) {
@@ -26,6 +26,7 @@ var app;
                 hashtagModel = new app.models.HashtagModel(dataByDate.model.forTotals);
                 reasonsModel = new app.models.TweetReasonsModel(dataByDate.model);
                 narcModel = new app.models.NarcModel(textByDate.model);
+                readingModel = new app.models.ReadingModel(textByDate.model.forTotals);
             }).fail(function (data) {
                 console.log('request failed');
             }).done(function (data) {
@@ -34,13 +35,6 @@ var app;
                 app.util.initViews({
                     tweetReasons: reasonsConfig
                 });
-            });
-
-            $.when(getAFFIN, getRawData).done(function (AFFINdata) {
-                sentimentData = AFFINdata[0];
-            }).done(function () {
-                sentimentModel = new app.models.SentimentModel(textByDate.model, sentimentData);
-            }).done(function () {
             });
         }
         util.initModels = initModels;
@@ -278,35 +272,58 @@ var app;
                 this.data = TextByDate;
                 this.dict = affin;
 
-                this.model = {
-                    forDays: null,
-                    forTotals: null
-                };
+                this.model = {};
 
                 this.init();
             }
             SentimentModel.prototype.init = function () {
                 this.parseSentimentForTotals();
-
-                this.parseSentimentForDays();
             };
 
             SentimentModel.prototype.parseSentimentForTotals = function () {
                 var data = this.data;
                 var dict = this.dict;
 
-                this.model.forTotals = app.processors.parseSentimentForTotals(data, dict);
-            };
-
-            SentimentModel.prototype.parseSentimentForDays = function () {
-                var totals = this.model.forTotals;
-                var dates = this.data.forDays;
-
-                this.model.forDays = app.processors.parseSentimentForDays(totals, dates);
+                this.model = app.processors.parseSentimentForTotals(data, dict);
+                console.log('sentiment totals', this.model);
             };
             return SentimentModel;
         })(Backbone.Model);
         models.SentimentModel = SentimentModel;
+    })(app.models || (app.models = {}));
+    var models = app.models;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (models) {
+        var ReadingModel = (function (_super) {
+            __extends(ReadingModel, _super);
+            function ReadingModel(DataByDate) {
+                _super.call(this);
+
+                this.data = DataByDate;
+                this.model = null;
+                this.init();
+            }
+            ReadingModel.prototype.init = function () {
+                this.scrubForReading();
+                this.parseForFogScale();
+            };
+
+            ReadingModel.prototype.scrubForReading = function () {
+                var data = this.data.slice(0);
+
+                this.model = app.processors.scrubForReading(data);
+            };
+
+            ReadingModel.prototype.parseForFogScale = function () {
+                var data = this.model;
+
+                this.model = app.processors.parseForFogScale(data);
+            };
+            return ReadingModel;
+        })(Backbone.Model);
+        models.ReadingModel = ReadingModel;
     })(app.models || (app.models = {}));
     var models = app.models;
 })(app || (app = {}));
@@ -343,8 +360,6 @@ var app;
                 forDays: []
             };
 
-            console.log('data', data);
-
             function textDataForTotals() {
                 for (var i = 0; i < data.forTotals.length; i++) {
                     var obj = data.forTotals[i];
@@ -365,12 +380,13 @@ var app;
                         day: obj.day,
                         month: obj.month,
                         year: obj.year,
-                        text: []
+                        text: [],
+                        textStr: null
                     };
 
                     for (var j = 0; j < obj.tweets.length; j++) {
                         var tweet = obj.tweets[j];
-
+                        newTweetObj.textStr = tweet.text;
                         newTweetObj.text.push(tweet.text);
                     }
                     newTweetObj["quantity"] = newTweetObj.text.length;
@@ -546,6 +562,87 @@ var app;
             return returnObj;
         }
         processors.scrubHashtags = scrubHashtags;
+    })(app.processors || (app.processors = {}));
+    var processors = app.processors;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (processors) {
+        function scrubForReading(data) {
+            var tweets = data;
+
+            function groupStrings() {
+                var newTweets = [];
+
+                for (var i = 0; i < tweets.length; i++) {
+                    var tweet = tweets[i];
+
+                    newTweets.push({
+                        str: tweet,
+                        array: tweet.split(" "),
+                        RT: false
+                    });
+                }
+
+                tweets = newTweets;
+
+                return tweets;
+            }
+
+            function removeSymbols() {
+                var tweets = groupStrings();
+
+                for (var i = 0; i < tweets.length; i++) {
+                    var tweet = tweets[i];
+                    var arrayedText = tweet.array;
+
+                    var noSymbols = _.filter(arrayedText, function (string) {
+                        var firstLetter = string.slice(0, 1);
+                        var firstTwo = string.slice(0, 2);
+                        var firstFour = string.slice(0, 4);
+                        return firstLetter !== "@" && firstLetter !== "#" && firstFour !== "http";
+                    });
+
+                    if (noSymbols[0] === "rt") {
+                        tweet.RT = true;
+                    }
+
+                    for (var j = 0; j < noSymbols.length; j++) {
+                        var word = noSymbols[j];
+
+                        var punctuationless = word.replace(/[\.,-\/#"!$%\^&\*;:{}=\-_`~()]/g, "");
+                        var finalString = punctuationless.replace(/\s{2,}/g, " ");
+
+                        noSymbols[j] = removeAccents(finalString);
+                    }
+
+                    tweet.array = noSymbols;
+                    tweet.str = noSymbols.join(" ");
+                }
+                return tweets;
+            }
+
+            function removeAccents(s) {
+                var r = s.toLowerCase();
+                r = r.replace(new RegExp(/\s/g), "");
+                r = r.replace(new RegExp(/[àáâãäå]/g), "a");
+                r = r.replace(new RegExp(/æ/g), "ae");
+                r = r.replace(new RegExp(/ç/g), "c");
+                r = r.replace(new RegExp(/[èéêë]/g), "e");
+                r = r.replace(new RegExp(/[ìíîï]/g), "i");
+                r = r.replace(new RegExp(/ñ/g), "n");
+                r = r.replace(new RegExp(/[òóôõö]/g), "o");
+                r = r.replace(new RegExp(/œ/g), "oe");
+                r = r.replace(new RegExp(/[ùúûü]/g), "u");
+                r = r.replace(new RegExp(/[ýÿ]/g), "y");
+                r = r.replace(new RegExp(/\W/g), "");
+                return r;
+            }
+            ;
+
+            return removeSymbols();
+        }
+        processors.scrubForReading = scrubForReading;
     })(app.processors || (app.processors = {}));
     var processors = app.processors;
 })(app || (app = {}));
@@ -847,8 +944,8 @@ var app;
                     return -tweets.balance;
                 });
 
-                topNeg = topNeg.slice(0, 25);
-                topPos = topPos.slice(0, 25);
+                topNeg = topNeg;
+                topPos = topPos;
 
                 var posTweetCount = 0;
                 var negTweetCount = 0;
@@ -880,8 +977,6 @@ var app;
 
                 var allNeg = [];
                 var allPos = [];
-
-                console.log('here is what we have to analyze', data);
 
                 for (var i = 0; i < data.tweets.length; i++) {
                     var tweet = data.tweets[i];
@@ -1101,6 +1196,73 @@ var app;
             return countNarc();
         }
         processors.parseNarcDays = parseNarcDays;
+    })(app.processors || (app.processors = {}));
+    var processors = app.processors;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (processors) {
+        function parseForFogScale(data) {
+            var tweets = data;
+
+            function getAvgSyllables() {
+                for (var i = 0; i < tweets.length; i++) {
+                    var tweet = tweets[i];
+                    var newSyls = null;
+                    var syllableCounts = [];
+
+                    for (var j = 0; j < tweet.array.length; j++) {
+                        if (tweet.RT === false) {
+                            var word = tweet.array[j];
+
+                            var syl = new_count(word);
+
+                            syllableCounts.push(syl);
+                        }
+                    }
+
+                    newSyls = _.reduce(syllableCounts, function (memo, num) {
+                        return memo + num;
+                    }, 0);
+
+                    tweets[i]["avgSyl"] = (newSyls / tweet.array.length).toFixed(2);
+                }
+                return tweets;
+            }
+
+            function getOverallAvgSyllables() {
+                var tweets = getAvgSyllables();
+                var total = 0;
+                var isNaNs = 0;
+                for (var i = 0; i < tweets.length; i++) {
+                    var avg = Number(tweets[i].avgSyl);
+                    if (isNaN(avg)) {
+                        isNaNs++;
+                    } else {
+                        total += avg;
+                    }
+                }
+
+                return (total / (tweets.length - isNaNs)).toFixed(2);
+            }
+
+            console.log('average syllables', getOverallAvgSyllables());
+
+            function new_count(word) {
+                word = word.toLowerCase();
+                if (word.length <= 3) {
+                    return 1;
+                }
+                word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+                word = word.replace(/^y/, '');
+                if (!word.match(/[aeiouy]{1,2}/g)) {
+                    return 1;
+                }
+
+                return word.match(/[aeiouy]{1,2}/g).length;
+            }
+        }
+        processors.parseForFogScale = parseForFogScale;
     })(app.processors || (app.processors = {}));
     var processors = app.processors;
 })(app || (app = {}));

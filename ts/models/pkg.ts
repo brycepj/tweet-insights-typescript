@@ -3,3 +3,4 @@
 /// <reference path="NarcModel.ts"/>
 /// <reference path="chartConfig/pkg.ts"/>
 /// <reference path="SentimentModel.ts"/>
+/// <reference path="ReadingModel.ts"/>

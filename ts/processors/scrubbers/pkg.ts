@@ -3,3 +3,5 @@
 /// <reference path="scrubForWords.ts"/>
 /// <reference path="scrubForWordsDays.ts"/>
 /// <reference path="scrubHashtags.ts"/>
+/// <reference path="scrubForReading.ts"/>
+

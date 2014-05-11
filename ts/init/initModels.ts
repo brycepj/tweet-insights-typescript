@@ -7,7 +7,7 @@ module app {
             var getRawData = $.getJSON('data/bryce.json');
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
             var freshData, dataByDate, blueData, textByDate;
-            var reasonsModel, hashtagModel, narcModel, sentimentModel;
+            var reasonsModel, hashtagModel, narcModel, sentimentModel, readingModel;
             var reasonsConfig;
 
             getRawData.done(function(data) {
@@ -25,6 +25,7 @@ module app {
                     hashtagModel = new app.models.HashtagModel(dataByDate.model.forTotals);
                     reasonsModel = new app.models.TweetReasonsModel(dataByDate.model);
                     narcModel = new app.models.NarcModel(textByDate.model);
+                    readingModel = new app.models.ReadingModel(textByDate.model.forTotals);
 
                 }).fail(function(data) {
 
@@ -42,7 +43,7 @@ module app {
                 });
 
             // store AFFIN data, once other models have been initialized
-
+/*
             $.when(getAFFIN, getRawData).done(function(AFFINdata) {
 
                 sentimentData = AFFINdata[0];
@@ -54,7 +55,7 @@ module app {
                 }).done(function() {
 
                 });
-
+*/
         }
     }
 }
