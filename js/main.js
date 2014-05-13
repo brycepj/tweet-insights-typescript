@@ -12,8 +12,10 @@ var app;
         function initModels() {
             var startTime = new Date().getTime();
 
-            var getRawData = $.getJSON('data/brooks.json');
+            var getRawData = $.getJSON('data/bryce.json');
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
+            var getProfanity = $.getJSON('data/profanity.json');
+
             var freshData, dataByDate, blueData, textByDate;
             var reasonsModel, hashtagModel, narcModel, sentimentModel, readingModel;
             var reasonsConfig;
@@ -37,14 +39,6 @@ var app;
                 app.util.initViews({
                     tweetReasons: reasonsConfig
                 });
-            });
-
-            $.when(getAFFIN, getRawData).done(function (AFFINdata) {
-                sentimentData = AFFINdata[0];
-            }).done(function () {
-                sentimentModel = new app.models.SentimentModel(textByDate.model, sentimentData);
-            }).done(function () {
-                console.log((new Date().getTime() - startTime) / 1000 + " seconds");
             });
         }
         util.initModels = initModels;
@@ -312,26 +306,36 @@ var app;
                 _super.call(this);
 
                 this.data = DataByDate;
+
                 this.model = null;
                 this.init();
             }
             ReadingModel.prototype.init = function () {
                 this.scrubForReading();
                 this.parseForReading();
+                this.parseForVocabulary();
+
+                console.log('reading model', this.model);
             };
 
             ReadingModel.prototype.scrubForReading = function () {
                 var data = this.data.slice(0);
 
                 this.model = app.processors.scrubForReading(data);
+
+                this.scrubbed = this.model;
             };
 
             ReadingModel.prototype.parseForReading = function () {
                 var data = this.model;
 
                 this.model = app.processors.parseForReading(data);
+            };
 
-                console.log('reading model', this.model);
+            ReadingModel.prototype.parseForVocabulary = function () {
+                var data = this.scrubbed;
+
+                this.model["vocab"] = app.processors.parseForVocabulary(data);
             };
             return ReadingModel;
         })(Backbone.Model);
@@ -1327,6 +1331,38 @@ var app;
             return calculate();
         }
         processors.parseForReading = parseForReading;
+    })(app.processors || (app.processors = {}));
+    var processors = app.processors;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (processors) {
+        function parseForVocabulary(data) {
+            var tweets = data;
+
+            function countUniqueWords() {
+                var allWords = [], total, unique;
+
+                for (var i = 0; i < tweets.length; i++) {
+                    var tweet = tweets[i];
+
+                    if (tweet.RT === false) {
+                        allWords.push(tweet.array);
+                    }
+                }
+
+                total = _.flatten(allWords).sort();
+                unique = _.uniq(total, true);
+
+                return {
+                    unique: unique.length,
+                    total: total.length
+                };
+            }
+
+            return countUniqueWords();
+        }
+        processors.parseForVocabulary = parseForVocabulary;
     })(app.processors || (app.processors = {}));
     var processors = app.processors;
 })(app || (app = {}));

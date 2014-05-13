@@ -5,8 +5,11 @@ Data needs retweet, favorite data, text and dates.
 - ALL TIME RETWEETS, FAVORITES
 - All time most engaging tweets
 - Hour of the day you've got the most engagement based on a tweet
--
-- https://github.com/gabceb/grunt-profanities/blob/master/lib/profanities/en.json
+- Most positive about yourself?
+- Off limit phrases (pls retweet);
+- Profanity
+- Range of Vocabulary
+https://github.com/gabceb/grunt-profanities/blob/master/lib/profanities/en.json
 
 ## Setup Models
 

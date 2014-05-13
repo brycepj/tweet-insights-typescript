@@ -6,6 +6,7 @@
 
 /// <reference path="parseNarcDays.ts"/>
 /// <reference path="parseForReading.ts"/>
+/// <reference path="parseForVocabulary.ts"/>
 
 /// <reference path="parseTweetReasons.ts"/>
 /// <reference path="parseHashtags.ts"/>

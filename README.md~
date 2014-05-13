@@ -1,6 +1,12 @@
 ## Next
 
+Data needs retweet, favorite data, text and dates.
+
 - ALL TIME RETWEETS, FAVORITES
+- All time most engaging tweets
+- Hour of the day you've got the most engagement based on a tweet
+-
+- https://github.com/gabceb/grunt-profanities/blob/master/lib/profanities/en.json
 
 ## Setup Models
 
@@ -73,4 +79,5 @@
 - use interfaces for data passed into models and return from them at least
 - decide on a javascript pattern to use consistently, like with function declarations, return objects etc
 
+unique words, vocabulary size
 

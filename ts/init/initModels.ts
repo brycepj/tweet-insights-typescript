@@ -6,8 +6,10 @@ module app {
             var startTime = new Date().getTime();
 
 
-            var getRawData = $.getJSON('data/brooks.json');
+            var getRawData = $.getJSON('data/bryce.json');
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
+            var getProfanity = $.getJSON('data/profanity.json');
+            
             var freshData, dataByDate, blueData, textByDate;
             var reasonsModel, hashtagModel, narcModel, sentimentModel, readingModel;
             var reasonsConfig;
@@ -49,9 +51,8 @@ module app {
             });
 
             // store AFFIN data, once other models have been initialized
-
-            $.when(getAFFIN, getRawData).done(function (AFFINdata) {
-
+/*
+            $.when(getAFFIN, getRawData,getProfanity).done(function (AFFINdata) {
                 sentimentData = AFFINdata[0];
 
             }).done(function () {
@@ -62,7 +63,7 @@ module app {
                 console.log((new Date().getTime() - startTime) / 1000 + " seconds");
             });
 
-
+*/
         }
     }
 }
