@@ -9,61 +9,67 @@ module app {
             var getRawData = $.getJSON('data/bryce.json');
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
             var getProfanity = $.getJSON('data/profanity.json');
-            
+
             var freshData, dataByDate, blueData, textByDate;
-            var reasonsModel, hashtagModel, narcModel, sentimentModel, readingModel;
+            var reasonsModel, hashtagModel, narcModel, sentimentModel, readingModel, profanityModel;
             var reasonsConfig;
 
-            getRawData.done(function (data) {
+            getRawData.done(function(data) {
 
                 freshData = app.scrubRawData(data);
                 console.log('fresh data length', freshData.length, freshData);
 
-            }).done(function (data) {
+            }).done(function(data) {
 
-                dataByDate = new app.models.DataByDate(freshData);
-                textByDate = new app.models.TextByDate(dataByDate.model);
+                    dataByDate = new app.models.DataByDate(freshData);
+                    textByDate = new app.models.TextByDate(dataByDate.model);
 
-            }).done(function (data) {
+                }).done(function(data) {
 
-                hashtagModel = new app.models.HashtagModel(dataByDate.model.forTotals);
-                reasonsModel = new app.models.TweetReasonsModel(dataByDate.model);
-                narcModel = new app.models.NarcModel(textByDate.model);
-                readingModel = new app.models.ReadingModel(textByDate.model.forTotals);
+                    hashtagModel = new app.models.HashtagModel(dataByDate.model.forTotals);
+                    reasonsModel = new app.models.TweetReasonsModel(dataByDate.model);
+                    narcModel = new app.models.NarcModel(textByDate.model);
+                    readingModel = new app.models.ReadingModel(textByDate.model.forTotals);
 
-            }).fail(function (data) {
 
-                console.log('request failed');
+                }).fail(function(data) {
 
-            }).done(function (data) {
+                    console.log('request failed');
 
-                reasonsConfig = new app.models.TweetReasonsConfig(reasonsModel.model);
+                }).done(function(data) {
 
-            }).done(function () {
+                    reasonsConfig = new app.models.TweetReasonsConfig(reasonsModel.model);
 
-                app.util.initViews({
-                    tweetReasons: reasonsConfig
+                }).done(function() {
+
+                    app.util.initViews({
+                        tweetReasons: reasonsConfig
+                    });
 
 
                 });
 
+            $.when(getRawData,getProfanity).done(function(dict) {
+ 
+                profanityModel = new app.models.ProfanityModel(textByDate.model.forTotals,dict);
 
             });
 
             // store AFFIN data, once other models have been initialized
-/*
-            $.when(getAFFIN, getRawData,getProfanity).done(function (AFFINdata) {
-                sentimentData = AFFINdata[0];
+            /*
+                        $.when(getAFFIN, getRawData,getProfanity).done(function (AFFINdata) {
+                            sentimentData = AFFINdata[0];
 
-            }).done(function () {
+            
+                        }).done(function () {
 
-                sentimentModel = new app.models.SentimentModel(textByDate.model, sentimentData);
+                            sentimentModel = new app.models.SentimentModel(textByDate.model, sentimentData);
 
-            }).done(function () {
-                console.log((new Date().getTime() - startTime) / 1000 + " seconds");
-            });
+                        }).done(function () {
+                            console.log((new Date().getTime() - startTime) / 1000 + " seconds");
+                        });
 
-*/
+            */
         }
     }
 }

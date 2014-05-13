@@ -4,4 +4,5 @@
 /// <reference path="scrubForWordsDays.ts"/>
 /// <reference path="scrubHashtags.ts"/>
 /// <reference path="scrubForReading.ts"/>
+/// <reference path="scrubForProfanity.ts"/>
 

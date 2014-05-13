@@ -17,7 +17,7 @@ var app;
             var getProfanity = $.getJSON('data/profanity.json');
 
             var freshData, dataByDate, blueData, textByDate;
-            var reasonsModel, hashtagModel, narcModel, sentimentModel, readingModel;
+            var reasonsModel, hashtagModel, narcModel, sentimentModel, readingModel, profanityModel;
             var reasonsConfig;
 
             getRawData.done(function (data) {
@@ -39,6 +39,10 @@ var app;
                 app.util.initViews({
                     tweetReasons: reasonsConfig
                 });
+            });
+
+            $.when(getRawData, getProfanity).done(function (dict) {
+                profanityModel = new app.models.ProfanityModel(textByDate.model.forTotals, dict);
             });
         }
         util.initModels = initModels;
@@ -294,6 +298,44 @@ var app;
             return SentimentModel;
         })(Backbone.Model);
         models.SentimentModel = SentimentModel;
+    })(app.models || (app.models = {}));
+    var models = app.models;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (models) {
+        var ProfanityModel = (function (_super) {
+            __extends(ProfanityModel, _super);
+            function ProfanityModel(TextByDate, profanity) {
+                _super.call(this);
+
+                this.data = TextByDate;
+                this.dict = profanity.words;
+
+                this.model = {};
+
+                this.init();
+            }
+            ProfanityModel.prototype.init = function () {
+                this.scrubForProfanity();
+                this.parseForProfanity();
+            };
+
+            ProfanityModel.prototype.scrubForProfanity = function () {
+                var data = this.data;
+
+                this.data = app.processors.scrubForProfanity(data);
+            };
+
+            ProfanityModel.prototype.parseForProfanity = function () {
+                var data = this.data;
+                var dict = this.dict;
+
+                app.processors.parseForProfanity(data, dict);
+            };
+            return ProfanityModel;
+        })(Backbone.Model);
+        models.ProfanityModel = ProfanityModel;
     })(app.models || (app.models = {}));
     var models = app.models;
 })(app || (app = {}));
@@ -659,6 +701,54 @@ var app;
             return removeSymbols();
         }
         processors.scrubForReading = scrubForReading;
+    })(app.processors || (app.processors = {}));
+    var processors = app.processors;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (processors) {
+        function scrubForProfanity(data) {
+            var tweets = data;
+
+            var arrayedText = _.map(tweets, function (value) {
+                return value.split(" ");
+            });
+
+            function noSymbols() {
+                for (var i = 0; i < arrayedText.length; i++) {
+                    var noSymbols = _.filter(arrayedText[i], function (string) {
+                        var firstLetter = string.slice(0, 1);
+
+                        var firstFour = string.slice(0, 4);
+                        return firstLetter !== "@" && firstFour !== "http" && string !== "RT";
+                    });
+
+                    arrayedText[i] = noSymbols;
+                }
+                return arrayedText;
+            }
+
+            function noPunctuation() {
+                var array = noSymbols();
+
+                for (var i = 0; i < array.length; i++) {
+                    var tweet = array[i];
+
+                    for (var j = 0; j < tweet.length; j++) {
+                        var word = tweet[j];
+
+                        var punctuationless = word.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+                        var finalString = punctuationless.replace(/\s{2,}/g, " ");
+
+                        tweet[j] = finalString.toLowerCase();
+                    }
+                }
+                return array;
+            }
+
+            return noPunctuation();
+        }
+        processors.scrubForProfanity = scrubForProfanity;
     })(app.processors || (app.processors = {}));
     var processors = app.processors;
 })(app || (app = {}));
@@ -1363,6 +1453,32 @@ var app;
             return countUniqueWords();
         }
         processors.parseForVocabulary = parseForVocabulary;
+    })(app.processors || (app.processors = {}));
+    var processors = app.processors;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (processors) {
+        function parseForProfanity(data, dict) {
+            var tweets = data.slice(0);
+            tweets = _.flatten(tweets);
+            var dict = dict;
+
+            console.log(dict);
+
+            for (var i = 0; i < tweets.length; i++) {
+                var tweet = tweets[i];
+
+                for (var j = 0; j < dict.words.length; j++) {
+                    var curse = dict.words[j];
+
+                    if (i == 999) {
+                        console.log(curse);
+                    }
+                }
+            }
+        }
+        processors.parseForProfanity = parseForProfanity;
     })(app.processors || (app.processors = {}));
     var processors = app.processors;
 })(app || (app = {}));

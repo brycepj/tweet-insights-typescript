@@ -43,8 +43,6 @@ module app {
 
                 this.model = app.processors.parseForReading(data);
 
-
-
             }
 
             parseForVocabulary() {
@@ -52,7 +50,6 @@ module app {
                 var data = this.scrubbed;
 
                 this.model["vocab"] = app.processors.parseForVocabulary(data);
-
 
             }
 
