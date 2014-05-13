@@ -5,7 +5,7 @@
 /// <reference path="parseSentimentForDays.ts"/>
 
 /// <reference path="parseNarcDays.ts"/>
-/// <reference path="parseForFogScale.ts"/>
+/// <reference path="parseForReading.ts"/>
 
 /// <reference path="parseTweetReasons.ts"/>
 /// <reference path="parseHashtags.ts"/>

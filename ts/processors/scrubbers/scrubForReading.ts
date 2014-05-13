@@ -36,19 +36,25 @@ module app {
                         var firstLetter = string.slice(0, 1);
                         var firstTwo = string.slice(0,2);
                         var firstFour = string.slice(0,4);
-                        return firstLetter !== "@" && firstLetter !== "#" && firstFour !== "http";
+                        return firstLetter !== "#" && firstFour !== "http" && firstLetter !== "@";
 
                     });
 
-                    if (noSymbols[0] === "rt") {
+
+
+                    if (noSymbols[0] === "RT") {
                         tweet.RT = true;
 
                     }
 
-                    for (var j = 0; j < noSymbols.length; j++) {
-                        var word = noSymbols[j];
 
-                        var punctuationless = word.replace(/[\.,-\/#"!$%\^&\*;:{}=\-_`~()]/g,"");
+
+                    tweet.str = noSymbols.join(" ");
+
+                    for (var j = 0; j < noSymbols.length; j++) {
+
+                        var word = noSymbols[j];
+                        var punctuationless = word.replace(/[\.,-\/#"!@$%\^&\*;:{}=\-_`~()]/g,"");
                         var finalString = punctuationless.replace(/\s{2,}/g," ");
 
                         noSymbols[j] = removeAccents(finalString);
@@ -57,7 +63,7 @@ module app {
                     }
 
                     tweet.array = noSymbols;
-                    tweet.str = noSymbols.join(" ");
+
 
                 }
                 return tweets;

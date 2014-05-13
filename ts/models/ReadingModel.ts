@@ -19,7 +19,7 @@ module app {
             init():void {
 
                 this.scrubForReading();
-                this.parseForFogScale();
+                this.parseForReading();
 
             }
 
@@ -27,20 +27,17 @@ module app {
 
                 var data = this.data.slice(0);
 
-
                 this.model = app.processors.scrubForReading(data);
 
-                //str = str.split(/\r\n|\r|\n|[.|!|?]\s/gi);
-
-                //str.split(/\r\n|\r|\n|[.|!|?]\s/gi);
             }
 
-            parseForFogScale() {
+            parseForReading() {
 
                 var data = this.model;
 
-                this.model = app.processors.parseForFogScale(data);
+                this.model = app.processors.parseForReading(data);
 
+                console.log('reading model',this.model);
 
             }
 

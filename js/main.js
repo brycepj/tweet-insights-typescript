@@ -10,7 +10,7 @@ var app;
 (function (app) {
     (function (util) {
         function initModels() {
-            var getRawData = $.getJSON('data/bryce.json');
+            var getRawData = $.getJSON('data/brooks.json');
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
             var freshData, dataByDate, blueData, textByDate;
             var reasonsModel, hashtagModel, narcModel, sentimentModel, readingModel;
@@ -307,7 +307,7 @@ var app;
             }
             ReadingModel.prototype.init = function () {
                 this.scrubForReading();
-                this.parseForFogScale();
+                this.parseForReading();
             };
 
             ReadingModel.prototype.scrubForReading = function () {
@@ -316,10 +316,12 @@ var app;
                 this.model = app.processors.scrubForReading(data);
             };
 
-            ReadingModel.prototype.parseForFogScale = function () {
+            ReadingModel.prototype.parseForReading = function () {
                 var data = this.model;
 
-                this.model = app.processors.parseForFogScale(data);
+                this.model = app.processors.parseForReading(data);
+
+                console.log('reading model', this.model);
             };
             return ReadingModel;
         })(Backbone.Model);
@@ -600,24 +602,24 @@ var app;
                         var firstLetter = string.slice(0, 1);
                         var firstTwo = string.slice(0, 2);
                         var firstFour = string.slice(0, 4);
-                        return firstLetter !== "@" && firstLetter !== "#" && firstFour !== "http";
+                        return firstLetter !== "#" && firstFour !== "http" && firstLetter !== "@";
                     });
 
-                    if (noSymbols[0] === "rt") {
+                    if (noSymbols[0] === "RT") {
                         tweet.RT = true;
                     }
 
+                    tweet.str = noSymbols.join(" ");
+
                     for (var j = 0; j < noSymbols.length; j++) {
                         var word = noSymbols[j];
-
-                        var punctuationless = word.replace(/[\.,-\/#"!$%\^&\*;:{}=\-_`~()]/g, "");
+                        var punctuationless = word.replace(/[\.,-\/#"!@$%\^&\*;:{}=\-_`~()]/g, "");
                         var finalString = punctuationless.replace(/\s{2,}/g, " ");
 
                         noSymbols[j] = removeAccents(finalString);
                     }
 
                     tweet.array = noSymbols;
-                    tweet.str = noSymbols.join(" ");
                 }
                 return tweets;
             }
@@ -1202,10 +1204,11 @@ var app;
 var app;
 (function (app) {
     (function (processors) {
-        function parseForFogScale(data) {
+        function parseForReading(data) {
             var tweets = data;
 
             function getAvgSyllables() {
+                var fog = [];
                 for (var i = 0; i < tweets.length; i++) {
                     var tweet = tweets[i];
                     var newSyls = null;
@@ -1217,6 +1220,10 @@ var app;
 
                             var syl = new_count(word);
 
+                            if (syl >= 3) {
+                                fog.push(word);
+                            }
+
                             syllableCounts.push(syl);
                         }
                     }
@@ -1227,16 +1234,19 @@ var app;
 
                     tweets[i]["avgSyl"] = (newSyls / tweet.array.length).toFixed(2);
                 }
-                return tweets;
+                return {
+                    tweets: tweets,
+                    fog: fog
+                };
             }
 
             function getOverallAvgSyllables() {
-                var tweets = getAvgSyllables();
+                var tweets = getAvgSyllables().tweets;
                 var total = 0;
                 var isNaNs = 0;
                 for (var i = 0; i < tweets.length; i++) {
                     var avg = Number(tweets[i].avgSyl);
-                    if (isNaN(avg)) {
+                    if (isNaN(avg) || avg === 0.00) {
                         isNaNs++;
                     } else {
                         total += avg;
@@ -1246,7 +1256,49 @@ var app;
                 return (total / (tweets.length - isNaNs)).toFixed(2);
             }
 
-            console.log('average syllables', getOverallAvgSyllables());
+            function getWordsPerSentence() {
+                var totalWords = 0;
+                var totalSentences = 0;
+                var isNaNs = 0;
+
+                for (var i = 0; i < tweets.length; i++) {
+                    var tweet = tweets[i];
+
+                    if (tweet.RT === false) {
+                        var text = tweet.str;
+                        var words = text.split(" ");
+                        var sentences = text.split(/[.|!|?]\s/gi);
+                        totalSentences += sentences.length;
+                        totalWords += words.length;
+                    } else {
+                        isNaNs++;
+                    }
+                }
+
+                return {
+                    perSentence: (totalWords / totalSentences).toFixed(2),
+                    totalWords: totalWords
+                };
+            }
+
+            function calculate() {
+                var wordsPerSentence = getWordsPerSentence();
+                var avgSyllables = getOverallAvgSyllables();
+
+                var calculateFog = function () {
+                    var longWords = getAvgSyllables().fog.length;
+                    var PHW = Number((longWords / wordsPerSentence.totalWords) * 100);
+                    var ASL = Number(wordsPerSentence.perSentence);
+
+                    return (0.4 * (ASL + PHW)).toFixed(2);
+                };
+
+                return {
+                    fog: calculateFog(),
+                    ease: (206.835 - (1.015 * wordsPerSentence.perSentence) - (84.6 * avgSyllables)).toFixed(2),
+                    grade: ((0.39 * wordsPerSentence.perSentence) + (11.8 * avgSyllables) - 15.59).toFixed(2)
+                };
+            }
 
             function new_count(word) {
                 word = word.toLowerCase();
@@ -1261,8 +1313,10 @@ var app;
 
                 return word.match(/[aeiouy]{1,2}/g).length;
             }
+
+            return calculate();
         }
-        processors.parseForFogScale = parseForFogScale;
+        processors.parseForReading = parseForReading;
     })(app.processors || (app.processors = {}));
     var processors = app.processors;
 })(app || (app = {}));
