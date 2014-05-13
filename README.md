@@ -79,4 +79,5 @@ Data needs retweet, favorite data, text and dates.
 - use interfaces for data passed into models and return from them at least
 - decide on a javascript pattern to use consistently, like with function declarations, return objects etc
 
+unique words, vocabulary size
 

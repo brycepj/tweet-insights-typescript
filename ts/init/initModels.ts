@@ -3,6 +3,8 @@ module app {
     export module util {
 
         export function initModels() {
+            var startTime = new Date().getTime();
+
 
             var getRawData = $.getJSON('data/brooks.json');
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
@@ -10,52 +12,57 @@ module app {
             var reasonsModel, hashtagModel, narcModel, sentimentModel, readingModel;
             var reasonsConfig;
 
-            getRawData.done(function(data) {
+            getRawData.done(function (data) {
 
                 freshData = app.scrubRawData(data);
                 console.log('fresh data length', freshData.length, freshData);
 
-            }).done(function(data) {
+            }).done(function (data) {
 
-                    dataByDate = new app.models.DataByDate(freshData);
-                    textByDate = new app.models.TextByDate(dataByDate.model);
+                dataByDate = new app.models.DataByDate(freshData);
+                textByDate = new app.models.TextByDate(dataByDate.model);
 
-                }).done(function(data) {
+            }).done(function (data) {
 
-                    hashtagModel = new app.models.HashtagModel(dataByDate.model.forTotals);
-                    reasonsModel = new app.models.TweetReasonsModel(dataByDate.model);
-                    narcModel = new app.models.NarcModel(textByDate.model);
-                    readingModel = new app.models.ReadingModel(textByDate.model.forTotals);
+                hashtagModel = new app.models.HashtagModel(dataByDate.model.forTotals);
+                reasonsModel = new app.models.TweetReasonsModel(dataByDate.model);
+                narcModel = new app.models.NarcModel(textByDate.model);
+                readingModel = new app.models.ReadingModel(textByDate.model.forTotals);
 
-                }).fail(function(data) {
+            }).fail(function (data) {
 
-                    console.log('request failed');
+                console.log('request failed');
 
-                }).done(function(data) {
+            }).done(function (data) {
 
-                    reasonsConfig = new app.models.TweetReasonsConfig(reasonsModel.model);
+                reasonsConfig = new app.models.TweetReasonsConfig(reasonsModel.model);
 
-                }).done(function() {
+            }).done(function () {
 
-                    app.util.initViews({
-                        tweetReasons: reasonsConfig
-                    });
+                app.util.initViews({
+                    tweetReasons: reasonsConfig
+
+
                 });
 
+
+            });
+
             // store AFFIN data, once other models have been initialized
-/*
-            $.when(getAFFIN, getRawData).done(function(AFFINdata) {
+
+            $.when(getAFFIN, getRawData).done(function (AFFINdata) {
 
                 sentimentData = AFFINdata[0];
 
-            }).done(function() {
+            }).done(function () {
 
-                    sentimentModel = new app.models.SentimentModel(textByDate.model, sentimentData);
+                sentimentModel = new app.models.SentimentModel(textByDate.model, sentimentData);
 
-                }).done(function() {
+            }).done(function () {
+                console.log((new Date().getTime() - startTime) / 1000 + " seconds");
+            });
 
-                });
-*/
+
         }
     }
 }

@@ -10,6 +10,8 @@ var app;
 (function (app) {
     (function (util) {
         function initModels() {
+            var startTime = new Date().getTime();
+
             var getRawData = $.getJSON('data/brooks.json');
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
             var freshData, dataByDate, blueData, textByDate;
@@ -35,6 +37,14 @@ var app;
                 app.util.initViews({
                     tweetReasons: reasonsConfig
                 });
+            });
+
+            $.when(getAFFIN, getRawData).done(function (AFFINdata) {
+                sentimentData = AFFINdata[0];
+            }).done(function () {
+                sentimentModel = new app.models.SentimentModel(textByDate.model, sentimentData);
+            }).done(function () {
+                console.log((new Date().getTime() - startTime) / 1000 + " seconds");
             });
         }
         util.initModels = initModels;
