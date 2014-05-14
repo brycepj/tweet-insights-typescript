@@ -12,7 +12,7 @@ var app;
         function initModels() {
             var startTime = new Date().getTime();
 
-            var getRawData = $.getJSON('data/austin.json');
+            var getRawData = $.getJSON('data/bryce.json');
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
             var getProfanity = $.getJSON('data/profanity.json');
 
@@ -477,20 +477,24 @@ var app;
     (function (processors) {
         function scrubForWords(data) {
             var arrayedText = _.map(data, function (value) {
-                return value.split(" ");
+                var str = String(value);
+                return str.split(" ");
             });
 
             function noSymbols() {
+                var noSymbolsText = [];
+
                 for (var i = 0; i < arrayedText.length; i++) {
-                    var noSymbols = _.filter(arrayedText[i], function (string) {
-                        var firstLetter = string.slice(0, 1);
-                        var firstFour = string.slice(0, 4);
+                    var noSymbols = _.filter(arrayedText[i], function (value) {
+                        var str = String(value);
+                        var firstLetter = str.slice(0, 1);
+                        var firstFour = str.slice(0, 4);
                         return firstLetter !== "@" && firstFour !== "http";
                     });
 
-                    arrayedText[i] = noSymbols;
+                    noSymbolsText[i] = noSymbols;
                 }
-                return arrayedText;
+                return noSymbolsText;
             }
 
             function noPunctuation() {
@@ -666,9 +670,11 @@ var app;
                     var arrayedText = tweet.array;
 
                     var noSymbols = _.filter(arrayedText, function (string) {
-                        var firstLetter = string.slice(0, 1);
-                        var firstTwo = string.slice(0, 2);
-                        var firstFour = string.slice(0, 4);
+                        var str = String(string);
+
+                        var firstLetter = str.slice(0, 1);
+                        var firstTwo = str.slice(0, 2);
+                        var firstFour = str.slice(0, 4);
                         return firstLetter !== "#" && firstFour !== "http" && firstLetter !== "@";
                     });
 
@@ -679,7 +685,7 @@ var app;
                     tweet.str = noSymbols.join(" ");
 
                     for (var j = 0; j < noSymbols.length; j++) {
-                        var word = noSymbols[j];
+                        var word = String(noSymbols[j]);
                         var punctuationless = word.replace(/[\.,-\/#"!@$%\^&\*;:{}=\-_`~()]/g, "");
                         var finalString = punctuationless.replace(/\s{2,}/g, " ");
 
@@ -692,19 +698,20 @@ var app;
             }
 
             function removeAccents(s) {
-                var r = s.toLowerCase();
-                r = r.replace(new RegExp(/\s/g), "");
-                r = r.replace(new RegExp(/[àáâãäå]/g), "a");
-                r = r.replace(new RegExp(/æ/g), "ae");
-                r = r.replace(new RegExp(/ç/g), "c");
-                r = r.replace(new RegExp(/[èéêë]/g), "e");
-                r = r.replace(new RegExp(/[ìíîï]/g), "i");
-                r = r.replace(new RegExp(/ñ/g), "n");
-                r = r.replace(new RegExp(/[òóôõö]/g), "o");
-                r = r.replace(new RegExp(/œ/g), "oe");
-                r = r.replace(new RegExp(/[ùúûü]/g), "u");
-                r = r.replace(new RegExp(/[ýÿ]/g), "y");
-                r = r.replace(new RegExp(/\W/g), "");
+                var str = String(s);
+                var r = str.toLowerCase();
+                r = r.replace(/\s/g, "");
+                r = r.replace(/[àáâãäå]/g, "a");
+                r = r.replace(/æ/g, "ae");
+                r = r.replace(/ç/g, "c");
+                r = r.replace(/[èéêë]/g, "e");
+                r = r.replace(/[ìíîï]/g, "i");
+                r = r.replace(/ñ/g, "n");
+                r = r.replace(/[òóôõö]/g, "o");
+                r = r.replace(/œ/g, "oe");
+                r = r.replace(/[ùúûü]/g, "u");
+                r = r.replace(/[ýÿ]/g, "y");
+                r = r.replace(/\W/g, "");
                 return r;
             }
             ;
@@ -721,22 +728,27 @@ var app;
         function scrubForProfanity(data) {
             var tweets = data;
 
-            var arrayedText = _.map(tweets, function (value) {
-                return value.split(" ");
-            });
-
             function noSymbols() {
+                var arrayedText = _.map(tweets, function (value) {
+                    var str = String(value);
+                    return str.split(" ");
+                });
+
+                var noSymbolsText = [];
+
                 for (var i = 0; i < arrayedText.length; i++) {
                     var noSymbols = _.filter(arrayedText[i], function (string) {
-                        var firstLetter = string.slice(0, 1);
+                        var str = String(string);
 
-                        var firstFour = string.slice(0, 4);
-                        return firstLetter !== "@" && firstFour !== "http" && string !== "RT";
+                        var firstLetter = str.slice(0, 1);
+                        var firstFour = str.slice(0, 4);
+
+                        return firstLetter !== "@" && firstFour !== "http" && str !== "RT";
                     });
 
-                    arrayedText[i] = noSymbols;
+                    noSymbolsText[i] = noSymbols;
                 }
-                return arrayedText;
+                return noSymbolsText;
             }
 
             function noPunctuation() {
@@ -1344,7 +1356,10 @@ var app;
                     }
 
                     newSyls = _.reduce(syllableCounts, function (memo, num) {
-                        return memo + num;
+                        var current = Number(memo);
+                        var add = Number(num);
+
+                        return (current + add);
                     }, 0);
 
                     tweets[i]["avgSyl"] = (newSyls / tweet.array.length).toFixed(2);
@@ -1410,8 +1425,8 @@ var app;
 
                 return {
                     fog: calculateFog(),
-                    ease: (206.835 - (1.015 * wordsPerSentence.perSentence) - (84.6 * avgSyllables)).toFixed(2),
-                    grade: ((0.39 * wordsPerSentence.perSentence) + (11.8 * avgSyllables) - 15.59).toFixed(2)
+                    ease: (206.835 - (1.015 * Number(wordsPerSentence.perSentence)) - (84.6 * Number(avgSyllables))).toFixed(2),
+                    grade: ((0.39 * Number(wordsPerSentence.perSentence)) + (11.8 * Number(avgSyllables)) - 15.59).toFixed(2)
                 };
             }
 
@@ -1498,8 +1513,6 @@ var app;
 
                     if (word === "please" || word === "plz" || word === "pls") {
                         please = true;
-
-                        console.log(tweets[i - 3] + tweets[i - 2] + tweets[i - 1] + 'please ' + tweets[i + 1] + tweets[i + 2] + tweets[i + 3]);
                     }
 
                     for (var j = 0; j < list.length; j++) {

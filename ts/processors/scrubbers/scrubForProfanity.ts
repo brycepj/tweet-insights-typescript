@@ -4,26 +4,32 @@ module app {
 
             var tweets = data;
 
-            //break apart strings
-            var arrayedText = _.map(tweets, function(value) {
-                return value.split(" ");
-            });
-
             function noSymbols() {
+
+                //break apart strings
+                var arrayedText = _.map(tweets, function(value) {
+                    var str = String(value);
+                    return str.split(" ");
+                });
+
+                var noSymbolsText = [];
 
                 for (var i = 0; i < arrayedText.length; i++) {
 
                     var noSymbols = _.filter(arrayedText[i], function(string) {
-                        var firstLetter = string.slice(0, 1);
 
-                        var firstFour = string.slice(0, 4);
-                        return firstLetter !== "@" && firstFour !== "http" && string !== "RT";
+                        var str = String(string);
+
+                        var firstLetter = str.slice(0, 1);
+                        var firstFour = str.slice(0, 4);
+
+                        return firstLetter !== "@" && firstFour !== "http" && str !== "RT";
                     });
 
-                    arrayedText[i] = noSymbols;
+                    noSymbolsText[i] = noSymbols;
 
                 }
-                return arrayedText;
+                return noSymbolsText;
             }
 
             function noPunctuation() {
@@ -39,7 +45,7 @@ module app {
                         var finalString = punctuationless.replace(/\s{2,}/g, " ");
 
                         tweet[j] = finalString.toLowerCase();
-                        
+
 
                     }
 

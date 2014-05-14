@@ -4,23 +4,26 @@ module app {
 
             //break apart strings
             var arrayedText = _.map(data, function (value) {
-                return value.split(" ");
+                var str = String(value);
+                return str.split(" ");
             });
 
             function noSymbols() {
 
+                var noSymbolsText = [];
+                
                 for (var i = 0; i < arrayedText.length; i++) {
 
-                    var noSymbols = _.filter(arrayedText[i], function (string) {
-                        var firstLetter = string.slice(0, 1);
-                        var firstFour = string.slice(0,4);                      
+                    var noSymbols = _.filter(arrayedText[i], function (value) {
+                        var str = String(value);
+                        var firstLetter = str.slice(0, 1);
+                        var firstFour = str.slice(0,4);                      
                             return firstLetter !== "@" && firstFour !== "http";
                     });
-
-                    arrayedText[i] = noSymbols;
-
+                    
+                    noSymbolsText[i] = noSymbols;
                 }
-            return arrayedText;
+            return noSymbolsText;
             }
 
             function noPunctuation(){
