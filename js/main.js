@@ -12,7 +12,7 @@ var app;
         function initModels() {
             var startTime = new Date().getTime();
 
-            var getRawData = $.getJSON('data/bryce.json');
+            var getRawData = $.getJSON('data/Jennifer.json');
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
             var getProfanity = $.getJSON('data/profanity.json');
 
@@ -41,7 +41,7 @@ var app;
                 });
             });
 
-            $.when(getRawData, getProfanity).done(function (dict) {
+            $.when(getProfanity, getRawData).done(function (dict) {
                 profanityModel = new app.models.ProfanityModel(textByDate.model.forTotals, dict);
             });
         }
@@ -310,15 +310,17 @@ var app;
                 _super.call(this);
 
                 this.data = TextByDate;
-                this.dict = profanity.words;
+                this.dict = profanity[0].words;
 
-                this.model = {};
+                this.model = null;
 
                 this.init();
             }
             ProfanityModel.prototype.init = function () {
                 this.scrubForProfanity();
                 this.parseForProfanity();
+
+                console.log('profanity model', this.model);
             };
 
             ProfanityModel.prototype.scrubForProfanity = function () {
@@ -331,7 +333,7 @@ var app;
                 var data = this.data;
                 var dict = this.dict;
 
-                app.processors.parseForProfanity(data, dict);
+                this.model = app.processors.parseForProfanity(data, dict);
             };
             return ProfanityModel;
         })(Backbone.Model);
@@ -1460,23 +1462,59 @@ var app;
 (function (app) {
     (function (processors) {
         function parseForProfanity(data, dict) {
-            var tweets = data.slice(0);
-            tweets = _.flatten(tweets);
-            var dict = dict;
+            var list = dict;
+            var totalWords = 0;
 
-            console.log(dict);
+            function storeProfanity() {
+                var tweets = data.slice(0);
+                tweets = _.flatten(tweets);
 
-            for (var i = 0; i < tweets.length; i++) {
-                var tweet = tweets[i];
+                var profanity = [];
 
-                for (var j = 0; j < dict.words.length; j++) {
-                    var curse = dict.words[j];
+                for (var i = 0; i < tweets.length; i++) {
+                    var word = tweets[i].toLowerCase();
 
-                    if (i == 999) {
-                        console.log(curse);
+                    totalWords++;
+
+                    for (var j = 0; j < list.length; j++) {
+                        var curse = list[j].toLowerCase();
+
+                        if (word === curse) {
+                            profanity.push(word);
+                        }
                     }
                 }
+                return profanity.sort();
             }
+
+            function countProfanity() {
+                var profanity = storeProfanity();
+                var uniques = _.uniq(profanity);
+                var counts = {};
+
+                var current = null;
+
+                for (var i = 0; i < uniques.length; i++) {
+                    var uniq = uniques[i];
+                    current = uniq;
+                    counts[current] = 0;
+
+                    for (var j = 0; j < profanity.length; j++) {
+                        var prof = profanity[j];
+
+                        if (prof === current) {
+                            counts[prof] += 1;
+                        }
+                    }
+                }
+
+                return {
+                    frequency: (totalWords / profanity.length).toFixed(2),
+                    counts: counts
+                };
+            }
+
+            return countProfanity();
         }
         processors.parseForProfanity = parseForProfanity;
     })(app.processors || (app.processors = {}));

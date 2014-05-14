@@ -6,7 +6,7 @@ module app {
             var startTime = new Date().getTime();
 
 
-            var getRawData = $.getJSON('data/bryce.json');
+            var getRawData = $.getJSON('data/Jennifer.json');
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
             var getProfanity = $.getJSON('data/profanity.json');
 
@@ -49,7 +49,7 @@ module app {
 
                 });
 
-            $.when(getRawData,getProfanity).done(function(dict) {
+            $.when(getProfanity,getRawData).done(function(dict) {
  
                 profanityModel = new app.models.ProfanityModel(textByDate.model.forTotals,dict);
 

@@ -4,45 +4,67 @@ module app {
 
         export function parseForProfanity(data, dict) {
 
-            // IN PROGRESS (DICT NOT DEFINED)
-            
-            var tweets = data.slice(0);
-            tweets = _.flatten(tweets);
-            var dict = dict;
+            var list = dict;
+            var totalWords = 0;
 
-            console.log(dict);
+            function storeProfanity() {
 
-            for (var i = 0; i < tweets.length; i++) {
+                var tweets = data.slice(0);
+                tweets = _.flatten(tweets);
 
-                var tweet = tweets[i];
+                var profanity = [];
 
-                for (var j = 0; j < dict.words.length; j++) {
-                    var curse = dict.words[j];
+                for (var i = 0; i < tweets.length; i++) {
 
-                    if (i == 999) {
-                        console.log(curse);
+                    var word = tweets[i].toLowerCase();
+
+                    totalWords++;
+
+                    for (var j = 0; j < list.length; j++) {
+                        var curse = list[j].toLowerCase();
+
+                        if (word === curse) {
+                            profanity.push(word);
+                        }
                     }
+                }
+                return profanity.sort();
+            }
 
+            function countProfanity() {
 
+                var profanity = storeProfanity();
+                var uniques = _.uniq(profanity);
+                var counts = {};
+
+                var current = null;
+
+                for (var i = 0; i < uniques.length; i++) {
+                    var uniq = uniques[i];
+                    current = uniq;
+                    counts[current] = 0;
+
+                    for (var j = 0; j < profanity.length; j++) {
+                        var prof = profanity[j];
+
+                        if (prof === current) {
+                            counts[prof] += 1;
+                        }
+                    }
                 }
 
-
-
+                return {
+                    frequency: (totalWords / profanity.length).toFixed(2),
+                    counts: counts
+                };
             }
 
 
-
+            return countProfanity();
 
             // count percent of total words
             // top used swear words
             // how often you use them
-
-
-
-
-
-
-
 
 
         }

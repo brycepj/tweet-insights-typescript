@@ -12,9 +12,9 @@ module app {
                 super();
 
                 this.data = TextByDate;
-                this.dict = profanity.words;
+                this.dict = profanity[0].words;
 
-                this.model = {};
+                this.model = null;
 
                 this.init();
 
@@ -25,6 +25,7 @@ module app {
                 this.scrubForProfanity();
                 this.parseForProfanity();
 
+                console.log('profanity model',this.model);
             }
             
             scrubForProfanity() {
@@ -39,7 +40,7 @@ module app {
                 var data = this.data;
                 var dict = this.dict;
 
-                app.processors.parseForProfanity(data,dict);
+                this.model = app.processors.parseForProfanity(data,dict);
 
             }
 
