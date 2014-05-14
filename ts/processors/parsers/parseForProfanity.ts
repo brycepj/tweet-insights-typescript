@@ -6,6 +6,7 @@ module app {
 
             var list = dict;
             var totalWords = 0;
+            var pleaseRTs = 0;
 
             function storeProfanity() {
 
@@ -14,11 +15,32 @@ module app {
 
                 var profanity = [];
 
+                var please = false;
+
+
                 for (var i = 0; i < tweets.length; i++) {
 
                     var word = tweets[i].toLowerCase();
 
                     totalWords++;
+
+                    // check for pls retweet
+                    if (please && (word !== "please" || word !== "plz" || word !== "pls")) {
+
+                        if (word === "rt" || word === "retweet") {
+                            pleaseRTs++;
+                        }
+
+                        please = false;
+                    }
+
+                    if (word === "please" || word === "plz" || word === "pls") {
+
+                        please = true;
+
+                        console.log(tweets[i-3] + tweets[i-2] + tweets[i-1] + 'please ' + tweets[i + 1] + tweets[i + 2] + tweets[i + 3]);
+                    }
+
 
                     for (var j = 0; j < list.length; j++) {
                         var curse = list[j].toLowerCase();
@@ -54,19 +76,13 @@ module app {
                 }
 
                 return {
+                    pleaseRTs: pleaseRTs,
                     frequency: (totalWords / profanity.length).toFixed(2),
                     counts: counts
                 };
             }
 
-
             return countProfanity();
-
-            // count percent of total words
-            // top used swear words
-            // how often you use them
-
-
         }
     }
 }

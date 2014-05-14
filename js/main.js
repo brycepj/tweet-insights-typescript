@@ -12,7 +12,7 @@ var app;
         function initModels() {
             var startTime = new Date().getTime();
 
-            var getRawData = $.getJSON('data/Jennifer.json');
+            var getRawData = $.getJSON('data/austin.json');
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
             var getProfanity = $.getJSON('data/profanity.json');
 
@@ -43,6 +43,15 @@ var app;
 
             $.when(getProfanity, getRawData).done(function (dict) {
                 profanityModel = new app.models.ProfanityModel(textByDate.model.forTotals, dict);
+                console.log('profanity done', (new Date().getTime() - startTime) / 1000 + " seconds");
+            });
+
+            $.when(getAFFIN, getRawData, getProfanity).done(function (AFFINdata) {
+                sentimentData = AFFINdata[0];
+            }).done(function () {
+                sentimentModel = new app.models.SentimentModel(textByDate.model, sentimentData);
+            }).done(function () {
+                console.log('sentiments done', (new Date().getTime() - startTime) / 1000 + " seconds");
             });
         }
         util.initModels = initModels;
@@ -1464,6 +1473,7 @@ var app;
         function parseForProfanity(data, dict) {
             var list = dict;
             var totalWords = 0;
+            var pleaseRTs = 0;
 
             function storeProfanity() {
                 var tweets = data.slice(0);
@@ -1471,10 +1481,26 @@ var app;
 
                 var profanity = [];
 
+                var please = false;
+
                 for (var i = 0; i < tweets.length; i++) {
                     var word = tweets[i].toLowerCase();
 
                     totalWords++;
+
+                    if (please && (word !== "please" || word !== "plz" || word !== "pls")) {
+                        if (word === "rt" || word === "retweet") {
+                            pleaseRTs++;
+                        }
+
+                        please = false;
+                    }
+
+                    if (word === "please" || word === "plz" || word === "pls") {
+                        please = true;
+
+                        console.log(tweets[i - 3] + tweets[i - 2] + tweets[i - 1] + 'please ' + tweets[i + 1] + tweets[i + 2] + tweets[i + 3]);
+                    }
 
                     for (var j = 0; j < list.length; j++) {
                         var curse = list[j].toLowerCase();
@@ -1509,6 +1535,7 @@ var app;
                 }
 
                 return {
+                    pleaseRTs: pleaseRTs,
                     frequency: (totalWords / profanity.length).toFixed(2),
                     counts: counts
                 };
