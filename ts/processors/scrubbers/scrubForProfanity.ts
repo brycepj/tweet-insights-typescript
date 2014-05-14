@@ -46,7 +46,6 @@ module app {
 
                         tweet[j] = finalString.toLowerCase();
 
-
                     }
 
                 }

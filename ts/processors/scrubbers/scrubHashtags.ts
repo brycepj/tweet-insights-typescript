@@ -1,5 +1,6 @@
 module app {
     export module processors {
+        
         export function scrubHashtags(data) {
 
             var data = data;
