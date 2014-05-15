@@ -8,6 +8,9 @@
 /// <reference path="parseForReading.ts"/>
 /// <reference path="parseForVocabulary.ts"/>
 /// <reference path="parseForProfanity.ts"/>
+/// <reference path="parseForSources.ts"/>
+
+
 
 /// <reference path="parseTweetReasons.ts"/>
 /// <reference path="parseHashtags.ts"/>

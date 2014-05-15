@@ -12,16 +12,13 @@ var app;
         function initModels() {
             var startTime = new Date().getTime();
 
-<<<<<<< HEAD
             var getRawData = $.getJSON('data/bryce.json');
-=======
-            var getRawData = $.getJSON('data/brooks.json');
->>>>>>> 74436a04fa0c14f0dde30015dbcf9c4ca9ef57ff
+
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
             var getProfanity = $.getJSON('data/profanity.json');
 
-            var freshData, dataByDate, blueData, textByDate;
-            var reasonsModel, hashtagModel, narcModel, sentimentModel, readingModel, profanityModel;
+            var freshData, dataByDate, textByDate;
+            var reasonsModel, hashtagModel, narcModel, sentimentModel, readingModel, profanityModel, sourcesModel;
             var reasonsConfig;
 
             getRawData.done(function (data) {
@@ -35,6 +32,7 @@ var app;
                 reasonsModel = new app.models.TweetReasonsModel(dataByDate.model);
                 narcModel = new app.models.NarcModel(textByDate.model);
                 readingModel = new app.models.ReadingModel(textByDate.model.forTotals);
+                sourcesModel = new app.models.SourcesModel(dataByDate.model.forTotals);
             }).fail(function (data) {
                 console.log('request failed');
             }).done(function (data) {
@@ -43,20 +41,6 @@ var app;
                 app.util.initViews({
                     tweetReasons: reasonsConfig
                 });
-            });
-
-            $.when(getProfanity, getRawData).done(function (dict) {
-                profanityModel = new app.models.ProfanityModel(textByDate.model.forTotals, dict);
-
-                console.log('profanity done', (new Date().getTime() - startTime) / 1000 + " seconds");
-            });
-
-            $.when(getAFFIN, getRawData).done(function (AFFINdata) {
-                sentimentData = AFFINdata[0];
-            }).done(function () {
-                sentimentModel = new app.models.SentimentModel(textByDate.model, sentimentData);
-            }).done(function () {
-                console.log('sentiments done', (new Date().getTime() - startTime) / 1000 + " seconds");
             });
         }
         util.initModels = initModels;
@@ -352,6 +336,44 @@ var app;
             return ProfanityModel;
         })(Backbone.Model);
         models.ProfanityModel = ProfanityModel;
+    })(app.models || (app.models = {}));
+    var models = app.models;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (models) {
+        var SourcesModel = (function (_super) {
+            __extends(SourcesModel, _super);
+            function SourcesModel(data) {
+                _super.call(this);
+
+                this.data = data;
+
+                this.model = null;
+
+                this.init();
+            }
+            SourcesModel.prototype.init = function () {
+                this.scrubForSources();
+                this.parseForSources();
+
+                console.log(this.model);
+            };
+
+            SourcesModel.prototype.scrubForSources = function () {
+                var tweets = this.data;
+
+                this.model = app.processors.scrubForSources(tweets);
+            };
+
+            SourcesModel.prototype.parseForSources = function () {
+                var data = this.model;
+
+                this.model = app.processors.parseForSources(data);
+            };
+            return SourcesModel;
+        })(Backbone.Model);
+        models.SourcesModel = SourcesModel;
     })(app.models || (app.models = {}));
     var models = app.models;
 })(app || (app = {}));
@@ -777,6 +799,39 @@ var app;
             return noPunctuation();
         }
         processors.scrubForProfanity = scrubForProfanity;
+    })(app.processors || (app.processors = {}));
+    var processors = app.processors;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (processors) {
+        function scrubForSources(data) {
+            var tweets = data;
+            tweets = _.flatten(tweets);
+
+            function saveProps() {
+                var saved = [];
+
+                for (var i = 0; i < tweets.length; i++) {
+                    var tweet = tweets[i];
+                    var source = tweet.source;
+                    var urls = tweet.urls;
+                    var source_url = tweet.source_url;
+
+                    saved.push({
+                        source: source,
+                        urls: urls,
+                        source_url: source_url
+                    });
+                }
+
+                tweets = saved;
+                return tweets;
+            }
+
+            return saveProps();
+        }
+        processors.scrubForSources = scrubForSources;
     })(app.processors || (app.processors = {}));
     var processors = app.processors;
 })(app || (app = {}));
@@ -1562,6 +1617,79 @@ var app;
             return countProfanity();
         }
         processors.parseForProfanity = parseForProfanity;
+    })(app.processors || (app.processors = {}));
+    var processors = app.processors;
+})(app || (app = {}));
+var app;
+(function (app) {
+    (function (processors) {
+        function parseForSources(data) {
+            var tweets = data;
+
+            var sources = _.pluck(tweets, 'source').sort(), source_urls = _.pluck(tweets, 'source_url'), urls = _.pluck(tweets, 'urls');
+
+            function countSources() {
+                var dict = {};
+                var uniques = _.uniq(sources);
+
+                for (var i = 0; i < uniques.length; i++) {
+                    var unique = uniques[i];
+                    var prop = unique.replace(/ /g, "_");
+
+                    dict[prop] = 0;
+                }
+
+                for (var j = 0; j < sources.length; j++) {
+                    var source = sources[j];
+                    var prop = source.replace(/ /g, "_");
+
+                    dict[prop]++;
+                }
+
+                return dict;
+            }
+
+            function parseURLs() {
+                var displays;
+                var URLs = _.flatten(urls);
+                var displayURLs = _.pluck(URLs, 'display_url');
+
+                displays = _.map(displayURLs, function (value) {
+                    var shortURL = String(value);
+                    shortURL = shortURL.split('/')[0];
+
+                    return shortURL;
+                });
+
+                return displays;
+            }
+
+            function countURLs() {
+                var dict = {};
+                var URLs = parseURLs().sort();
+                var uniques = _.uniq(URLs);
+
+                for (var i = 0; i < uniques.length; i++) {
+                    var unique = uniques[i];
+
+                    dict[unique] = 0;
+                }
+
+                for (var j = 0; j < URLs.length; j++) {
+                    var URL = URLs[j];
+
+                    dict[URL]++;
+                }
+
+                return dict;
+            }
+
+            return {
+                urls: countURLs(),
+                sources: countSources()
+            };
+        }
+        processors.parseForSources = parseForSources;
     })(app.processors || (app.processors = {}));
     var processors = app.processors;
 })(app || (app = {}));

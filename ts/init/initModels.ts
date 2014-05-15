@@ -11,8 +11,10 @@ module app {
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
             var getProfanity = $.getJSON('data/profanity.json');
 
-            var freshData, dataByDate, blueData, textByDate;
-            var reasonsModel, hashtagModel, narcModel, sentimentModel, readingModel, profanityModel;
+            var freshData, dataByDate, textByDate;
+            var reasonsModel, hashtagModel, narcModel,
+                sentimentModel, readingModel, profanityModel,
+                sourcesModel;
             var reasonsConfig;
 
             getRawData.done(function (data) {
@@ -31,6 +33,7 @@ module app {
                 reasonsModel = new app.models.TweetReasonsModel(dataByDate.model);
                 narcModel = new app.models.NarcModel(textByDate.model);
                 readingModel = new app.models.ReadingModel(textByDate.model.forTotals);
+                sourcesModel = new app.models.SourcesModel(dataByDate.model.forTotals);
 
             }).fail(function (data) {
 
@@ -47,7 +50,7 @@ module app {
                 });
 
             });
-
+/*
             $.when(getProfanity, getRawData).done(function (dict) {
 
                 profanityModel = new app.models.ProfanityModel(textByDate.model.forTotals, dict);
@@ -66,7 +69,7 @@ module app {
             }).done(function () {
                 console.log('sentiments done', (new Date().getTime() - startTime) / 1000 + " seconds");
             });
-
+*/
 
         }
     }

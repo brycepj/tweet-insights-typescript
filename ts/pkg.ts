@@ -1,4 +1,3 @@
-/// <reference path="interfaces/pkg.ts"/>
 /// <reference path="lib/pkg.ts"/>
 /// <reference path="init/pkg.ts"/>
 /// <reference path="models/datasets/pkg.ts"/>
@@ -6,10 +5,3 @@
 /// <reference path="processors/pkg.ts"/>
 /// <reference path="views/pkg.ts"/>
 
-
-
-
-
-
-
-// this is where the order matters
