@@ -31,7 +31,10 @@ module app {
                     }
 
                     newSyls = _.reduce(syllableCounts, function (memo, num) {
-                        return memo + num;
+                        var current = Number(memo);
+                        var add = Number(num);
+                        
+                        return (current + add);
                     }, 0);
 
                     tweets[i]["avgSyl"] = (newSyls / tweet.array.length).toFixed(2);
@@ -105,8 +108,8 @@ module app {
 
                 return {
                     fog:calculateFog(),
-                    ease: (206.835 - (1.015 * wordsPerSentence.perSentence) - (84.6 * avgSyllables)).toFixed(2),
-                    grade: ((0.39 * wordsPerSentence.perSentence) + (11.8 * avgSyllables) - 15.59).toFixed(2)
+                    ease: (206.835 - (1.015 * Number(wordsPerSentence.perSentence)) - (84.6 * Number(avgSyllables))).toFixed(2),
+                    grade: ((0.39 * Number(wordsPerSentence.perSentence)) + (11.8 * Number(avgSyllables)) - 15.59).toFixed(2)
                 };
 
             }
