@@ -23,7 +23,7 @@ module app {
                 this.scrubForSources();
                 this.parseForSources();
 
-                console.log(this.model);
+                console.log('sources model',this.model);
             }
 
             scrubForSources(){
