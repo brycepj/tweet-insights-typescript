@@ -12,7 +12,7 @@ var app;
         function initModels() {
             var startTime = new Date().getTime();
 
-            var getRawData = $.getJSON('data/austin.json');
+            var getRawData = $.getJSON('data/bryce.json');
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
             var getProfanity = $.getJSON('data/profanity.json');
 
@@ -1498,8 +1498,6 @@ var app;
 
                     if (word === "please" || word === "plz" || word === "pls") {
                         please = true;
-
-                        console.log(tweets[i - 3] + tweets[i - 2] + tweets[i - 1] + 'please ' + tweets[i + 1] + tweets[i + 2] + tweets[i + 3]);
                     }
 
                     for (var j = 0; j < list.length; j++) {

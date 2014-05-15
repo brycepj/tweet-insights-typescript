@@ -5,7 +5,7 @@ module app {
         export function initModels() {
             var startTime = new Date().getTime();
 
-            var getRawData = $.getJSON('data/austin.json');
+            var getRawData = $.getJSON('data/bryce.json');
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
             var getProfanity = $.getJSON('data/profanity.json');
 
