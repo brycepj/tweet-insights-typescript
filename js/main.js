@@ -357,7 +357,7 @@ var app;
                 this.scrubForSources();
                 this.parseForSources();
 
-                console.log(this.model);
+                console.log('sources model', this.model);
             };
 
             SourcesModel.prototype.scrubForSources = function () {
