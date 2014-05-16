@@ -6,7 +6,7 @@ module app {
             var startTime = new Date().getTime();
 
 
-            var getRawData = $.getJSON('data/bryce.json');
+            var getRawData = $.getJSON('data/mitchell.json');
 
             var getAFFIN = $.getJSON('data/AFINN.json'), sentimentData;
             var getProfanity = $.getJSON('data/profanity.json');
@@ -50,7 +50,7 @@ module app {
                 });
 
             });
-/*
+
             $.when(getProfanity, getRawData).done(function (dict) {
 
                 profanityModel = new app.models.ProfanityModel(textByDate.model.forTotals, dict);
@@ -69,7 +69,7 @@ module app {
             }).done(function () {
                 console.log('sentiments done', (new Date().getTime() - startTime) / 1000 + " seconds");
             });
-*/
+
 
         }
     }
